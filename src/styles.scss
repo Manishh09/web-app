@@ -1,1 +1,71 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+body { font-family: sans-serif; }
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+}
+
+// custome tooltip
+.custom-tooltip {
+
+
+  border-radius: 5px;
+
+  padding: 8px;
+  text-align: center;
+
+  outline: none;
+  background-color: #EDEEEF!important;
+}
+
+// mat-icon color
+.item-icon {
+  color: #3f51b5;
+}
+
+/*SNACK BAR STYLES - STARTS*/
+
+.mdc-snackbar{
+  padding-bottom: 1.5rem !important;
+}
+.mat-mdc-snack-bar-label{
+  padding: 0px !important;
+  height: 0px !important;
+}
+// signout-styles
+.custom-snack-signout {
+  background-color:  #5bcd97; //color code reference : https://www.uicolorpicker.learncodeonline.in/
+  height: 4rem;
+  width: fit-content;
+  border-left: 5px solid rgb(24, 94, 24);
+}
+.custom-snack-warn {
+  background-color: #F0DF87; //color code reference : https://www.uicolorpicker.learncodeonline.in/
+  height: 4rem;
+  width: fit-content;
+  border-left: 5px solid#FAD02E;
+}
+.custom-snack-success {
+  background-color:  #5bcd97; //color code reference : https://www.uicolorpicker.learncodeonline.in/
+  height: 4rem;
+  width: fit-content;
+  border-left: 5px solid rgb(24, 94, 24);
+}
+.custom-snack-failure {
+  background-color:  #f47d7d; //color code reference : https://www.uicolorpicker.learncodeonline.in/
+  height: 4rem;
+  width: fit-content;
+  border-left: 5px solid #B83227;
+}
+/*SNACK BAR STYLES - ENDS*/
+
+
+

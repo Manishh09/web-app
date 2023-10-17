@@ -1,0 +1,34 @@
+<div class="sidebar-container">
+  <mat-toolbar color="primary" class="tool-bar-container">
+    <button  mat-icon-button matTooltip="{{sidenav.opened ? 'Close Sidenav' : 'Open Sidenav'}}"
+    matTooltipClass="custom-tooltip"
+    class="example-icon" aria-label="Example icon-button with menu icon"
+    (click)="sidenav.toggle()" >
+      <mat-icon [@rotate]="sidenav.opened ? 'close' : 'menu'">{{sidenav.opened ? 'close' : 'menu'}}</mat-icon>
+    </button>
+    <img src="assets/images/narvee-logo.png" alt="logo" width="100" height="100" loading="lazy">
+    <span class="button-devider"></span>
+    <!-- <button mat-icon-button class="login-icon" aria-label="login-icon" (click)="login()">
+      <mat-icon>login</mat-icon>
+    </button> -->
+    <button mat-icon-button class="profile-icon" aria-label="profile-icon" [matMenuTriggerFor]="menu">
+     <mat-icon>account_circle</mat-icon>
+   </button>
+   <mat-menu #menu="matMenu">
+    <button mat-menu-item>Profile
+      <mat-icon class="icon">person</mat-icon>
+    </button>
+    <button mat-menu-item (click)="onSignOut()">Sign Out
+      <mat-icon class="icon">logout</mat-icon>
+    </button>
+  </mat-menu>
+  </mat-toolbar>
+  <mat-sidenav-container class="sidebar-sidenav-container">
+    <mat-sidenav #sidenav mode="side"   opened="true" class="sidnav"  [fixedBottomGap]="10">
+      <app-side-navbar></app-side-navbar>
+    </mat-sidenav>
+    <mat-sidenav-content class="router-container">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

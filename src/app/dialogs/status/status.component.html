@@ -1,0 +1,33 @@
+
+<div class="status-dialog-container">
+
+
+
+  <div class="header">
+    <h2 mat-dialog-title>{{data.title}}</h2>
+    <hr>
+    <button mat-icon-button (click)="onAction('SAFE_CLOSE')" >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="content" mat-dialog-content>
+    <form class="status-form" [formGroup]="statusForm" #myFrom name="status-form" (ngSubmit)="onAction('UPDATE')">
+      <mat-label>Reason for {{data.updateText}} {{data.type}}</mat-label>
+      <mat-form-field class="status-reason-field">
+        <textarea title="" matInput placeholder="Enter the reason for {{data.updateText}} {{data.type}}" formControlName="reasonForStatusUpdate"></textarea>
+      </mat-form-field>
+      <div class="error-message"  *ngIf="showValidationError">
+        <mat-error>Reason must be provided to {{data.updateText}} {{data.type}} and it must be at least 4 characters</mat-error>
+        <!-- <mat-error *ngIf="statusForm.controls['reasonForStatusUpdate'].hasError('minLength')">Reason must be at least 4 characters</mat-error> -->
+      </div>
+      <div class="actions">
+        <button type="submit"  mat-raised-button color="primary">{{data.buttonText}}</button>
+      </div>
+    </form>
+
+  </div>
+
+
+
+  </div>

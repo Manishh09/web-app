@@ -1,0 +1,128 @@
+import { Component, OnInit, inject } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { PermissionsService } from 'src/app/services/permissions.service';
+import {
+  ISnackBarData,
+  SnackBarService,
+} from 'src/app/services/snack-bar.service';
+import { UserManagementService } from 'src/app/services/user-management.service';
+import { Employee } from 'src/app/usit/models/employee';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+})
+export class LoginComponent implements OnInit {
+  hidePassword = true;
+  private userManagementServ = inject(UserManagementService);
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private snackBarServ = inject(SnackBarService);
+  private permissionServ = inject(PermissionsService);
+
+  form: any = FormGroup;
+
+  ngOnInit(): void {
+    this.initializeLoginForm();
+  }
+
+  private initializeLoginForm() {
+    this.form = this.formBuilder.group({
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
+        ],
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          this.passwordValidator(),
+        ],
+      ],
+    });
+  }
+
+  passwordValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value: string = control.value;
+
+      const hasUppercase = /[A-Z]/.test(value);
+      const hasNumber = /\d/.test(value);
+      const hasSpecialCharacter = /[!@#$%^&*]/.test(value);
+
+      if (!hasUppercase || !hasNumber || !hasSpecialCharacter) {
+        return { pattern: true };
+      }
+
+      return null;
+    };
+  }
+
+  userLogin() {
+    // if form is valid, call login api
+    if (this.form.valid) {
+      const userObj: Partial<Employee> = {
+        email: this.form.controls.email.value,
+        password: this.form.controls.password.value,
+      };
+      this.userManagementServ.login(userObj).subscribe({
+       next: (result: any) => {
+          if (result.status == 'success') {
+            const loggedInUserData = result.data;
+            console.log(result.data);
+
+            this.permissionServ.login(loggedInUserData).subscribe((data) => {
+              this.router.navigate(['/dashboard']);
+              const message = 'You have logged in successfully!';
+              this.showErroNotification(message, 'success');
+            });
+          } else if (result.status == 'locked') {
+            const message =
+              'Your Account has been locked, Please contact with admin';
+            this.showErroNotification(message);
+          } else if (result.status == 'inactive') {
+            const message = 'Account In Active';
+            this.showErroNotification(message);
+          }
+        },
+        error: err => {
+          console.log(JSON.stringify(err) + 'hello');
+          if (err.status == 401) {
+            const message = 'Invalid Credentials, Please try with valid credentials';
+            this.showErroNotification(message);
+          } else {
+            const message = 'Failed to connect Server';
+            this.showErroNotification(message);
+          }
+        }
+    });
+    }
+    return;
+  }
+
+  private showErroNotification(message: string, errorType = 'failure'): void {
+    let dataToBeSentToSnackBar: ISnackBarData = {
+      message: message,
+      duration: 2000,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: [`custom-snack-${errorType}`],
+    };
+    this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+  }
+}

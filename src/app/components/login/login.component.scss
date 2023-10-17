@@ -1,0 +1,89 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #3f51b5;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.center-text {
+  text-align: center;
+  margin-bottom: 16px; /* Space between text and logo */
+}
+
+.center-logo {
+  text-align: center;
+  margin-bottom: 16px; /* Space between text and logo */
+}
+
+.full-width {
+  width: 100%;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 16px;
+}
+
+.login-button {
+  margin-top: 16px;
+}
+
+img{
+  width: 200px;
+  height:51.25px;
+}
+
+mat-card-header{
+  display: block;
+}
+
+.create-account{
+  margin-top: 20px;
+}
+
+a{
+  text-decoration: none;
+}
+
+::ng-deep .green-snackbar .mat-snack-bar-container {
+  background-color: green;
+  color: white;
+}
+
+::ng-deep .red-snackbar .mat-snack-bar-container {
+  background-color: red;
+  color: white;
+}
+
+mat-form-field{
+  margin-bottom: 5px;
+}
+
+mat-card-header{
+  margin-bottom: 30px;
+}
+
+mat-error{
+  font-size: 12px;
+}
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(0, 0, 0, 1);
+}

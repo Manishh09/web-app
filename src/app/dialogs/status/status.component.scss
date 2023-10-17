@@ -1,0 +1,28 @@
+.status-dialog-container{
+  overflow: hidden !important;
+  padding: 1rem;
+
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+
+}
+.content{
+  height: fit-content;
+}
+.status-form{
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.status-reason-field{
+  width: 370px;
+}
+ .actions{
+
+  padding-left: 20.5rem;
+}
