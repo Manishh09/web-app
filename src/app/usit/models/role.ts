@@ -1,9 +1,9 @@
 export class Role {
-  roleid!: number;
+  roleId!: number;
 
-  rolename!: string;
+  roleName!: string;
 
-  roleno!: string;
+  roleNo!: string;
 
   description!: string;
 
@@ -12,6 +12,6 @@ export class Role {
   remarks!: string;
   ///info:info=[];
   //hero = new Employee();
-  addedby = localStorage.getItem('userid');
-  updatedby = localStorage.getItem('userid');
+  addedBy = localStorage.getItem('userid');
+  updatedBy = localStorage.getItem('userid');
 }

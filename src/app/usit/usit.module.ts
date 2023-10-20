@@ -6,17 +6,23 @@ import { EmployeeListComponent } from './components/employee-list/employee-list.
 import { VendorListComponent } from './components/vendor-list/vendor-list.component';
 import { AddEmployeeComponent } from './components/employee-list/add-employee/add-employee.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { MaterialModule } from '../material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RolesListComponent } from './components/role-list/roles-list.component';
+import { AddRoleComponent } from './components/role-list/add-role/add-role.component';
 
 
 @NgModule({
   declarations: [
-  
-    AddEmployeeComponent,
-       DashboardComponent
+
+    DashboardComponent,
   ],
   imports: [
     CommonModule,
-    UsitRoutingModule
+    UsitRoutingModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class UsitModule { }

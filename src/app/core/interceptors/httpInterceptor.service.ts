@@ -37,12 +37,12 @@ export class HttpInterceptorService implements HttpInterceptor {
         finalize(() => {
           //this.loaderService.loaderHide();
         }),
-        catchError((error: HttpErrorResponse) => {
-          // this.ngxService.stop();
-          const errorMessage = this.handleServerSideError(error);
-          return throwError(() => error);
-        })
-      );
+      //   catchError((error: HttpErrorResponse) => {
+      //     // this.ngxService.stop();
+      //     const errorMessage = this.handleServerSideError(error);
+      //     return throwError(() => error);
+      //   })
+     );
     }
     return next.handle(req);
   }

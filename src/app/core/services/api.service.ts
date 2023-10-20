@@ -1,29 +1,46 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { map, catchError, retry } from 'rxjs/operators';
 import { HandledError } from 'src/app/services/error-wrappers/handled-error';
 import { UnHandledError } from 'src/app/services/error-wrappers/unhandled-error';
-import { Observable } from 'rxjs';
+import { Observable, TimeoutError, of } from 'rxjs';
+import { HttpErrors } from '../models/http-errors';
 
+@Injectable({
+  providedIn: 'root',
+})
 export class ApiService {
-  private readonly apiUrl = "";
+  private readonly apiUrl = 'http://69.216.19.140:8080/usit/';
   constructor(private http: HttpClient) {}
 
   get(url: string) {
-
     return this.http.get(this.apiUrl + url).pipe(
-      map(x => this.responseHandler(x)),
-      retry(1),
-      catchError(x => this.responseHandler(x))
+      map((x) => x),
+
+      catchError(x=> of({errorMessage: this.handleHttpError(x)}))
     );
   }
 
   post(url: string, data: any) {
     return this.http.post(this.apiUrl + url, data).pipe(
-      map(x => this.responseHandler(x)),
-      catchError(x => this.responseHandler(x))
-    );
+      map((x) => x),
 
+      catchError(x=> of(this.handleHttpError(x)))
+    );
+  }
+  put(url: string, data: any) {
+    return this.http.post(this.apiUrl + url, data).pipe(
+      map((x) => x),
+      retry(1),
+      catchError(x=> of(this.handleHttpError(x)))
+    );
+  }
+
+  delete(url: string, data?: any) {
+    return this.http.delete(this.apiUrl + url).pipe(
+      map((x) => x),
+      catchError(x=> of(this.handleHttpError(x)))
+    );
   }
 
   private responseHandler(x: any) {
@@ -42,7 +59,7 @@ export class ApiService {
     }
   }
 
-  getJson(path: string): Observable<unknown>{
+  getJson(path: string): Observable<any> {
     return this.http.get(path);
   }
 
@@ -50,5 +67,45 @@ export class ApiService {
   getFakeAPI(url: string): Observable<unknown> {
     return this.http.get(url);
   }
-
+  // handle errors
+  handleHttpError(error: HttpErrorResponse) {
+    if (error instanceof TimeoutError) {
+      return  'TimeoutError';
+    }
+    switch (error.status) {
+      case 400: {
+        if (error.error === 'invalid_username_or_password') {
+          return `${HttpErrors[400]}: Invalid Credentials`;
+        }
+        return `${HttpErrors[400]}: Please re-check the api endpoint`;
+      }
+      case 401: {
+        return `You are not allowed to access the requested resource`;
+      }
+      case 403: {
+        return `You don't have the required permissions`;
+      }
+      case 404: {
+        return `Resource not found`;
+      }
+      case 422: {
+        return ` Invalid data provided`
+      }
+      case 500:
+      case 501:
+      case 502:
+      case 503: {
+        return `An internal server error occurred`;
+      }
+      case -1: {
+        return `You appear to be offline. Please check your internet connection and try again`
+      }
+      case 0: {
+        return `CORS Error, Check the endpoints and domain`;
+      }
+      default: {
+        return `An unknown error occurred`;
+      }
+    }
+  }
 }

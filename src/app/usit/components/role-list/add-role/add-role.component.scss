@@ -1,0 +1,32 @@
+.update-role-dialog-container{
+  overflow: hidden !important;
+  padding: 1rem;
+
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+
+}
+.content{
+  height: fit-content;
+}
+.add-role-form{
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.description-field{
+  width: 370px;
+}
+ .actions{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-end;
+
+
+}

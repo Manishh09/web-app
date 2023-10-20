@@ -1,0 +1,43 @@
+
+<div class="update-role-dialog-container">
+
+
+
+  <div class="header">
+    <h2 mat-dialog-title>{{data.title}}</h2>
+    <hr>
+    <button mat-icon-button (click)="onAction('SAFE_CLOSE')" >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="content" mat-dialog-content>
+    <form class="add-role-form" [formGroup]="addRoleForm" #myFrom name="add-role-form" (ngSubmit)="onSubmit()">
+      <mat-label>Role Name</mat-label>
+      <mat-form-field class="status-reason-field">
+        <input title="" matInput placeholder="Enter Role Name" formControlName="roleName">
+      </mat-form-field>
+      <div class="error-message"  *ngIf="showValidationError">
+        <mat-error>Please enter remarks</mat-error>
+        <!-- <mat-error *ngIf="statusForm.controls['reasonForStatusUpdate'].hasError('minLength')">Reason must be at least 4 characters</mat-error> -->
+      </div>
+      <mat-label>Description</mat-label>
+      <mat-form-field class="description-field">
+        <textarea title="" matInput placeholder="Please enter the remarks" formControlName="description"></textarea>
+      </mat-form-field>
+      <div class="error-message"  *ngIf="showValidationError">
+        <mat-error>Please enter the remarks</mat-error>
+        <!-- <mat-error *ngIf="statusForm.controls['reasonForStatusUpdate'].hasError('minLength')">Reason must be at least 4 characters</mat-error> -->
+      </div>
+
+    </form>
+
+  </div>
+
+
+  <div class="actions" mat-dialog-actions>
+    <button  mat-raised-button  (click)="onAction('CANCEL')">{{data.buttonCancelText}}</button>
+    <button type="submit"  mat-raised-button color="primary">{{data.buttonSubmitText}}</button>
+  </div>
+  </div>
+

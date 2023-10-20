@@ -13,7 +13,8 @@ import { CoreModule } from './core/core.module';
 import { SideNavbarComponent } from './components/side-navbar/side-navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HttpInterceptorService } from './core/interceptors/httpInterceptor.service';
 
 @NgModule({
   declarations: [
@@ -34,8 +35,15 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     CoreModule,
     HttpClientModule
+
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

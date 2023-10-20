@@ -5,6 +5,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { SidebarV2Component } from './components/sidebar-v2/sidebar-v2.component';
 
 const routes: Routes = [
   {
@@ -27,8 +28,17 @@ const routes: Routes = [
     component: SignUpComponent
   },
   {
+
     path: 'usit',
     loadChildren: () => import('./usit/usit.module').then(m => m.UsitModule)
+    // component: SidebarComponent, //SidebarV2Component,
+    // children: [
+    //   {
+    //     path: 'usit',
+    //     loadChildren: () => import('./usit/usit.module').then(m => m.UsitModule)
+    //   }
+    // ]
+
   },
   {
     path: '**',

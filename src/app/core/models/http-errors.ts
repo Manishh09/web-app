@@ -3,5 +3,7 @@ export const HttpErrors = {
   401: 'Unauthorized',
   403: 'Forbidden',
   404: 'Not Found',
-  500: 'Internal Server Error'
+  422: 'Invalid Data',
+  500: 'Internal Server Error',
+
 }

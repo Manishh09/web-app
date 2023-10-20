@@ -18,7 +18,7 @@
         <textarea title="" matInput placeholder="Enter the reason for {{data.updateText}} {{data.type}}" formControlName="reasonForStatusUpdate"></textarea>
       </mat-form-field>
       <div class="error-message"  *ngIf="showValidationError">
-        <mat-error>Reason must be provided to {{data.updateText}} {{data.type}} and it must be at least 4 characters</mat-error>
+        <mat-error>Please enter the remarks</mat-error>
         <!-- <mat-error *ngIf="statusForm.controls['reasonForStatusUpdate'].hasError('minLength')">Reason must be at least 4 characters</mat-error> -->
       </div>
       <div class="actions">

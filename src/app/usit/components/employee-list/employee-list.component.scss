@@ -1,3 +1,29 @@
+.breadcrumb{
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  height: 2rem;
+  background-color: rgb(228, 231, 234);
+  padding-top: 8PX;
+  position: sticky;
+  z-index: 9999999;
+  top: 0;
+}
+ul.breadcrumb li+li:before {
+  color: black;
+  content: "/\00a0";
+}
+
+ul.breadcrumb li a {
+  color: #0275d8;
+  text-decoration: none;
+}
+
+ul.breadcrumb li a:hover {
+  color: #01447e;
+  text-decoration: underline;
+}
+
 .table-wrapper{
 
   overflow: auto;
@@ -50,10 +76,11 @@ thead {
 
   background-color: white;
   position: sticky;
-  z-index: 99999;
+  z-index: 9999999;
   top: 0;
   overflow: hidden;
-  margin: 4px
+  margin: 4px;
+  background-color: rgb(228, 231, 234);
 }
 .header-text{
  padding-left: 8px;

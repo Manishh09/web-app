@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   private permissionServ = inject(PermissionsService);
 
   form: any = FormGroup;
-
+  protected isFormSubmitted = false;
   ngOnInit(): void {
     this.initializeLoginForm();
   }
@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
         [
           Validators.required,
           Validators.email,
-          Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
+          this.emailValidator,
         ],
       ],
       password: [
@@ -55,6 +55,18 @@ export class LoginComponent implements OnInit {
       ],
     });
   }
+  // email validator
+  emailValidator(control: AbstractControl) {
+    const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    const email = control.value.toLowerCase();
+
+    if (!emailRegex.test(email)) {
+      control.setErrors({ pattern: true })
+      return { pattern: true };
+    }
+
+    return null;
+  }
 
   passwordValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -65,6 +77,8 @@ export class LoginComponent implements OnInit {
       const hasSpecialCharacter = /[!@#$%^&*]/.test(value);
 
       if (!hasUppercase || !hasNumber || !hasSpecialCharacter) {
+        //return { pattern: true };
+        control.setErrors({ pattern: true })
         return { pattern: true };
       }
 
@@ -74,13 +88,15 @@ export class LoginComponent implements OnInit {
 
   userLogin() {
     // if form is valid, call login api
+    this.isFormSubmitted = true;
     if (this.form.valid) {
       const userObj: Partial<Employee> = {
         email: this.form.controls.email.value,
         password: this.form.controls.password.value,
       };
-      this.userManagementServ.login(userObj).subscribe({
+      this.userManagementServ.loginV2(userObj).subscribe({
        next: (result: any) => {
+        console.log("result", result)
           if (result.status == 'success') {
             const loggedInUserData = result.data;
             console.log(result.data);
@@ -97,10 +113,12 @@ export class LoginComponent implements OnInit {
           } else if (result.status == 'inactive') {
             const message = 'Account In Active';
             this.showErroNotification(message);
+          }else{
+            const message = result.includes('Unauthorized') ? 'Invalid Credentials, Please try with valid credentials' : result;
+            this.showErroNotification(message);
           }
         },
         error: err => {
-          console.log(JSON.stringify(err) + 'hello');
           if (err.status == 401) {
             const message = 'Invalid Credentials, Please try with valid credentials';
             this.showErroNotification(message);

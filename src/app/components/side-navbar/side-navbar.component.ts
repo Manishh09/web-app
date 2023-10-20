@@ -197,6 +197,23 @@ export class SideNavbarComponent implements OnInit {
       icon: 'note_add',
       routerLink: '/usit/create-po',
     },
+    {
+      text: 'HR',
+      icon: 'description',
+      children: [
+        {
+          text: 'HR Performance',
+          icon: 'bar_chart',
+          routerLink: '/usit/emp-perf',
+        },
+        {
+          text: 'HR Interviews',
+          icon: 'assessment',
+          routerLink: '/usit/source-interviews',
+        },
+
+      ],
+    },
   ];
 
 

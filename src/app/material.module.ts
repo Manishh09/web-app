@@ -13,7 +13,8 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
 const modules = [
     MatProgressSpinnerModule,
     MatIconModule,
@@ -28,8 +29,10 @@ const modules = [
     MatMenuModule,
     MatTooltipModule,
     MatSnackBarModule,
-    MatDialogModule
-]
+    MatDialogModule,
+    MatAutocompleteModule,
+    MatSelectModule,
+];
 @NgModule({
   declarations: [],
   imports: modules,

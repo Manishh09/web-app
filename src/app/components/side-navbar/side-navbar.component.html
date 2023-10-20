@@ -15,20 +15,20 @@
         <mat-icon class="item-icon">{{menu.icon}}</mat-icon>
         <span> {{menu.text}} </span>
       </div> -->
-      <mat-icon class="item-icon">{{menu.icon}}</mat-icon>
-      <span>{{menu.text}}</span>
+      <mat-icon  matListItemIcon class="item-icon">{{menu.icon}}</mat-icon>
+       <span matListItemTitle>{{menu.text}}</span>
     </mat-list-item>
-    <mat-divider></mat-divider>
+    <!-- <mat-divider></mat-divider> -->
   </mat-nav-list>
 </ng-template>
 
 <ng-template #childMenu let-menu="menu">
-  <mat-expansion-panel [class.mat-elevation-z0]="true" class="expansion-panel" #pannel>
+  <mat-expansion-panel [class.mat-elevation-z0]="true" #pannel [ngClass]="pannel.expanded ? 'expansion-panel-2': 'expansion-panel'">
     <mat-expansion-panel-header class="expansion-panel-header" [matTooltip]="menu.text" matTooltipPosition="above">
       <mat-icon mat-list-icon class="item-icon">{{menu.icon}}</mat-icon>
       {{menu.text}}
     </mat-expansion-panel-header>
-    <mat-divider *ngIf="pannel.expanded"></mat-divider>
+    <!-- <mat-divider *ngIf="pannel.expanded"></mat-divider> -->
     <!-- <mat-nav-list class="nav-list"> -->
 
 
@@ -40,10 +40,11 @@
           {{submenu.text}}</span>
 
         </div> -->
-        <mat-icon class="item-icon">{{submenu.icon}}</mat-icon>
-        <span>
-          {{submenu.text}}
-        </span>
+        <mat-icon matListItemIcon class="item-icon">{{submenu.icon}}</mat-icon>
+
+        <span matListItemTitle>
+          {{submenu.text}}</span>
+
       </mat-list-item>
 
     <!-- </mat-nav-list> -->

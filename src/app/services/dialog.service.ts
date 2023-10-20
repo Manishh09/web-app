@@ -10,10 +10,12 @@ export class DialogService {
 
   constructor(private dialog:  MatDialog) { }
 
-  openDialogWithComponent(comp: any , data: any){
+  openDialogWithComponent(comp: any , data?: any){
     this.dialog.open(comp, {
       data,
-      width: '400px',
+      width: data.width ? data.width : '400px',
+      height: 'auto',
+      panelClass: data.class ? data.class : '',
       disableClose: false
     });
   }
