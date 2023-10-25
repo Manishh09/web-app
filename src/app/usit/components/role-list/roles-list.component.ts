@@ -17,6 +17,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { Role } from '../../models/role';
 import { AddRoleComponent } from './add-role/add-role.component';
+import { MatDialogConfig } from '@angular/material/dialog';
 @Component({
   selector: 'app-roles-list',
   templateUrl: './roles-list.component.html',
@@ -61,9 +62,15 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       title: 'Add New Role',
       buttonCancelText: 'Cancel',
       buttonSubmitText: 'Submit',
-      action: 'add'
+      actionName: 'add-role'
     };
-    this.dialogServ.openDialogWithComponent(AddRoleComponent, actionData)
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "400px";
+    dialogConfig.height = "auto";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = "add-role";
+    dialogConfig.data = actionData;
+    this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig)
   }
   // search
   onFilter(event: any){
@@ -80,9 +87,15 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       title: 'Update Role',
       buttonCancelText: 'Cancel',
       buttonSubmitText: 'Submit',
-      action: 'update'
+      action: 'update-role'
     };
-    this.dialogServ.openDialogWithComponent(AddRoleComponent, actionData)
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "400px";
+    dialogConfig.height = "auto";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = "update-role";
+    dialogConfig.data = actionData;
+    this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig)
   }
   // delete
   deleteRole(role: Role){
@@ -93,7 +106,13 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       cancelText: 'No',
       actionData: role,
     }
-    this.dialogServ.openDialogWithComponent(ConfirmComponent, dataToBeSentToDailog);
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "400px";
+    dialogConfig.height = "auto";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = "update-role";
+    dialogConfig.data = dataToBeSentToDailog;
+    this.dialogServ.openDialogWithComponent(ConfirmComponent, dialogConfig);
 
     // call delete api after  clicked 'Yes' on dialog click
 
@@ -109,8 +128,12 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       buttonText: 'Update',
       actionData: role
     }
-    const compType  = StatusComponent;
-    this.dialogServ.openDialogWithComponent(compType, dataToBeSentToDailog)
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "400px";
+    dialogConfig.panelClass = "update-role-status";
+    dialogConfig.data = dataToBeSentToDailog;
+    this.dialogServ.openDialogWithComponent(StatusComponent, dialogConfig)
   }
 
   }

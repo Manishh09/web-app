@@ -31,6 +31,7 @@ ul.breadcrumb li a:hover {
 }
 table {
   width: 100%;
+
 }
 .mat-mdc-header-row  {
   background-color: rgb(213, 231, 231);
@@ -38,6 +39,9 @@ table {
 }
 thead {
   position: sticky; top: 0;
+}
+tbody{
+  text-align: left;
 }
 .mat-sort-header-arrow {
   color: #1a1717;
@@ -48,23 +52,23 @@ thead {
 .mat-mdc-column {
   border-right: 1px solid currentColor;
 }
-.mat-column-position {
+.mat-column-Designation{
   width: 32px;
   border-right: 1px solid lightgray;
   padding-right: 24px;
-  text-align: center;
+
 }
-.mat-column-name {
+.mat-column-Name {
 
   border-right: 1px solid lightgray;
-  padding-right: 24px;
-  text-align: center;
+
+
 }
-.mat-column-weight {
+.mat-column-Name, .mat-column-Email, .mat-column-PersonalOrCompanyNumber, .mat-column-Department, .mat-column-Status{
 
   border-right: 1px solid lightgray;
-  padding-right: 24px;
-  text-align: center;
+
+
 }
 .header-container{
   display: flex;

@@ -34,7 +34,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+ // text-align: center;
 }
 
 .form-column-right{
@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+ // text-align: center;
 }
 
 .form{
@@ -52,13 +52,13 @@
 
 .form .form-column-left .mat-mdc-form-field{
   width: 80%;
-  height: 60px;
+ // height: 60px;
   margin-bottom: 12px;
 }
 
 .form .form-column-right .mat-mdc-form-field{
   width: 80%;
-  height: 60px;
+  // height: 60px;
   margin-bottom: 12px;
 }
 
@@ -66,8 +66,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 4px 4px 0 4px;
-  padding: 6px;
+
 }
 
 .form-button-left{
@@ -77,7 +76,7 @@
 }
 
 .form-button-right{
-
+  margin-top: 8px;
   display: flex !important;
   justify-content: flex-end;
   gap: 10px;
@@ -113,6 +112,7 @@ ul.breadcrumb li a:hover {
 .mat-card{
   max-width: 96%;
   padding-top: 20px;
+
 }
 
 .mat-list{
@@ -132,6 +132,18 @@ ul.breadcrumb li a:hover {
 
 .center-card {
   margin: 0 auto;
+  padding: 16px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.employee-form{
+
+  height: 75vh;
+
+  overflow: auto;
 }
 
 .anchor-link {
@@ -146,9 +158,7 @@ ul.breadcrumb li a:hover {
  font-weight: 600 ;
 }
 
-.center-card{
-  padding: 12px;
-}
+
 
 .mat-mdc-form-field-infix{
   padding-top: 0;
@@ -161,17 +171,21 @@ ul.breadcrumb li a:hover {
   padding: 6px;
   justify-content: space-between;
   height: 48px;
-  background-color: white;
+  background-color: whitesmoke;
   z-index: 99999;
   top: 0;
   overflow: hidden;
-  margin: 4px 4px 0 4px;
+ // margin: 4px 4px 0 4px;
 }
 .header-text{
- padding-left: 8px;
+ padding-left: 32px;
  font-weight: 600 ;
 }
 
 .mat-elevation-z1{
   box-shadow: none;
+}
+
+mat-error {
+  font-size: 12px;
 }
