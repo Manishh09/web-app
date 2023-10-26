@@ -13,6 +13,7 @@
   max-width: 400px;
   text-align: center;
   background-color: rgb(255, 255, 255);
+  padding: 16px;
 }
 
 .login-content {
@@ -23,12 +24,25 @@
 
 .center-text {
   text-align: center;
-  margin-bottom: 16px; /* Space between text and logo */
+  margin-bottom: 16px; 
 }
 
 .center-logo {
   text-align: center;
-  margin-bottom: 16px; /* Space between text and logo */
+  margin-bottom: 16px; 
+}
+
+.header-no-padding {
+  padding: 0 0 12px 0;
+  margin: 0 16px;
+}
+
+.no-padding {
+  padding: 0 0;
+}
+
+.mat-mdc-card-content:last-child {
+  padding-bottom: 0px;
 }
 
 .full-width {
@@ -56,6 +70,7 @@ img{
 
 mat-card-header{
   display: block;
+  // margin-bottom: 30px;
 }
 
 .create-account{
@@ -76,17 +91,14 @@ a{
   color: white;
 }
 
-mat-form-field{
+.mat-form-field{
   margin-bottom: 5px;
-}
-
-mat-card-header{
-  margin-bottom: 30px;
 }
 
 mat-error{
   font-size: 12px;
 }
-.mat-form-field-appearance-outline .mat-form-field-outline {
-  color: rgba(0, 0, 0, 1);
-}
+
+// .mat-form-field-appearance-outline .mat-form-field-outline {
+//   color: rgba(0, 0, 0, 1);
+// }

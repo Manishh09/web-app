@@ -20,7 +20,7 @@
       "children": [
         {
           "text": "Vendor",
-          "icon": "people",
+          "icon": "group",
           "routerLink": "/usit/vendor"
         },
         {
@@ -32,12 +32,12 @@
     },
     {
       "text": "Tech & Support",
-      "icon": "people",
+      "icon": "build",
       "routerLink": "/usit/tech-spport"
     },
     {
       "text": "Immigration",
-      "icon": "people",
+      "icon": "label",
       "routerLink": "/usit/immigration"
     },
     {
@@ -53,21 +53,21 @@
     {
       "text": "Employees",
       "icon": "people",
-      "routerLink": "/usit/employess"
+      "routerLink": "/usit/employees"
     },
     {
       "text": "LinkedIn Profiles",
-      "icon": "people",
+      "icon": "person",
       "routerLink": "/usit/linkedin-profiles"
     },
     {
       "text": "Pre-sales",
-      "icon": "people",
+      "icon": "local_offer",
       "routerLink": "/usit/pre-sales"
     },
     {
       "text": "H1-Transfer",
-      "icon": "people",
+      "icon": "swap_horiz",
       "routerLink": "/usit/h1-transfer"
     },
     {
@@ -86,12 +86,12 @@
         },
         {
           "text": "Submissions",
-          "icon": "person",
+          "icon": "assignment",
           "routerLink": "/usit/submissions"
         },
         {
           "text": "Interviews",
-          "icon": "person",
+          "icon": "chat_bubble_outline",
           "routerLink": "/usit/interviews"
         }
       ]
@@ -102,7 +102,7 @@
       "children": [
         {
           "text": "Requirements",
-          "icon": "business",
+          "icon": "assignment_turned_in",
           "routerLink": "/usit/req"
         },
         {
