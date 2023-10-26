@@ -3,11 +3,11 @@
       <div class="logo">
           <img src="../../../assets/images/logo-removebg-preview.png" alt="Logo">
       </div>
-      <mat-card-header>
+      <mat-card-header class="header-no-padding">
           <mat-card-title>Login to Your Account</mat-card-title>
       </mat-card-header>
 
-      <mat-card-content>
+      <mat-card-content class="no-padding">
           <form class="login-form" [formGroup]="form" (ngSubmit)="userLogin()">
               <mat-form-field class="full-width"  >
                   <mat-label>Email</mat-label>
@@ -16,7 +16,6 @@
                   <!-- errors -->
                   <mat-error *ngIf="form.get('email')!.hasError('required')">Email is required</mat-error>
                   <mat-error *ngIf="form.get('email')!.hasError('email') || form.get('email')!.errors">Invalid email address</mat-error>
-
               </mat-form-field>
 
               <mat-form-field class="full-width"  >
