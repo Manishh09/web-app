@@ -6,6 +6,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { SidebarV2Component } from './components/sidebar-v2/sidebar-v2.component';
+import { CanLoadGuard } from './core/guards/can-load.guard';
 
 const routes: Routes = [
   {
@@ -30,14 +31,9 @@ const routes: Routes = [
   {
 
     path: 'usit',
-    loadChildren: () => import('./usit/usit.module').then(m => m.UsitModule)
-    // component: SidebarComponent, //SidebarV2Component,
-    // children: [
-    //   {
-    //     path: 'usit',
-    //     loadChildren: () => import('./usit/usit.module').then(m => m.UsitModule)
-    //   }
-    // ]
+    loadChildren: () => import('./usit/usit.module').then(m => m.UsitModule),
+    canLoad: [CanLoadGuard] // add canactivate to check sign in
+
 
   },
   {

@@ -80,7 +80,7 @@ export class ApiService {
         return `${HttpErrors[400]}: Please re-check the api endpoint`;
       }
       case 401: {
-        return `You are not allowed to access the requested resource`;
+        return `Authentication Error`;
       }
       case 403: {
         return `You don't have the required permissions`;

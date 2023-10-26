@@ -111,10 +111,15 @@ export class PermissionsService {
   }
 
   getToken() {
-    return localStorage.getItem('token') as string;
+    return localStorage.getItem('token') as string ;
   }
 
-  logoutget(id: any) {
-    return this.http.get(this.baseUrl + "login/logout/" + id);
+  logOut() {
+    const userId = localStorage.getItem('userid');
+    return this.http.get(this.baseUrl + "login/logout/" + userId);
+  }
+
+  getCurrentURL(): string {
+    return window.location.pathname;
   }
 }

@@ -89,53 +89,54 @@ export class LoginComponent implements OnInit {
   userLogin() {
     // if form is valid, call login api
     this.isFormSubmitted = true;
-    if (this.form.valid) {
-      const userObj: Partial<Employee> = {
-        email: this.form.controls.email.value,
-        password: this.form.controls.password.value,
-      };
-      this.userManagementServ.loginV2(userObj).subscribe({
-       next: (result: any) => {
-        console.log("result", result)
-          if (result.status == 'success') {
-            const loggedInUserData = result.data;
-            console.log(result.data);
-
-            this.permissionServ.login(loggedInUserData).subscribe((data) => {
-              this.router.navigate(['/dashboard']);
-              const message = 'You have logged in successfully!';
-              this.showErroNotification(message, 'success');
-            });
-          } else if (result.status == 'locked') {
-            const message =
-              'Your Account has been locked, Please contact with admin';
-            this.showErroNotification(message);
-          } else if (result.status == 'inactive') {
-            const message = 'Account In Active';
-            this.showErroNotification(message);
-          }else{
-            const message = result.includes('Unauthorized') ? 'Invalid Credentials, Please try with valid credentials' : result;
-            this.showErroNotification(message);
-          }
-        },
-        error: err => {
-          if (err.status == 401) {
-            const message = 'Invalid Credentials, Please try with valid credentials';
-            this.showErroNotification(message);
-          } else {
-            const message = 'Failed to connect Server';
-            this.showErroNotification(message);
-          }
-        }
-    });
+    if (this.form.invalid) {
+      return;
     }
-    return;
+    const userObj: Partial<Employee> = {
+      email: this.form.controls.email.value,
+      password: this.form.controls.password.value,
+    };
+    this.userManagementServ.loginV2(userObj).subscribe({
+     next: (result: any) => {
+      console.log("result", result)
+        if (result.status == 'success') {
+          const loggedInUserData = result.data;
+          console.log(result.data);
+
+          this.permissionServ.login(loggedInUserData).subscribe((data) => {
+            this.router.navigate(['usit/dashboard']);
+            const message = 'You have logged in successfully!';
+            this.showErroNotification(message, 'success');
+          });
+        } else if (result.status == 'locked') {
+          const message =
+            'Your Account has been locked, Please contact with admin';
+          this.showErroNotification(message);
+        } else if (result.status == 'inactive') {
+          const message = 'Account In Active';
+          this.showErroNotification(message);
+        }else{
+          //const message = result.includes('Unauthorized') ? 'Invalid Credentials, Please try with valid credentials' : result;
+          this.showErroNotification(result);
+        }
+      },
+      error: err => {
+        if (err.status == 401) {
+          const message = 'Invalid Credentials, Please try with valid credentials';
+          this.showErroNotification(message);
+        } else {
+          const message = 'Failed to connect Server';
+          this.showErroNotification(message);
+        }
+      }
+  });
+
   }
 
   private showErroNotification(message: string, errorType = 'failure'): void {
     let dataToBeSentToSnackBar: ISnackBarData = {
       message: message,
-      duration: 2000,
+      duration: 3000,
       verticalPosition: 'top',
       horizontalPosition: 'center',
       direction: 'above',

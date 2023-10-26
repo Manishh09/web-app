@@ -12,14 +12,18 @@ export class CanActivateChildGuard implements CanActivate, CanActivateChild {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return true;
+      return this.permServ.isUserSignedin();
   }
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.permServ.isAdmin('Admin').pipe(
       map(isAdmin => isAdmin)
+
     );
+
+
+
   }
-  
+
 }

@@ -13,12 +13,14 @@ export class CanActivateGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.permServ.isLoggedIn().pipe(
-      map(isLoggedIn => isLoggedIn || this.router.createUrlTree(['']))
-    );
-    
+    // return this.permServ.isLoggedIn().pipe(
+    //   map(isLoggedIn => isLoggedIn || this.router.createUrlTree(['']))
+    // );
+
+    return this.permServ.isUserSignedin();
+
   }
-  
+
 
   private isUserLoggedIn() {
     this.permServ.isLoggedIn().subscribe(
