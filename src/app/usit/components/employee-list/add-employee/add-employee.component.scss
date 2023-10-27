@@ -80,6 +80,7 @@
   display: flex !important;
   justify-content: flex-end;
   gap: 10px;
+  padding-right: 45px;
 }
 
 ul{
@@ -158,8 +159,6 @@ ul.breadcrumb li a:hover {
  font-weight: 600 ;
 }
 
-
-
 .mat-mdc-form-field-infix{
   padding-top: 0;
 }
@@ -168,7 +167,7 @@ ul.breadcrumb li a:hover {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 6px;
+  padding: 6px 55px;
   justify-content: space-between;
   height: 48px;
   background-color: whitesmoke;
@@ -178,7 +177,7 @@ ul.breadcrumb li a:hover {
  // margin: 4px 4px 0 4px;
 }
 .header-text{
- padding-left: 32px;
+ //padding-left: 55px;
  font-weight: 600 ;
 }
 
@@ -188,4 +187,25 @@ ul.breadcrumb li a:hover {
 
 mat-error {
   font-size: 12px;
+}
+
+
+@media screen and (max-width: 425px) {
+  .form {
+    flex-direction: column; 
+  }
+
+  .form-column-left,
+  .form-column-right {
+    width: 100%; 
+  }
+
+  .center-card {
+    margin: 0 auto;
+    padding: 8px;
+  }
+
+  .header-container{
+    padding: 6px 28px;
+  }
 }

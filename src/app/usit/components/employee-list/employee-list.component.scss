@@ -1,14 +1,19 @@
-.breadcrumb{
-  display: flex;
-  flex-direction: row;
-  text-decoration: none;
-  height: 2rem;
+ul{
+  padding-inline-start: 10px;
   background-color: rgb(228, 231, 234);
+  height: 2rem;
   padding-top: 8PX;
-  position: sticky;
-  z-index: 9999999;
   top: 0;
 }
+
+ul.breadcrumb {
+  list-style: none;
+}
+
+ul.breadcrumb li {
+  display: inline;
+}
+
 ul.breadcrumb li+li:before {
   color: black;
   content: "/\00a0";
@@ -101,4 +106,13 @@ tbody{
     height: 32px;
     padding: 0px 8px;
   }
+}
+
+.table-style {
+  height: 400px;
+  overflow: auto;
+}
+
+.mat-mdc-header-row  {
+  z-index: 1000;
 }
