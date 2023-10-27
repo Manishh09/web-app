@@ -83,8 +83,7 @@
 
           </mat-datepicker>
           <mat-error
-            *ngIf="employeeForm.controls.joiningdate.hasError('joiningdate')">Invalid
-            start date</mat-error>
+            *ngIf="employeeForm.controls.joiningdate.hasError('required')">Joining Date Required</mat-error>
         </mat-form-field>
         <!-- Releiving Date -->
         <mat-form-field appearance="fill">
@@ -104,11 +103,15 @@
         <mat-form-field appearance="fill">
           <mat-label>Aadhar Number</mat-label>
           <input matInput formControlName="aadharno">
+          <mat-error *ngIf="employeeForm.get('aadharno')!.hasError('required')">Aadhar Number is required</mat-error>
+          <mat-error *ngIf="employeeForm.get('aadharno')!.hasError('pattern')">Aadhar Number must be exactly 12 digits</mat-error>
         </mat-form-field>
         <!-- PAN -->
         <mat-form-field appearance="fill">
           <mat-label>PAN Number</mat-label>
-          <input matInput formControlName="panno">
+          <input matInput formControlName="panno" placeholder="Ex: ABCDE1234F">
+          <mat-error *ngIf="employeeForm.get('panno')!.hasError('required')">PAN Number is required</mat-error>
+          <mat-error *ngIf="employeeForm.get('panno')!.hasError('pattern')">Invalid PAN Number</mat-error>
         </mat-form-field>
       </div>
 
@@ -117,21 +120,26 @@
         <mat-form-field appearance="fill">
           <mat-label>Bank Name</mat-label>
           <input matInput formControlName="bankname">
+          <mat-error *ngIf="employeeForm.get('bankname')!.hasError('required')">Bank Name is required</mat-error>
         </mat-form-field>
         <!-- AC NUMBER -->
         <mat-form-field appearance="fill">
           <mat-label>Account Number</mat-label>
           <input matInput formControlName="accno">
+          <mat-error *ngIf="employeeForm.get('accno')!.hasError('required')">Account Number is required</mat-error>
         </mat-form-field>
         <!-- IFSC -->
         <mat-form-field appearance="fill">
           <mat-label>IFSC Code</mat-label>
           <input matInput formControlName="ifsc">
+          <mat-error *ngIf="employeeForm.get('ifsc')!.hasError('required')">IFSC Code is required</mat-error>
+          <mat-error *ngIf="employeeForm.get('ifsc')!.hasError('pattern')">Invalid IFSC Code</mat-error>
         </mat-form-field>
         <!-- Branch -->
         <mat-form-field appearance="fill">
           <mat-label>Branch Name</mat-label>
           <input matInput formControlName="branchname">
+          <mat-error *ngIf="employeeForm.get('branchname')!.hasError('required')">Branch Name is required</mat-error>
         </mat-form-field>
         <!-- Designation -->
         <mat-form-field appearance="fill">
