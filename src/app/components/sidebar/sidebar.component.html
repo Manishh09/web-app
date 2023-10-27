@@ -13,12 +13,12 @@
     </button> -->
     <button mat-icon-button class="profile-icon" aria-label="profile-icon" [matMenuTriggerFor]="menu">
      <mat-icon>account_circle</mat-icon>
-     <span style="font-size: 14px;">{{ 'Demo User' }}</span>
-    <mat-icon>arrow_drop_down</mat-icon>
+     <span class="profile-user-name">{{ userManagementServ.getUserName() }}</span>
+    <!-- <mat-icon>arrow_drop_down</mat-icon> -->
    </button>
-   <mat-menu #menu="matMenu">
+   <mat-menu #menu="matMenu" class="user-menu">
     <button mat-menu-item class="user-name">
-      {{ 'Demo User' }}
+      {{ userManagementServ.getUserName() }}
     </button>
     <button mat-menu-item>
       My Profile
@@ -33,7 +33,7 @@
       Need Help?
     </button>
     <button mat-menu-item (click)="onSignOut()">
-      Log Out
+      Sign Out
       <mat-icon class="icon">logout</mat-icon>
     </button>
   </mat-menu>

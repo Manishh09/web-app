@@ -15,7 +15,7 @@
     <form class="status-form" [formGroup]="statusForm" #myFrom name="status-form" (ngSubmit)="onAction('UPDATE')">
       <mat-label>Reason for {{data.updateText}} {{data.type}}</mat-label>
       <mat-form-field class="status-reason-field">
-        <textarea title="" matInput placeholder="Enter the reason for {{data.updateText}} {{data.type}}" formControlName="reasonForStatusUpdate"></textarea>
+        <textarea title="" [(ngModel)]="remarks" matInput placeholder="Enter the reason for {{data.updateText}} {{data.type}}" formControlName="reasonForStatusUpdate"></textarea>
       </mat-form-field>
       <div class="error-message"  *ngIf="showValidationError">
         <mat-error>Please enter the remarks</mat-error>

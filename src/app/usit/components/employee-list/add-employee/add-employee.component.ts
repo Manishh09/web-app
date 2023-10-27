@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, Component , Inject, inject} from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  Inject,
+  inject,
+} from '@angular/core';
 import {
   Validators,
   FormBuilder,
@@ -18,8 +23,11 @@ import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { Observable, startWith, map } from 'rxjs';
 import { EmployeeManagementService } from 'src/app/usit/services/employee-management.service';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import {
+  ISnackBarData,
+  SnackBarService,
+} from 'src/app/services/snack-bar.service';
 
 @Component({
   selector: 'app-add-employee',
@@ -37,7 +45,6 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-
   ],
 
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -84,15 +91,19 @@ export class AddEmployeeComponent {
     );
   }
   private empManagementServ = inject(EmployeeManagementService);
-  constructor(private formBuilder: FormBuilder, private router: Router,
+  private snackBarServ = inject(SnackBarService);
+  private router = inject(Router);
+  private formBuilder = inject(FormBuilder);
+  constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
-    public dialogRef: MatDialogRef<AddEmployeeComponent>) {}
+    public dialogRef: MatDialogRef<AddEmployeeComponent>
+  ) {}
 
   ngOnInit(): void {
-    console.log("empdata, ", this.data);
-    if(this.data.actionName === 'edit-employee'){
+    console.log('empdata, ', this.data);
+    if (this.data.actionName === 'edit-employee') {
       const empId = this.data.employeeData.userid;
-      this.getTeamLead(empId)
+      this.getTeamLead(empId);
     }
     // this.employeeForm = this.formBuilder.group({
     //   fullname: ['', Validators.required],
@@ -109,50 +120,78 @@ export class AddEmployeeComponent {
     this.getRoles();
     this.getManager();
     this.initilizeAddEmployeeForm();
-    this.validateControls()
+    this.validateControls();
   }
 
   private initilizeAddEmployeeForm() {
-    this.employeeForm = this.formBuilder.group(
-      {
-        fullname: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
-        pseudoname: [''],
-        email: ['', [Validators.required, Validators.email, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]],
-        personalcontactnumber: ['', [Validators.required]],
-        //['', [Validators.required]],
-        companycontactnumber: [this.employeeForm.companycontactnumber],
-        designation: [this.employeeForm.designation],
-        department: ['', Validators.required],
-        joiningdate: ['', Validators.required],
-        relievingdate: [this.employeeForm.relievingdate],
-        personalemail: ['', [Validators.required, Validators.email, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]],
-        manager: [''],
-        aadharno: [this.employeeForm.aadharno],
+    this.employeeForm = this.formBuilder.group({
+      fullname: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(100),
+        ],
+      ],
+      pseudoname: [''],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
+        ],
+      ],
+      personalcontactnumber: ['', [Validators.required]],
+      //['', [Validators.required]],
+      companycontactnumber: [this.employeeForm.companycontactnumber],
+      designation: [this.employeeForm.designation],
+      department: ['', Validators.required],
+      joiningdate: ['', Validators.required],
+      relievingdate: [this.employeeForm.relievingdate],
+      personalemail: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
+        ],
+      ],
+      manager: [''],
+      aadharno: [
+        this.employeeForm.aadharno,
+        [Validators.required, Validators.pattern(/^\d{12}$/)],
+      ],
 
-        panno: [this.employeeForm.panno],
-        bankname: [this.employeeForm.bankname],
-        accno: [this.employeeForm.accno],
-        ifsc: [this.employeeForm.ifsc],
-        branch: [this.employeeForm.branch],
-        teamlead: [''],
-        role: ['', Validators.required],
-        // role: this.formBuilder.group({
-        //   roleid: new FormControl('', [
-        //     Validators.required
-        //   ]),
-        // })
-      });
-      this.optionsMethod()
+      panno: [
+        this.employeeForm.panno,
+        [Validators.required, Validators.pattern(/^[A-Z]{5}\d{4}[A-Z]{1}$/)],
+      ],
+      bankname: [this.employeeForm.bankname, Validators.required],
+      accno: [this.employeeForm.accno, [Validators.required]],
+      ifsc: [
+        this.employeeForm.ifsc,
+        [Validators.required, Validators.pattern(/^([A-Za-z]{4}\d{7})$/)],
+      ],
+      branch: [this.employeeForm.branchname, [Validators.required]],
+      teamlead: [''],
+      role: ['', Validators.required],
+      // role: this.formBuilder.group({
+      //   roleid: new FormControl('', [
+      //     Validators.required
+      //   ]),
+      // })
+    });
+    this.optionsMethod();
   }
 
-  validateControls(){
-     // for psuedo name validation
-     this.employeeForm.get('department').valueChanges.subscribe((res: any) => {
+  validateControls() {
+    // for psuedo name validation
+    this.employeeForm.get('department').valueChanges.subscribe((res: any) => {
       const pseudoname = this.employeeForm.get('pseudoname');
-      if (res == "Bench Sales") {
+      if (res == 'Bench Sales') {
         pseudoname.setValidators(Validators.required);
-      }
-      else {
+      } else {
         pseudoname.clearValidators();
       }
       pseudoname.updateValueAndValidity();
@@ -165,14 +204,12 @@ export class AddEmployeeComponent {
         this.managerflg = true;
         this.teamleadflg = false;
         manager.setValidators(Validators.required);
-      }
-      else if (res == 5) {
+      } else if (res == 5) {
         this.managerflg = true;
         this.teamleadflg = true;
         manager.setValidators(Validators.required);
         // tl.setValidators(Validators.required);
-      }
-      else {
+      } else {
         this.managerflg = false;
         this.teamleadflg = false;
         manager.clearValidators();
@@ -181,7 +218,6 @@ export class AddEmployeeComponent {
       manager.updateValueAndValidity();
       // tl.updateValueAndValidity();
     });
-
 
     // for team lead validation
 
@@ -200,30 +236,38 @@ export class AddEmployeeComponent {
     //   manager.updateValueAndValidity();
     // });
   }
- get addEmpForm() { return this.employeeForm.controls; }
+  get addEmpForm() {
+    return this.employeeForm.controls;
+  }
 
   private optionsMethod() {
     this.filteredDepartmentOptions =
       this.employeeForm.controls.department.valueChanges.pipe(
         startWith(''),
-        map((value: any) => this._filterOptions(value || '', this.departmentOptions)
+        map((value: any) =>
+          this._filterOptions(value || '', this.departmentOptions)
         )
       );
 
-    this.filteredRoleOptions = this.employeeForm.controls.role.valueChanges.pipe(
-      startWith(''),
-      map((value: any) => this._filterOptions(value || '', this.roleOptions))
-    );
+    this.filteredRoleOptions =
+      this.employeeForm.controls.role.valueChanges.pipe(
+        startWith(''),
+        map((value: any) => this._filterOptions(value || '', this.roleOptions))
+      );
 
-    this.filteredManagerOptions = this.employeeForm.controls.manager.valueChanges.pipe(
-      startWith(''),
-      map((value: any) => this._filterOptions(value || '', this.managerOptions))
-    );
+    this.filteredManagerOptions =
+      this.employeeForm.controls.manager.valueChanges.pipe(
+        startWith(''),
+        map((value: any) =>
+          this._filterOptions(value || '', this.managerOptions)
+        )
+      );
 
     this.filteredTeamLeadOptions =
       this.employeeForm.controls.teamlead.valueChanges.pipe(
         startWith(''),
-        map((value: any) => this._filterOptions(value || '', this.teamLeadOptions)
+        map((value: any) =>
+          this._filterOptions(value || '', this.teamLeadOptions)
         )
       );
   }
@@ -235,24 +279,20 @@ export class AddEmployeeComponent {
       this.employeeForm.reset();
       this.dialogRef.close();
       this.router.navigate(['../usit/employees/users']);
-
     }
   }
 
-
   getRoles() {
-    this.empManagementServ.getRolesDropdown().subscribe(
-      (response: any) => {
-        this.rolearr = response.data;
-        // console.log(this.rolearr)
-      })
+    this.empManagementServ.getRolesDropdown().subscribe((response: any) => {
+      this.rolearr = response.data;
+      // console.log(this.rolearr)
+    });
   }
 
   getManager() {
-    this.empManagementServ.getManagerDropdown().subscribe(
-      (response: any) => {
-        this.managerarr = response.data;
-      })
+    this.empManagementServ.getManagerDropdown().subscribe((response: any) => {
+      this.managerarr = response.data;
+    });
   }
 
   managerid(event: any) {
@@ -260,49 +300,65 @@ export class AddEmployeeComponent {
     this.getTeamLead(id);
   }
   getTeamLead(id: number) {
-    this.empManagementServ.getTLdropdown(id).subscribe(
-      (response: any) => {
-        this.tlarr = response.data;
-        //  console.log(response.data)
-      })
+    this.empManagementServ.getTLdropdown(id).subscribe((response: any) => {
+      this.tlarr = response.data;
+      //  console.log(response.data)
+    });
   }
 
   onSubmit() {
-    this.message = '';
     this.submitted = true;
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 2500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
     if (this.employeeForm.invalid) {
-      this.blur = "enable"
+      this.blur = 'enable';
       return;
+    } else {
+      this.blur = 'Active';
     }
-    else {
-      this.blur = "Active"
-    }
-    //console.log(this.employeeForm.value)
+    console.log(this.employeeForm.value);
     // console.log(JSON.stringify(this.employeeForm.value, null, 2) + " =============== ");
-    this.empManagementServ.registerEmployee(this.employeeForm.value)
-      .subscribe((data: any) => {
-        // console.log(JSON.stringify(data))
-        this.blur = "Active";
+    this.empManagementServ.registerEmployee(this.employeeForm.value).subscribe({
+      next: (data: any) => {
+        this.blur = 'Active';
         if (data.status == 'Success') {
-       //   alertify.success("Employee Added successfully");
+          //   alertify.success("Employee Added successfully");
+          dataToBeSentToSnackBar.message =
+            this.data.actionName === 'add-employee'
+              ? 'Employee added successfully'
+              : 'Employee updated successfully';
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
           this.employeeForm.reset();
-          this.router.navigate(['list-employees']);
-        }
-        else {
-          this.blur = "enable"
-          this.message = data.message;
-         // alertify.error("Record Insertion failed");
+        } else {
+          this.blur = 'enable';
+
+          dataToBeSentToSnackBar.message =
+            this.data.actionName === 'add-employee'
+              ? 'Employee addition is failed'
+              : 'Employee updation is failed';
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         }
       },
-        error => {  // error response
-          this.blur = "enable"
-          this.message = "Record Insertion failed";
-         // alertify.error("Record Insertion failed");
-        }
-      );
+      error: (err) => {
+        this.blur = 'enable';
+        dataToBeSentToSnackBar.message =
+          this.data.actionName === 'add-employee'
+            ? 'Employee addition is failed'
+            : 'Employee updation is failed';
+        dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+      },
+    });
   }
 
-  onCancel(){
+  onCancel() {
     this.dialogRef.close();
   }
 }

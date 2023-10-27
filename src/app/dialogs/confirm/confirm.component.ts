@@ -16,6 +16,7 @@ import { IConfirmDialogData } from '../models/confirm-dialog-data';
 export class ConfirmComponent {
 
   private dialog = inject(MatDialog);
+  allowAction: boolean = false;
   constructor(@Inject(MAT_DIALOG_DATA) protected data: IConfirmDialogData,
   public dialogRef: MatDialogRef<ConfirmComponent>){
 
@@ -29,6 +30,8 @@ export class ConfirmComponent {
 
     if(action === "YES"){
       // call delete apis
+      this.allowAction = true;
+      this.dialogRef.close()
     }
 
   }

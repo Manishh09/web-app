@@ -20,6 +20,8 @@ export class StatusComponent implements OnInit {
   private snackBarServ = inject(SnackBarService);
   protected statusForm!: FormGroup;
   protected showValidationError = false;
+  submitted: boolean = false;
+  remarks = '';
   constructor(@Inject(MAT_DIALOG_DATA) protected data: IStatusData,
   public dialogRef: MatDialogRef<StatusComponent>){
 
@@ -31,6 +33,7 @@ export class StatusComponent implements OnInit {
         reasonForStatusUpdate: ["", [Validators.required, Validators.minLength(4), Validators.maxLength(200)]]
       }
     )
+    this.remarks = this.data.actionData.remarks;
   }
 
   onAction(action: string){
@@ -49,8 +52,12 @@ export class StatusComponent implements OnInit {
       }
       if(this.statusForm.valid){
         this.showValidationError = false;
+        this.submitted = true;
+        if (this.statusForm.invalid) {
+          return;
+        }
 
-        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+       // this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         this.dialogRef.close();
       } else {
         this.showValidationError = true;

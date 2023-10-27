@@ -41,6 +41,13 @@ export class UserManagementService {
     return this.apiServ.post("login/change_password", user);
   }
 
+  // get User name
+
+  getUserName(): string {
+    const userName = localStorage.getItem('userName');
+    return userName !== null ? userName : ''
+  }
+
   /**************ROLES SERVICES -  STARTS************* */
   // roles management
   //register role

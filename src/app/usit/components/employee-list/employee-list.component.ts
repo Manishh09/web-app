@@ -28,6 +28,11 @@ import { AddEmployeeComponent } from './add-employee/add-employee.component';
 import { Employee } from '../../models/employee';
 import { EmployeeManagementService } from '../../services/employee-management.service';
 import { MatDialogConfig } from '@angular/material/dialog';
+import {
+  ISnackBarData,
+  SnackBarService,
+} from 'src/app/services/snack-bar.service';
+import { CustomSnackbarComponent } from 'src/app/components/custom-snackbar/custom-snackbar.component';
 
 @Component({
   selector: 'app-employee-list',
@@ -82,6 +87,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   private dialogServ = inject(DialogService);
+  private snackBarServ = inject(SnackBarService);
   private empManagementServ = inject(EmployeeManagementService);
 
   ngOnInit(): void {
@@ -109,7 +115,54 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
   }
 
   onSort(event: Sort) {
+    const sortDirection = event.direction;
+    const activeSortHeader = event.active;
 
+    if (sortDirection === '' || !activeSortHeader) {
+      return;
+    }
+
+    const isAsc = sortDirection === 'asc';
+    this.dataSource.data = this.dataSource.data.sort((a: any, b: any) => {
+      switch (activeSortHeader) {
+        case 'Name':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.pseudoname || '').localeCompare(b.pseudoname || '')
+          );
+        case 'Email':
+          return (
+            (isAsc ? 1 : -1) * (a.email || '').localeCompare(b.email || '')
+          );
+        case 'PersonalOrCompanyNumber':
+          return (
+            (isAsc ? 1 : -1) *
+            (
+              a.personalcontactnumber?.internationalNumber ||
+              '' ||
+              ''
+            ).localeCompare(
+              b.personalcontactnumber?.internationalNumber || '' || ''
+            )
+          );
+        case 'Designation':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.designation || '').localeCompare(b.designation || '')
+          );
+        case 'Department':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.department || '').localeCompare(b.department || '')
+          );
+        case 'Status':
+          return (
+            (isAsc ? 1 : -1) * (a.status || '').localeCompare(b.status || '')
+          );
+        default:
+          return 0;
+      }
+    });
   }
 
   onFilter(event: any) {
@@ -120,13 +173,13 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
     const actionData = {
       title: 'Add Employee',
       empployeeData: null,
-      actionName: 'add-employee'
+      actionName: 'add-employee',
     };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "65vw";
-   // dialogConfig.height = "100vh";
+    dialogConfig.width = '65vw';
+    // dialogConfig.height = "100vh";
     dialogConfig.disableClose = false;
-    dialogConfig.panelClass = "add-employee";
+    dialogConfig.panelClass = 'add-employee';
     dialogConfig.data = actionData;
 
     this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
@@ -136,38 +189,74 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
     const actionData = {
       title: 'Update Employee',
       employeeData: emp,
-      actionName: 'edit-employee'
+      actionName: 'edit-employee',
     };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "65vw";
-    dialogConfig.height = "100vh";
-    dialogConfig.panelClass = "edit-employee";
+    dialogConfig.width = '65vw';
+    dialogConfig.height = '100vh';
+    dialogConfig.panelClass = 'edit-employee';
     dialogConfig.data = actionData;
     this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
   }
 
-  deleteEmployee(user: Employee) {
+  deleteEmployee(emp: Employee) {
     const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
       title: 'Confirmation',
       message: 'Are you sure you want to delete?',
       confirmText: 'Yes',
       cancelText: 'No',
-      actionData: user,
+      actionData: emp,
     };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "400px";
-    dialogConfig.height = "auto";
+    dialogConfig.width = '400px';
+    dialogConfig.height = 'auto';
     dialogConfig.disableClose = false;
-    dialogConfig.panelClass = "delete-employee";
+    dialogConfig.panelClass = 'delete-employee';
     dialogConfig.data = dataToBeSentToDailog;
-    this.dialogServ.openDialogWithComponent(
+    const dialogRef = this.dialogServ.openDialogWithComponent(
       ConfirmComponent,
       dialogConfig
     );
-
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: 'Status updated successfully!',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
     // call delete api after  clicked 'Yes' on dialog click
 
-    // show snack bar after successfull deletion
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: 'Status updated successfully!',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+
+          this.empManagementServ
+            .deleteEmployeeById(emp.userid)
+            .subscribe((response: any) => {
+              if (response.status == 'Success') {
+                this.getAllEmployees();
+                dataToBeSentToSnackBar.message =
+                  'Employee Deleted successfully';
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              } else {
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                dataToBeSentToSnackBar.message = 'Record Deletion failed';
+              }
+            });
+        }
+      },
+    });
   }
 
   // status update
@@ -180,12 +269,46 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
       actionData: emp,
     };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "400px";
-    dialogConfig.height = "auto";
+    dialogConfig.width = '400px';
+    dialogConfig.height = 'auto';
     dialogConfig.disableClose = false;
-    dialogConfig.panelClass = "update-employee-status";
+    dialogConfig.panelClass = 'update-employee-status';
     dialogConfig.data = dataToBeSentToDailog;
-    this.dialogServ.openDialogWithComponent(StatusComponent, dialogConfig);
+
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      StatusComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.submitted) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: 'Status updated successfully!',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+          emp.remarks = dialogRef.componentInstance.remarks;
+          this.empManagementServ
+            .changeEmployeeStatus(emp)
+            .subscribe((response: any) => {
+              if (response.status == 'Success') {
+                this.getAllEmployees();
+                dataToBeSentToSnackBar.message = 'Status updated successfully';
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              } else {
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                dataToBeSentToSnackBar.message = 'Status update failed';
+              }
+            });
+        }
+      },
+    });
   }
 
   handlePageEvent(e: PageEvent) {

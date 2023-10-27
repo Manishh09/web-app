@@ -5,6 +5,7 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { PermissionsService } from 'src/app/services/permissions.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
+import { UserManagementService } from 'src/app/services/user-management.service';
 const keyFrames = [
   style({ transform: 'rotate(0deg)', offset: '0'}),
   style({ transform: 'rotate(1turn)', offset: '1'})
@@ -26,14 +27,17 @@ export class SidebarComponent implements OnInit {
 
   private snackBarServ = inject(SnackBarService);
   protected permissionServ = inject(PermissionsService);
+  protected userManagementServ = inject(UserManagementService)
   private router = inject(Router);
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
 
   onSignOut(){
   //  this.snaclBar.open("You have Signed out.!", "", {duration: 1500});
   const dataToBeSentToSnackBar: ISnackBarData = {
     message: 'You have signed out!',
-    duration: 1500,
+    duration: 2500,
     verticalPosition: 'top',
     horizontalPosition: 'center',
     direction: 'above',

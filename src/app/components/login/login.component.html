@@ -14,8 +14,8 @@
                   <input matInput  type="email" formControlName="email">
                   <mat-icon matPrefix [style.color]="'#3f51b5'">email</mat-icon>
                   <!-- errors -->
-                  <mat-error *ngIf="form.get('email')!.hasError('required')">Email is required</mat-error>
-                  <mat-error *ngIf="form.get('email')!.hasError('email') || form.get('email')!.errors">Invalid email address</mat-error>
+                  <mat-error *ngIf="isFormSubmitted && loginFrom.email.errors && loginFrom.email.errors.required">Email is required</mat-error>
+                  <mat-error *ngIf="isFormSubmitted && loginFrom.email.errors && loginFrom.email.errors.email">Invalid email address</mat-error>
               </mat-form-field>
 
               <mat-form-field class="full-width"  >
@@ -27,7 +27,7 @@
                       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                   </button>
                   <!-- error section -->
-                  <mat-error *ngIf="form.get('password')!.touched || form.get('password')!.hasError('required') || form.get('password')!.value === '' || form.get('password')!.errors">Password is required</mat-error>
+                  <mat-error *ngIf="isFormSubmitted && loginFrom.password.errors && loginFrom.password.errors.required">Password is required</mat-error>
               </mat-form-field>
 
               <div class="forgot-password">

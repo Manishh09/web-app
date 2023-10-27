@@ -49,8 +49,8 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.minLength(8),
-          this.passwordValidator(),
+          // Validators.minLength(8),
+          // this.passwordValidator(),
         ],
       ],
     });
@@ -86,6 +86,10 @@ export class LoginComponent implements OnInit {
     };
   }
 
+  // get all controls
+  get loginFrom() {
+    return this.form.controls;
+  }
   userLogin() {
     // if form is valid, call login api
     this.isFormSubmitted = true;
