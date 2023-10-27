@@ -98,6 +98,7 @@
       <tr mat-header-row *matHeaderRowDef="dataTableColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: dataTableColumns;"></tr>
     </table>
+    <p class="no-data-found" *ngIf="!dataSource.filteredData.length">{{'No matching data found'}}</p>
   </section>
     <hr>
     <!-- paginator -->
