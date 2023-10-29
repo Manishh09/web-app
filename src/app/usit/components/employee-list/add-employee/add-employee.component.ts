@@ -28,6 +28,8 @@ import {
   ISnackBarData,
   SnackBarService,
 } from 'src/app/services/snack-bar.service';
+import { SearchPipe } from 'src/app/pipes/search.pipe';
+import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 
 @Component({
   selector: 'app-add-employee',
@@ -45,6 +47,8 @@ import {
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    SearchPipe,
+    NgxMatIntlTelInputComponent
   ],
 
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -58,22 +62,26 @@ export class AddEmployeeComponent {
     'Accounts',
   ];
 
-  roleOptions: string[] = [
-    'Super Admin',
-    'Admin',
-    'Manager',
-    'Team Lead',
-    'Employee',
+  roleOptions: any[] = [
+    // 'Super Admin',
+    // 'Admin',
+    // 'Manager',
+    // 'Team Lead',
+    // 'Employee',
   ];
 
-  managerOptions: string[] = ['John Smith', 'Sarah Johnson', 'David Anderson'];
+  managerOptions: any[] = [
+    // 'John Smith', 'Sarah Johnson', 'David Anderson'
+  ];
 
-  teamLeadOptions: string[] = ['Alice', 'Bob', 'Charlie', 'David', 'Eva'];
+  teamLeadOptions: any[] = [
+    // 'Alice', 'Bob', 'Charlie', 'David', 'Eva'
+  ];
 
   filteredDepartmentOptions!: Observable<string[]>;
-  filteredRoleOptions!: Observable<string[]>;
-  filteredManagerOptions!: Observable<string[]>;
-  filteredTeamLeadOptions!: Observable<string[]>;
+  filteredRoleOptions!: Observable<any[]>;
+  filteredManagerOptions!: Observable<any[]>;
+  filteredTeamLeadOptions!: Observable<any[]>;
 
   employeeForm: any = FormGroup;
   submitted = false;
@@ -84,12 +92,7 @@ export class AddEmployeeComponent {
   teamleadflg = false;
   managerarr: any = [];
   tlarr: any = [];
-  private _filterOptions(value: string, options: string[]): string[] {
-    const filterValue = value.toLowerCase();
-    return options.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
-  }
+
   private empManagementServ = inject(EmployeeManagementService);
   private snackBarServ = inject(SnackBarService);
   private router = inject(Router);
@@ -101,88 +104,83 @@ export class AddEmployeeComponent {
 
   ngOnInit(): void {
     console.log('empdata, ', this.data);
+
+    this.getRoles(); // common for add employee
+    this.getManager();// common for add employee
     if (this.data.actionName === 'edit-employee') {
-      const empId = this.data.employeeData.userid;
-      this.getTeamLead(empId);
+      const managerId = this.data.employeeData.manager;
+      this.initilizeAddEmployeeForm(this.data.employeeData);
+      this.getTeamLead(managerId);
+    } else {
+    //  for add employee
+      this.initilizeAddEmployeeForm(null);
+
     }
-    // this.employeeForm = this.formBuilder.group({
-    //   fullname: ['', Validators.required],
-    //   pseudoname: [''],
-    //   email: ['', [Validators.required, Validators.email]],
-    //   personalcontactnumber: ['', Validators.required],
-    //   companycontactnumber: [],
-    //   designation: [],
-    //   department: ['', Validators.required],
-    //   role: ['', Validators.required],
-    //   manager: ['', Validators.required],
-    //   teamlead: ['', Validators.required],
-    // });
-    this.getRoles();
-    this.getManager();
-    this.initilizeAddEmployeeForm();
+   // common for add employee
     this.validateControls();
+    //this.optionsMethod();
   }
 
-  private initilizeAddEmployeeForm() {
+  private initilizeAddEmployeeForm(employeeData: any) {
     this.employeeForm = this.formBuilder.group({
       fullname: [
-        '',
+        employeeData ? employeeData.fullname : '',
         [
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(100),
         ],
       ],
-      pseudoname: [''],
+      pseudoname: [employeeData ? employeeData.pseudoname : ''],
       email: [
-        '',
+        employeeData ? employeeData.email : '',
         [
           Validators.required,
           Validators.email,
           Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
         ],
       ],
-      personalcontactnumber: ['', [Validators.required]],
+      personalcontactnumber: [employeeData ? employeeData.personalcontactnumber.internationalNumber : '', [Validators.required]],
       //['', [Validators.required]],
-      companycontactnumber: [this.employeeForm.companycontactnumber],
-      designation: [this.employeeForm.designation],
-      department: ['', Validators.required],
-      joiningdate: ['', Validators.required],
+      companycontactnumber: [employeeData && employeeData.companycontactnumber ? employeeData.companycontactnumber.internationalNumber : ''],
+      designation: [employeeData ? employeeData.designation : ''],
+      department: [employeeData ? employeeData.department : '', Validators.required],
+      joiningdate: [employeeData ? employeeData.joiningdate : '', Validators.required],
       relievingdate: [this.employeeForm.relievingdate],
       personalemail: [
-        '',
+        employeeData ? employeeData.personalemail : '',
         [
           Validators.required,
           Validators.email,
           Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
         ],
       ],
-      manager: [''],
+      manager: [employeeData ? employeeData.manager : ''],
       aadharno: [
-        this.employeeForm.aadharno,
+        employeeData ? employeeData.aadharno : '',
         [Validators.required, Validators.pattern(/^\d{12}$/)],
       ],
 
       panno: [
-        this.employeeForm.panno,
+        employeeData ? employeeData.panno : '',
         [Validators.required, Validators.pattern(/^[A-Z]{5}\d{4}[A-Z]{1}$/)],
       ],
-      bankname: [this.employeeForm.bankname, Validators.required],
-      accno: [this.employeeForm.accno, [Validators.required]],
+      bankname: [employeeData ? employeeData.bankname : '', Validators.required],
+      accno: [employeeData ? employeeData.accno : '', [Validators.required]],
       ifsc: [
-        this.employeeForm.ifsc,
+        employeeData ? employeeData.ifsc : '',
         [Validators.required, Validators.pattern(/^([A-Za-z]{4}\d{7})$/)],
       ],
-      branch: [this.employeeForm.branchname, [Validators.required]],
-      teamlead: [''],
-      role: ['', Validators.required],
+      branch: [employeeData ? employeeData.branch : '', [Validators.required]],
+      teamlead: [employeeData ? employeeData.teamlead : ''],
+      role: [employeeData ? employeeData.role.rolename : '', Validators.required],
       // role: this.formBuilder.group({
       //   roleid: new FormControl('', [
       //     Validators.required
       //   ]),
       // })
     });
-    this.optionsMethod();
+
   }
 
   validateControls() {
@@ -197,7 +195,7 @@ export class AddEmployeeComponent {
       pseudoname.updateValueAndValidity();
     });
     // for manager validation
-    this.employeeForm.get('role.roleid').valueChanges.subscribe((res: any) => {
+    this.employeeForm.get('role').valueChanges.subscribe((res: any) => {
       const manager = this.employeeForm.get('manager');
       const tl = this.employeeForm.get('teamlead');
       if (res == 4) {
@@ -240,69 +238,103 @@ export class AddEmployeeComponent {
     return this.employeeForm.controls;
   }
 
-  private optionsMethod() {
-    this.filteredDepartmentOptions =
+  private optionsMethod(type = "roles") {
+
+    if(type === "roles"){
+    this.filteredRoleOptions =
+      this.employeeForm.controls.role.valueChanges.pipe(
+        startWith(''),
+        map((value: any) => {
+          console.log("value in map", value)
+          const name = typeof value === 'string' ? value : value?.name;
+          return name ? this._filter(value) : this.roleOptions.slice();
+        }
+
+        )
+      );
+      return
+    }else if(type === "manager"){
+      this.filteredManagerOptions =
+      this.employeeForm.controls.manager.valueChanges.pipe(
+        startWith(''),
+        map((value: any) =>{
+          console.log("value in map", value)
+          const name = typeof value === 'string' ? value : value?.name;
+          return name ? this._filter(value) : this.managerOptions.slice();
+        }
+        )
+      );
+    }else if(type === "department"){
+      this.filteredDepartmentOptions =
       this.employeeForm.controls.department.valueChanges.pipe(
         startWith(''),
         map((value: any) =>
           this._filterOptions(value || '', this.departmentOptions)
         )
       );
-
-    this.filteredRoleOptions =
-      this.employeeForm.controls.role.valueChanges.pipe(
-        startWith(''),
-        map((value: any) => this._filterOptions(value || '', this.roleOptions))
-      );
-
-    this.filteredManagerOptions =
-      this.employeeForm.controls.manager.valueChanges.pipe(
-        startWith(''),
-        map((value: any) =>
-          this._filterOptions(value || '', this.managerOptions)
-        )
-      );
-
-    this.filteredTeamLeadOptions =
+    }else{
+      this.filteredTeamLeadOptions =
       this.employeeForm.controls.teamlead.valueChanges.pipe(
         startWith(''),
-        map((value: any) =>
-          this._filterOptions(value || '', this.teamLeadOptions)
+        map((value: any) =>{
+          console.log("value in map", value)
+          const name = typeof value === 'string' ? value : value?.name;
+          return name ? this._filter(value) : this.teamLeadOptions.slice();
+        }
         )
       );
+    }
+
   }
 
-  _onSubmit() {
-    if (this.employeeForm.valid) {
-      // this.usersService.addUser(this.employeeForm.value);
-      // this.snackBar.showSnackBar('New User Added', ['green-snackbar']);
-      this.employeeForm.reset();
-      this.dialogRef.close();
-      this.router.navigate(['../usit/employees/users']);
-    }
+  private _filter(name: string): any[] {
+    const filterValue = name.toLowerCase();
+
+    return this.roleOptions.filter(option => option.rolename.toLowerCase().includes(filterValue));
+  }
+
+  private _filterOptions(value: string, options: string[]): string[] {
+    const filterValue = value.toLowerCase();
+    console.log("filtervalu", value)
+    return options.filter((option) =>
+      option.toLowerCase().includes(filterValue)
+    );
+  }
+
+  displayFn(obj: any): string {
+    return obj && obj.rolename ? obj.rolename : '';
   }
 
   getRoles() {
     this.empManagementServ.getRolesDropdown().subscribe((response: any) => {
       this.rolearr = response.data;
-      // console.log(this.rolearr)
+      this.roleOptions = response.data;
+    //TBD: auto-complete -
+    // this.optionsMethod("roles")
     });
   }
 
   getManager() {
     this.empManagementServ.getManagerDropdown().subscribe((response: any) => {
       this.managerarr = response.data;
+      this.managerOptions = response.data;
+       //TBD: auto-complete -
+       //  this.optionsMethod("manager")
     });
   }
 
-  managerid(event: any) {
-    const id = event.target.value;
+  managerid(id: number) {
+
     this.getTeamLead(id);
   }
+
   getTeamLead(id: number) {
     this.empManagementServ.getTLdropdown(id).subscribe((response: any) => {
       this.tlarr = response.data;
+      this.teamLeadOptions = response.data;
       //  console.log(response.data)
+     // TBD autocomplete:
+      this.optionsMethod("teamLead")
     });
   }
 
@@ -318,13 +350,13 @@ export class AddEmployeeComponent {
     };
     if (this.employeeForm.invalid) {
       this.blur = 'enable';
+      this.displayFormErrors();
       return;
     } else {
       this.blur = 'Active';
     }
-    console.log(this.employeeForm.value);
-    // console.log(JSON.stringify(this.employeeForm.value, null, 2) + " =============== ");
-    this.empManagementServ.registerEmployee(this.employeeForm.value).subscribe({
+    console.log(this.data.actionName+" employeeForm.value",this.employeeForm.value);
+    this.empManagementServ.addOrUpdateEmployee(this.employeeForm.value, this.data.actionName).subscribe({
       next: (data: any) => {
         this.blur = 'Active';
         if (data.status == 'Success') {
@@ -345,6 +377,7 @@ export class AddEmployeeComponent {
           dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         }
+        this.dialogRef.close();
       },
       error: (err) => {
         this.blur = 'enable';
@@ -355,6 +388,15 @@ export class AddEmployeeComponent {
         dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
       },
+    });
+  }
+
+  displayFormErrors() {
+    Object.keys(this.employeeForm.controls).forEach((field) => {
+      const control = this.employeeForm.get(field);
+      if (control && control.invalid) {
+        control.markAsTouched();
+      }
     });
   }
 

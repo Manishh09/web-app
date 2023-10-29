@@ -60,7 +60,10 @@
         <!-- Personal Contact -->
         <mat-form-field appearance="fill">
           <mat-label>Personal Contact Number </mat-label>
-          <input matInput formControlName="personalcontactnumber">
+          <!-- <input matInput formControlName="personalcontactnumber"> -->
+          <ngx-mat-intl-tel-input formControlName="personalcontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
+          name="personalcontactnumber" id="intlInput">
+        </ngx-mat-intl-tel-input>
           <mat-error
             *ngIf="employeeForm.get('personalcontactnumber')!.hasError('required')">Personal
             Contact
@@ -69,11 +72,14 @@
         <!-- company contact -->
         <mat-form-field appearance="fill">
           <mat-label>Company Contact Number</mat-label>
-          <input matInput formControlName="companycontactnumber">
+          <!-- <input matInput formControlName="companycontactnumber"> -->
+          <ngx-mat-intl-tel-input formControlName="companycontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
+          name="companycontactnumber" id="intlInputCompany">
+        </ngx-mat-intl-tel-input>
         </mat-form-field>
         <!-- Joining Date -->
         <mat-form-field appearance="fill">
-          <mat-label>Joining Data</mat-label>
+          <mat-label>Joining Date</mat-label>
 
           <input matInput [matDatepicker]="datepicker"
             formControlName="joiningdate" placeholder="MM/DD/YYYY">
@@ -138,7 +144,7 @@
         <!-- Branch -->
         <mat-form-field appearance="fill">
           <mat-label>Branch Name</mat-label>
-          <input matInput formControlName="branchname">
+          <input matInput formControlName="branch">
           <mat-error *ngIf="employeeForm.get('branch')!.hasError('required')">Branch Name is required</mat-error>
         </mat-form-field>
         <!-- Designation -->
@@ -153,7 +159,7 @@
           <input matInput formControlName="department"
             [matAutocomplete]="departmentAuto">
           <mat-autocomplete #departmentAuto="matAutocomplete">
-            <mat-option *ngFor="let option of filteredDepartmentOptions | async"
+            <mat-option *ngFor="let option of departmentOptions"
               [value]="option">
               {{ option }}
             </mat-option>
@@ -167,8 +173,8 @@
           <input matInput formControlName="role" [matAutocomplete]="roleAuto">
           <mat-autocomplete #roleAuto="matAutocomplete">
             <mat-option *ngFor="let option of filteredRoleOptions | async"
-              [value]="option">
-              {{ option }}
+              [value]="option.rolename">
+              {{ option.rolename }}
             </mat-option>
           </mat-autocomplete>
           <mat-error *ngIf="employeeForm.get('role')!.hasError('required')">Role is
@@ -178,11 +184,11 @@
         <mat-form-field *ngIf="employeeForm.get('role')!.value === 'Employee'"
           appearance="fill">
           <mat-label>Select Manager</mat-label>
-          <input matInput formControlName="manager" [matAutocomplete]="roleAuto">
+          <input matInput formControlName="manager" [matAutocomplete]="roleAuto" >
           <mat-autocomplete #roleAuto="matAutocomplete">
-            <mat-option *ngFor="let option of filteredManagerOptions | async"
-              [value]="option">
-              {{ option }}
+            <mat-option *ngFor="let option of managerOptions"  (onSelectionChange)="managerid(option[0])"
+              [value]="option[1]">
+              {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
             </mat-option>
           </mat-autocomplete>
           <mat-error *ngIf="employeeForm.get('manager')!.hasError('required')">Manager
@@ -195,9 +201,9 @@
           <input matInput formControlName="teamlead"
             [matAutocomplete]="roleAuto">
           <mat-autocomplete #roleAuto="matAutocomplete">
-            <mat-option *ngFor="let option of filteredTeamLeadOptions | async"
-              [value]="option">
-              {{ option }}
+            <mat-option *ngFor="let option of teamLeadOptions"
+              [value]="option[1]">
+              {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
             </mat-option>
           </mat-autocomplete>
           <mat-error *ngIf="employeeForm.get('teamlead')!.hasError('required')">Manager

@@ -192,12 +192,12 @@ mat-error {
 
 @media screen and (max-width: 425px) {
   .form {
-    flex-direction: column; 
+    flex-direction: column;
   }
 
   .form-column-left,
   .form-column-right {
-    width: 100%; 
+    width: 100%;
   }
 
   .center-card {
@@ -208,4 +208,36 @@ mat-error {
   .header-container{
     padding: 6px 28px;
   }
+}
+
+.country-selector{
+  opacity:1 !important;
+  bottom:8px !important;
+}
+
+input:not(.country-search){
+  bottom: 3px;
+  left: 10px;
+}
+input.country-search {
+  width: 90%;
+  /* height: 34px; */
+  border: none;
+  border-bottom: 1px solid #f2f0f0;
+  font-size: 14px;
+  padding: 10px 10px !important;
+}
+
+.country-list-button{
+  font-size: 0.8rem!important;
+}
+
+.mat-mdc-menu-content:not(:empty){
+  max-height:250px !important;
+}
+mat-mdc-menu-content{
+  max-height:250px !important;
+}
+.mat-mdc-menu-panel  .ngx-mat-tel-input-mat-menu-panel{
+  max-height:250px !important;
 }

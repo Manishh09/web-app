@@ -64,5 +64,10 @@ export class EmployeeManagementService {
    public getAllTLBench() {
     return this.http.get(this.baseUrl + "users/teamleads");
   }
+
+  addOrUpdateEmployee(entity: any, action: string){
+   return action === "edit-employee" ? this.updateEmployee(entity) : this.registerEmployee(entity);
+
+  }
   /** EMPLOYEE SERVICES - END */
 }
