@@ -4,7 +4,7 @@
   </span>
   <div class="role-actions">
     <button mat-icon-button class="add-user" (click)="addRole()">
-      <mat-icon class="item-icon">person_add</mat-icon>
+      <mat-icon class="item-icon">add_circle</mat-icon>
     </button>
 
     <div class="search-role" >
@@ -22,21 +22,22 @@
             The actual rendered columns are set as a property on the row definition" -->
 
       <!-- Name Column -->
-      <ng-container matColumnDef="roleName">
+      <ng-container matColumnDef="RoleName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by roleName"> Role Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.roleName}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.rolename}} </td>
       </ng-container>
 
 
 
 
-      <!-- actions -->
-      <ng-container matColumnDef="status">
+     <!-- status -->
+      <!-- <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by symbol"> Status </th>
         <td mat-cell *matCellDef="let role" [ngStyle]="{ color: role.status === 'Active' ? 'green' : 'accent' }" ><span><button mat-raised-button (click)="onStatusUpdate(role)" > {{role.status}}</button> </span></td>
-      </ng-container>
+      </ng-container> -->
 
-      <ng-container matColumnDef="action">
+        <!-- actions -->
+      <ng-container matColumnDef="Actions">
         <th mat-header-cell *matHeaderCellDef> Action </th>
         <td mat-cell *matCellDef="let role">
           <button mat-icon-button (click)="editRole(role)">
@@ -51,7 +52,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-
+    <p class="no-data-found" *ngIf="!dataSource.filteredData.length">{{'No matching data found'}}</p>
     <!-- paginator -->
     <!-- <mat-paginator #paginator
             [length]="elements.length"

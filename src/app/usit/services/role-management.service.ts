@@ -44,6 +44,11 @@ export class RoleManagementService {
   updateRoleStatus(entity: any) {
     return this.http.patch(this.baseUrl + "roles/status", entity);
   }
+
+  // add or update role bases on action edit => update; add=> add
+  addOrUpdateRole(entity: any, action: string){
+    return action === "update-role" ? this.updateRole(entity) : this.addRole(entity);
+  }
   /**************ROLES SERVICES -  ENDS************* */
 
 }

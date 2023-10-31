@@ -16,17 +16,19 @@
 }
 .add-role-form{
   display: flex;
-  align-items: flex-start;
+  //align-items: flex-start;
   flex-direction: column;
+
 }
-.description-field{
-  width: 370px;
+.mat-form-field{
+  width: 100%;
 }
+
  .actions{
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  align-items: flex-end;
+  gap: 16px;
 
 
 }

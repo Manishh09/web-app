@@ -18,6 +18,8 @@ import { UserManagementService } from 'src/app/services/user-management.service'
 import { Role } from '../../models/role';
 import { AddRoleComponent } from './add-role/add-role.component';
 import { MatDialogConfig } from '@angular/material/dialog';
+import { RoleManagementService } from '../../services/role-management.service';
+import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 @Component({
   selector: 'app-roles-list',
   templateUrl: './roles-list.component.html',
@@ -39,22 +41,33 @@ standalone: true,
 })
 export class RolesListComponent implements OnInit , AfterViewInit{
   private userManagementServ = inject(UserManagementService);
+  private roleManagementServ = inject(RoleManagementService);
   form: any = FormGroup;
   private formBuilder = inject(FormBuilder);
-  private dialogServ = inject(DialogService)
-  displayedColumns: string[] = ['roleName','status', 'action'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+  private dialogServ = inject(DialogService);
+  private snackBarServ = inject(SnackBarService);
+  displayedColumns: string[] = ['RoleName', 'Actions'];
+  dataSource = new MatTableDataSource([]);
 
   @ViewChild(MatSort) sort!: MatSort;
+  roleList: Role[]= [];
   ngOnInit(): void {
-    this.form = this.formBuilder.group(
-      {
-        remarks: ['', Validators.required],
-      }
-    );
+    this.getAllRoles()
   }
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+  }
+  private getAllRoles() {
+    return this.roleManagementServ.getAllRoles().subscribe(
+      {
+        next:(response: any) => {
+          this.roleList = response.data;
+          console.log("roles",this.roleList);
+          this.dataSource.data = response.data;
+        },
+        error: (err)=> console.log(err)
+      }
+    );
   }
   // add
   addRole(){
@@ -65,12 +78,15 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       actionName: 'add-role'
     };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "400px";
+    dialogConfig.width = "450px";
     dialogConfig.height = "auto";
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = "add-role";
     dialogConfig.data = actionData;
-    this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig)
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(() => {
+      this.getAllRoles();
+    })
   }
   // search
   onFilter(event: any){
@@ -78,7 +94,25 @@ export class RolesListComponent implements OnInit , AfterViewInit{
   }
   // sort
   onSort(event: any){
+    const sortDirection = event.direction;
+    const activeSortHeader = event.active;
 
+    if (sortDirection === '' || !activeSortHeader) {
+      return;
+    }
+
+    const isAsc = sortDirection === 'asc';
+    this.dataSource.data = this.dataSource.data.sort((a: any, b: any) => {
+      switch (activeSortHeader) {
+        case 'RoleName':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.rolename || '').localeCompare(b.rolename || '')
+          );
+        default:
+          return 0;
+      }
+    });
   }
 
   // edit
@@ -87,7 +121,8 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       title: 'Update Role',
       buttonCancelText: 'Cancel',
       buttonSubmitText: 'Submit',
-      action: 'update-role'
+      actionName: 'update-role',
+      roleData: role
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "400px";
@@ -95,7 +130,10 @@ export class RolesListComponent implements OnInit , AfterViewInit{
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = "update-role";
     dialogConfig.data = actionData;
-    this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig)
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(() => {
+      this.getAllRoles();
+    })
   }
   // delete
   deleteRole(role: Role){
@@ -112,19 +150,49 @@ export class RolesListComponent implements OnInit , AfterViewInit{
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = "update-role";
     dialogConfig.data = dataToBeSentToDailog;
-    this.dialogServ.openDialogWithComponent(ConfirmComponent, dialogConfig);
+    const dialogRef = this.dialogServ.openDialogWithComponent(ConfirmComponent, dialogConfig);
 
-    // call delete api after  clicked 'Yes' on dialog click
+    dialogRef.afterClosed().subscribe({
+      next: () =>{
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: 'Role updated successfully!',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+          this.roleManagementServ.deleteRole(role.roleid).subscribe
+            ({
+              next: (resp: any) => {
+                if (resp.status == 'success') {
+                  dataToBeSentToSnackBar.message =
+                    'Role Deleted successfully';
+                  this.snackBarServ.openSnackBarFromComponent(
+                    dataToBeSentToSnackBar
+                  );
+                  // call get api after deleting a role
+                  this.getAllRoles();
+                } else {
+                  dataToBeSentToSnackBar.message = resp.message;
+                  this.snackBarServ.openSnackBarFromComponent(
+                    dataToBeSentToSnackBar
+                  );
+                }
 
-
-    // show snack bar after successfull deletion
+              }, error: (err) => console.log(`role delete error: ${err}`)
+            });
+        }
+      }
+    })
   }
-  // status update
-  onStatusUpdate(role: Role){
+  // status update: NOT USED
+  _onStatusUpdate(role: Role){
     const dataToBeSentToDailog : IStatusData = {
       title: 'Status Update',
       updateText: role.status !== 'Active' ? 'activating' : 'in-activating',
-      type: role.roleName,
+      type: role.rolename,
       buttonText: 'Update',
       actionData: role
     }
@@ -137,18 +205,9 @@ export class RolesListComponent implements OnInit , AfterViewInit{
   }
 
   }
-  const ELEMENT_DATA = [
-    { roleId: 1, roleName: 'Super Admin', status: 'Active' },
-    { roleId: 2, roleName: 'Admin', status: 'Active' },
-    { roleId: 3, roleName: 'Manager', status: 'Active' },
-    { roleId: 4, roleName: 'Team Lead', status: 'In Active' },
-    { roleId: 5, roleName: 'Employee', status: 'Active' },
-    { roleId: 6, roleName: 'User', status: 'Active' },
-
-  ];
 
   export interface IRoleData {
-    roleId: number;
-    roleName: string;
-    Status: string;
+    roleid: number;
+    rolename: string;
+    status: string;
   }

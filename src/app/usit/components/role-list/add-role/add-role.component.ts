@@ -24,6 +24,7 @@ import {
 } from 'src/app/services/snack-bar.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { Role } from 'src/app/usit/models/role';
+import { RoleManagementService } from 'src/app/usit/services/role-management.service';
 
 @Component({
   selector: 'app-add-role',
@@ -45,49 +46,100 @@ export class AddRoleComponent {
   addRoleForm: any = FormGroup;
   private formBuilder = inject(FormBuilder);
   private userManagementServ = inject(UserManagementService);
+  private roleManagementServ = inject(RoleManagementService);
   private snackBarServ = inject(SnackBarService);
   tech!: Role;
   private router = inject(Router);
   showValidationError = false;
-
+  protected isFormSubmitted: boolean = false;
+  roleDescription = ''
+  roleName = ''
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
     public dialogRef: MatDialogRef<AddRoleComponent>
   ) {}
 
   ngOnInit(): void {
+
+
+
+    if(this.data.actionName === "update-role"){
+      this.roleName = this.data.roleData.rolename;
+      this.roleDescription = this.data.roleData.description;
+      this.initializeRoleForm(this.data.roleData);
+    }else{
+      this.initializeRoleForm(this.data.roleData);
+    }
+  }
+
+  private initializeRoleForm(data : any) {
     this.addRoleForm = this.formBuilder.group({
-      roleName: ['', Validators.required],
+      rolename: [data ? data.rolename : '', Validators.required],
       //roleId: ['', Validators.required],
-      description: ['', Validators.maxLength(200)],
+      description: [data ? data.description : ''],
     });
   }
+
+  get roleForm() {
+    return this.addRoleForm.controls;
+  }
   onSubmit() {
-    // this.message = '';
-    // this.submitted = true;
+    this.isFormSubmitted = true;
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
     if (this.addRoleForm.invalid) {
+      this.displayFormErrors();
       return;
     }
-    this.tech.updatedBy = localStorage.getItem('userid');
-    this.userManagementServ.updateRole(this.tech).subscribe((data: any) => {
-      const dataToBeSentToSnackBar: ISnackBarData = {
-        message: '',
-        duration: 1500,
-        verticalPosition: 'top',
-        horizontalPosition: 'center',
-        direction: 'above',
-        panelClass: ['custom-snack-success'],
-      };
+    const userId = localStorage.getItem('userid');
+    const addObj = {
+      addedby: userId,
+      updatedby: userId,
+      rolename: this.addRoleForm.get('rolename').value,
+      description: this.addRoleForm.get('description').value
+    };
+    const updateObj = {
+      ...this.data.roleData,
+      rolename: this.addRoleForm.get('rolename').value,
+      updatedby: userId,
+    };
+    const saveObj = this.data.actionName === "update-role" ? updateObj : addObj;
+
+    this.roleManagementServ.addOrUpdateRole(saveObj, this.data.actionName).subscribe(
+      {
+      next:(data: any) => {
+
       if (data.status == 'Success') {
-        dataToBeSentToSnackBar.message = 'Role updated successfully!';
+        dataToBeSentToSnackBar.message =  this.data.actionName === 'add-role' ?
+        'Role added successfully!' :' Role updated successfully!';
         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-        // go to roles after the update
-        this.router.navigate(['roles']);
+        this.dialogRef.close();
       } else {
-        //"Role Already Exists");
-        dataToBeSentToSnackBar.message = data.message;
+        dataToBeSentToSnackBar.panelClass = ['custom-snack-failure']
+        dataToBeSentToSnackBar.message =  'Role Already Exists!'
+        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
       }
+
+    }, error: err =>{
+      dataToBeSentToSnackBar.panelClass = ['custom-snack-failure']
+      dataToBeSentToSnackBar.message =  err.message
       this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+    }
+  });
+  }
+
+  displayFormErrors() {
+    Object.keys(this.addRoleForm.controls).forEach((field) => {
+      const control = this.addRoleForm.get(field);
+      if (control && control.invalid) {
+        control.markAsTouched();
+      }
     });
   }
 

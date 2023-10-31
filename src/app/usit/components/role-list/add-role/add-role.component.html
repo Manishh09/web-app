@@ -12,32 +12,35 @@
   </div>
 
   <div class="content" mat-dialog-content>
-    <form class="add-role-form" [formGroup]="addRoleForm" #myFrom name="add-role-form" (ngSubmit)="onSubmit()">
+    <form class="add-role-form" [formGroup]="addRoleForm" #myFrom name="role-form" (ngSubmit)="onSubmit()">
       <mat-label>Role Name</mat-label>
-      <mat-form-field class="status-reason-field">
-        <input title="" matInput placeholder="Enter Role Name" formControlName="roleName">
+      <mat-form-field class="rolename-field">
+        <input title="" matInput placeholder="Enter Role Name" formControlName="rolename"  >
+        <!-- errors -->
+        <mat-error class="error-message" *ngIf="roleForm.rolename.errors && roleForm.rolename.errors.required">Role Name is required</mat-error>
       </mat-form-field>
-      <div class="error-message"  *ngIf="showValidationError">
-        <mat-error>Please enter remarks</mat-error>
-        <!-- <mat-error *ngIf="statusForm.controls['reasonForStatusUpdate'].hasError('minLength')">Reason must be at least 4 characters</mat-error> -->
-      </div>
+      <!-- <div class="error-message"  *ngIf="isFormSubmitted && roleForm.rolename.errors">
+        <mat-error class="error-message" *ngIf="isFormSubmitted && roleForm.rolename.errors">Please enter remarks</mat-error>
+      </div> -->
       <mat-label>Description</mat-label>
       <mat-form-field class="description-field">
-        <textarea title="" matInput placeholder="Please enter the remarks" formControlName="description"></textarea>
+        <textarea title=""  matInput placeholder="Please enter the remarks" formControlName="description"></textarea>
       </mat-form-field>
-      <div class="error-message"  *ngIf="showValidationError">
+      <!-- <div class="error-message"  *ngIf="showValidationError">
         <mat-error>Please enter the remarks</mat-error>
-        <!-- <mat-error *ngIf="statusForm.controls['reasonForStatusUpdate'].hasError('minLength')">Reason must be at least 4 characters</mat-error> -->
-      </div>
+      </div> -->
 
     </form>
-
+    <div class="actions" >
+      <button  mat-raised-button  (click)="onAction('CANCEL')">{{data.buttonCancelText}}</button>
+      <button type="submit"   mat-raised-button color="primary" (click)="onSubmit()">{{data.buttonSubmitText}}</button>
+    </div>
   </div>
 
 
-  <div class="actions" mat-dialog-actions>
+  <!-- <div class="actions" mat-dialog-actions>
     <button  mat-raised-button  (click)="onAction('CANCEL')">{{data.buttonCancelText}}</button>
-    <button type="submit"  mat-raised-button color="primary">{{data.buttonSubmitText}}</button>
-  </div>
+    <button type="submit" form="role-form"  mat-raised-button color="primary">{{data.buttonSubmitText}}</button>
+  </div> -->
   </div>
 
