@@ -43,7 +43,12 @@
   flex-direction: column;
   align-items: center;
  // text-align: center;
+.select-role-field{
+  width: 100%;
+  display: contents;
 }
+}
+
 
 .form{
   display: flex;
@@ -240,4 +245,7 @@ mat-mdc-menu-content{
 }
 .mat-mdc-menu-panel  .ngx-mat-tel-input-mat-menu-panel{
   max-height:250px !important;
+}
+.intl-input{
+  opacity: 1;
 }

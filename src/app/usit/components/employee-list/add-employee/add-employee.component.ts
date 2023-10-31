@@ -20,6 +20,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import { Router } from '@angular/router';
 import { Observable, startWith, map } from 'rxjs';
 import { EmployeeManagementService } from 'src/app/usit/services/employee-management.service';
@@ -47,8 +48,9 @@ import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSelectModule,
     SearchPipe,
-    NgxMatIntlTelInputComponent
+    NgxMatIntlTelInputComponent,
   ],
 
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -173,12 +175,12 @@ export class AddEmployeeComponent {
       ],
       branch: [employeeData ? employeeData.branch : '', [Validators.required]],
       teamlead: [employeeData ? employeeData.teamlead : ''],
-      role: [employeeData ? employeeData.role.rolename : '', Validators.required],
-      // role: this.formBuilder.group({
-      //   roleid: new FormControl('', [
-      //     Validators.required
-      //   ]),
-      // })
+     // role: [employeeData ? employeeData.role.rolename : '', Validators.required],
+      role: this.formBuilder.group({
+        roleid: new FormControl(employeeData ? employeeData.role.roleid : '', [
+          Validators.required
+        ]),
+      })
     });
 
   }
@@ -195,7 +197,7 @@ export class AddEmployeeComponent {
       pseudoname.updateValueAndValidity();
     });
     // for manager validation
-    this.employeeForm.get('role').valueChanges.subscribe((res: any) => {
+    this.employeeForm.get('role.roleid').valueChanges.subscribe((res: any) => {
       const manager = this.employeeForm.get('manager');
       const tl = this.employeeForm.get('teamlead');
       if (res == 4) {
@@ -323,9 +325,11 @@ export class AddEmployeeComponent {
     });
   }
 
-  managerid(id: number) {
-
-    this.getTeamLead(id);
+  managerid(event: MatSelectChange) {
+    const selectedManagerId = event.value;
+    if(selectedManagerId){
+      this.getTeamLead(selectedManagerId);
+    }
   }
 
   getTeamLead(id: number) {
@@ -334,7 +338,7 @@ export class AddEmployeeComponent {
       this.teamLeadOptions = response.data;
       //  console.log(response.data)
      // TBD autocomplete:
-      this.optionsMethod("teamLead")
+     // this.optionsMethod("teamLead")
     });
   }
 
@@ -402,5 +406,9 @@ export class AddEmployeeComponent {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  onContryChange(ev: any) {
+
   }
 }
