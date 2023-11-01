@@ -21,7 +21,7 @@
         {
           "text": "Vendor",
           "icon": "group",
-          "routerLink": "/usit/vendor"
+          "routerLink": "/usit/vendors"
         },
         {
           "text": "Recruiters",
@@ -180,4 +180,3 @@
       "routerLink": "/usit/create-po"
     }
   ]
-  

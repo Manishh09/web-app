@@ -7,9 +7,8 @@ import { ApiService } from 'src/app/core/services/api.service';
 })
 export class RoleManagementService {
 
-  private baseUrl = "http://69.216.19.140:8080/usit/";
   private apiServ = inject(ApiService);
-  constructor(private http: HttpClient) { }
+
 
   /**************ROLES SERVICES -  STARTS************* */
   // roles management
@@ -33,7 +32,7 @@ export class RoleManagementService {
   }
   // get roles based on page num
   getRolesBasedOnPageNum(page: any, size: any) {
-    return this.apiServ.get(this.baseUrl + "roles/all2/"+page+"/"+size);
+    return this.apiServ.get("roles/all2/"+page+"/"+size);
   }
 
   // delete role
@@ -42,7 +41,7 @@ export class RoleManagementService {
   }
   //used for delete the resource
   updateRoleStatus(entity: any) {
-    return this.http.patch(this.baseUrl + "roles/status", entity);
+    return this.apiServ.patch("roles/status", entity);
   }
 
   // add or update role bases on action edit => update; add=> add

@@ -36,6 +36,14 @@ export class ApiService {
     );
   }
 
+  patch(url: string, data: any) {
+    return this.http.patch(this.apiUrl + url, data).pipe(
+      map((x) => x),
+      retry(1),
+      catchError(x=> of(this.handleHttpError(x)))
+    );
+  }
+
   delete(url: string, data?: any) {
     return this.http.delete(this.apiUrl + url).pipe(
       map((x) => x),
