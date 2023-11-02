@@ -74,7 +74,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
 
   // paginator
   length = 50;
-  pageSize = 10;
+  pageSize = 25;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25];
 
@@ -193,7 +193,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
-    dialogConfig.height = '100vh';
+    // dialogConfig.height = '100vh';
     dialogConfig.panelClass = 'edit-employee';
     dialogConfig.data = actionData;
     this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
