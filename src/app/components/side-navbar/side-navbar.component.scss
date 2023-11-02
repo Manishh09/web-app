@@ -74,3 +74,7 @@
   padding: 0px !important;
   margin-left: 32px;
 }
+
+::ng-deep .mdc-list-item__primary-text{
+  font-size: 14px !important;
+}
