@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -19,9 +20,13 @@ import {
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { DialogService } from 'src/app/services/dialog.service';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 import { Recruiter } from 'src/app/usit/models/recruiter';
 import { VendorService } from 'src/app/usit/services/vendor.service';
+import { AddVendorComponent } from './add-vendor/add-vendor.component';
+import { StatusComponent } from 'src/app/dialogs/status/status.component';
+import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
+import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 
 @Component({
   selector: 'app-vendor-list',
@@ -120,8 +125,8 @@ export class VendorListComponent implements OnInit {
     );
   }
   /**
-   * get all employee data
-   * @returns employee data
+   * get all vendor data
+   * @returns vendor data
    */
   getAllVendors() {
     return this.vendorServ
@@ -216,27 +221,159 @@ export class VendorListComponent implements OnInit {
   /**
    * add
    */
-  addEmployee(){
+  addVendor() {
+    const actionData = {
+      title: 'Add Vendor',
+      vendorData: null,
+      actionName: 'add',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    // dialogConfig.height = "100vh";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'add-vendor';
+    dialogConfig.data = actionData;
 
+    this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
   }
   /**
    * edit
-   * @param emp
+   * @param endor
    */
-  editEmployee(emp: unknown) {}
+  editVendor(vendor: any) {
+    const actionData = {
+      title: 'Update Vendor',
+      vendorData: vendor,
+      actionName: 'edit',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    dialogConfig.height = '100vh';
+    dialogConfig.panelClass = 'edit-vendor';
+    dialogConfig.data = actionData;
+    this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
+  }
   /**
    * delete
-   * @param emp
+   * @param vendor
    */
-  deleteEmployee(emp: unknown) {}
+  deleteVendor(vendor: any) {
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: vendor,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '400px';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'delete-vendor';
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
+
+    // call delete api after  clicked 'Yes' on dialog click
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: 'Status updated successfully!',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+
+          this.vendorServ
+            .deleteEntity(vendor.userid)
+            .subscribe((response: any) => {
+              if (response.status == 'Success') {
+                this.gty(this.page);
+                dataToBeSentToSnackBar.message =
+                  'Vendor Deleted successfully';
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              } else {
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                dataToBeSentToSnackBar.message = 'Record Deletion failed';
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              }
+            });
+        }
+      },
+    });
+  }
   /**
    * on status update
-   * @param emp
+   * @param vendor
    */
-  onStatusUpdate(emp: unknown) {}
+  onStatusUpdate(vendor: any) {
+    const dataToBeSentToDailog = {
+      title: 'Status Update',
+      updateText: vendor.status !== 'Active' ? 'activating' : 'in-activating',
+      type: 'Vendor',
+      buttonText: 'Update',
+      actionData: vendor,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '400px';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'update-vendor-status';
+    dialogConfig.data = dataToBeSentToDailog;
+
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      StatusComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.submitted) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: 'Status updated successfully!',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+          vendor.remarks = dialogRef.componentInstance.remarks;
+          this.vendorServ
+            .changeStatus2(vendor.id, vendor.status, vendor.remarks)
+            .subscribe((response: any) => {
+              if (response.status == 'Success') {
+                this.gty(this.page);
+                dataToBeSentToSnackBar.message = 'Status updated successfully';
+
+              } else {
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                dataToBeSentToSnackBar.message = 'Status update failed';
+              }
+              this.snackBarServ.openSnackBarFromComponent(
+                dataToBeSentToSnackBar
+              );
+            });
+        }
+      },
+    });
+  }
+
+  onApproveOrRejectVMS(vendor: any){
+
+  }
   /**
    * handle page event - pagination
-   * @param emp
+   * @param endor
    */
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
