@@ -297,16 +297,15 @@ export class VendorListComponent implements OnInit {
                 this.gty(this.page);
                 dataToBeSentToSnackBar.message =
                   'Vendor Deleted successfully';
-                this.snackBarServ.openSnackBarFromComponent(
-                  dataToBeSentToSnackBar
-                );
+
               } else {
                 dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
                 dataToBeSentToSnackBar.message = 'Record Deletion failed';
-                this.snackBarServ.openSnackBarFromComponent(
-                  dataToBeSentToSnackBar
-                );
+
               }
+              this.snackBarServ.openSnackBarFromComponent(
+                dataToBeSentToSnackBar
+              );
             });
         }
       },
@@ -368,9 +367,73 @@ export class VendorListComponent implements OnInit {
     });
   }
 
-  onApproveOrRejectVMS(vendor: any){
+  // approve initiate reject
+  //public action(id: number, ctype: string, action: string) {
+  onApproveOrRejectVMS(vendor: any, rejectVendor = false) {
+    if(vendor.vms_stat !== 'Approved'){
 
+
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: 'Status updated successfully!',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
+    if (this.department == vendor.ctype) {
+     // alertify.error("Your not Authorized to approve the Vendor");
+      dataToBeSentToSnackBar.message = "You are not Authorized to approve the Vendor";
+      dataToBeSentToSnackBar.panelClass = ["custom-snack-failure"];
+      this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar)
+      return;
+    }
+
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: vendor.vms_stat == 'Initiated' && !rejectVendor? 'Approve Vendor' : 'Reject Vendor',
+      message: vendor.vms_stat == 'Initiated' && !rejectVendor? 'Are you sure you want to Approve the Vendor ?' : 'Are you sure you want to Reject the Vendor ?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: vendor,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = 'fit-content';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = `${vendor.vms_stat == 'Initiated' && !rejectVendor? 'approve': 'reject'}-vendor`;
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(ConfirmComponent, dialogConfig)
+
+    const statReqObj = {
+      action: vendor.vms_stat === "Initiated" ? 'Approved' : 'Reject',
+      id: vendor.id,
+      loginId: this.loginId
+    }
+    dialogRef.afterClosed().subscribe(()=>{
+        this.vendorServ.approvevms(statReqObj.action,statReqObj.id, statReqObj.loginId).subscribe
+        (
+          (response: any) => {
+            console.log(JSON.stringify(response))
+            if (response.status == 'Approved') {
+              dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+              dataToBeSentToSnackBar.panelClass = ["custom-snack-success"];
+              this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar)
+            }
+            else {
+            //  alertify.success("Vendor " + response.data + " successfully");
+            dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+            dataToBeSentToSnackBar.panelClass = ["custom-snack-success"];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar)
+            }
+            this.gty(this.page);
+          }
+        );
+    })
+  // after closing popup
+
+    } return
   }
+
   /**
    * handle page event - pagination
    * @param endor

@@ -90,7 +90,7 @@
           <span>
             <button mat-raised-button (click)="onStatusUpdate(vendor)"
               [ngStyle]="{ color: 'white' }"
-              [ngClass]="['Active', 'Approved'].includes(vendor.status) ? 'mat-primary' : 'mat-warn'">
+              [ngClass]="vendor.status === 'Approved' ? 'mat-primary' : vendor.status === 'Active' ? 'mat-primary' : 'mat-warn'">
               {{ vendor.status }}
             </button>
           </span>
@@ -115,20 +115,30 @@
       <ng-container matColumnDef="Approve/Reject">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Approve/Reject"> Approve/Reject </th>
         <td mat-cell *matCellDef="let vendor">
-          <span>
-            <button *ngIf="['Approved', 'Initiated'].includes(vendor.vms_stat)" mat-raised-button (click)="onApproveOrRejectVMS(vendor)"
+          <ng-container *ngIf="['Approved'].includes(vendor.vms_stat);  else ifNotApproved">
+
+            <button  mat-raised-button (click)="onApproveOrRejectVMS(vendor)"
               [ngStyle]="{ color: 'white' }"
-              [ngClass]="['Approved', 'Initiated'].includes(vendor.vms_stat) ? 'mat-primary' : 'mat-warn'">
+              [ngClass]="vendor.vms_stat === 'Approved'  ?   'mat-primary' : vendor.vms_stat === 'Initiated'  ?  'mat-secondary' : 'mat-warn'">
               {{vendor.vms_stat}}
             </button>
-          </span>
-          <span>
-            <button *ngIf="vendor.vms_stat === 'Reject'" mat-raised-button (click)="onApproveOrRejectVMS(vendor)"
-            [ngStyle]="{ color: 'white' }"
-            [ngClass]="'mat-warn'">
-            {{vendor.vms_stat}}
-          </button>
-        </span>
+
+          </ng-container >
+            <ng-template #ifNotApproved>
+              <!-- Initiated BUTTON -->
+              <button  *ngIf="['Initiated'].includes(vendor.vms_stat)" mat-raised-button (click)="onApproveOrRejectVMS(vendor)"
+              [ngStyle]="{ color: 'white' }"
+              [ngClass]="'mat-primary'"> {{vendor.vms_stat}}
+            </button>
+
+            <!-- Reject BUTTON -->
+
+              <button  mat-raised-button (click)="onApproveOrRejectVMS(vendor ,true)"
+              [ngStyle]="{ color: 'white' }"
+              [ngClass]="'mat-warn'"> {{'Reject'}}
+            </button>
+
+          </ng-template>
       </td>
       </ng-container>
 

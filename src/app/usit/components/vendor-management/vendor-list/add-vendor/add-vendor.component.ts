@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VendorService } from 'src/app/usit/services/vendor.service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
@@ -89,12 +89,17 @@ export class AddVendorComponent implements OnInit {
         }),
         headquerter: ['', Validators.required],
 
+
           // edit form
           vmsid: [this.entity.vmsid],
           vms_stat: [this.entity.vms_stat],
       }
     );
-    this.validateControls()
+    if(this.data.actionName === 'edit'){
+      this.vendorForm.addControl('vmsid', new FormControl(this.entity.vmsid));
+      this.vendorForm.addControl('vms_stat', new FormControl(this.entity.vms_stat));
+    }
+    this.validateControls(this.data.actionName)
   }
 
   validateControls(action = "add"){
