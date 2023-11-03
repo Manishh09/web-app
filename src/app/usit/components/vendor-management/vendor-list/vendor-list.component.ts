@@ -248,7 +248,7 @@ export class VendorListComponent implements OnInit {
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
-    dialogConfig.height = '100vh';
+    //dialogConfig.height = '100vh';
     dialogConfig.panelClass = 'edit-vendor';
     dialogConfig.data = actionData;
     this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
