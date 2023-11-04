@@ -112,6 +112,19 @@
             is required</mat-error> -->
         </mat-form-field>
 
+        <!-- select status -->
+        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit'">
+          <mat-label>Select Status</mat-label>
+         <!-- <input matInput formControlName="companytype" [matAutocomplete]="companyTypeAutoCmp" > -->
+          <!-- <mat-autocomplete #companyTypeAutoCmp="matAutocomplete"> -->
+            <mat-select formControlName="vms_stat">
+              <!-- <mat-option *ngFor="let option of []"
+                [value]="option[0]">
+                {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
+              </mat-option> -->
+            </mat-select>
+          <!-- </mat-autocomplete> -->
+        </mat-form-field>
          <!-- details   -->
          <mat-form-field appearance="fill">
           <mat-label>Other Details</mat-label>

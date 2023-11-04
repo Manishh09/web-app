@@ -17,11 +17,10 @@ import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.servi
 })
 export class StatusComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private snackBarServ = inject(SnackBarService);
   protected statusForm!: FormGroup;
   protected showValidationError = false;
-  submitted: boolean = false;
   remarks = '';
+  submitted = false;
   constructor(@Inject(MAT_DIALOG_DATA) protected data: IStatusData,
   public dialogRef: MatDialogRef<StatusComponent>){
 
@@ -42,20 +41,13 @@ export class StatusComponent implements OnInit {
       this.dialogRef.close();
     }
     else if(action === "UPDATE"){
-      const dataToBeSentToSnackBar: ISnackBarData = {
-        message: 'Status updated successfully!',
-        duration: 1500,
-        verticalPosition: 'top',
-        horizontalPosition: 'center',
-        direction: 'above',
-        panelClass: ['custom-snack-success']
+      if (this.statusForm.invalid) {
+        this.displayFormErrors();
+        return;
       }
       if(this.statusForm.valid){
-        this.showValidationError = false;
-        this.submitted = true;
-        if (this.statusForm.invalid) {
-          return;
-        }
+        this.submitted =true;
+
 
        // this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         this.dialogRef.close();
@@ -68,5 +60,12 @@ export class StatusComponent implements OnInit {
 
   }
 
-
+  displayFormErrors() {
+    Object.keys(this.statusForm.controls).forEach((field) => {
+      const control = this.statusForm.get(field);
+      if (control && control.invalid) {
+        control.markAsTouched();
+      }
+    });
+  }
 }
