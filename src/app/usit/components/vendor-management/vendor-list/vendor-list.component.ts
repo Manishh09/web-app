@@ -55,7 +55,7 @@ export class VendorListComponent implements OnInit {
   dataSource = new MatTableDataSource([]);
   // paginator
   length = 50;
-  pageSize = 10;
+  pageSize = 25;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25];
   hidePageSize = false;
@@ -107,6 +107,7 @@ export class VendorListComponent implements OnInit {
       ((response: any) => {
         this.datarr = response.data.content;
         this.dataSource.data = response.data.content;
+        console.log(this.dataSource.data);
         // for serial-num {}
         this.dataSource.data.map( (x:any, i)=> {x.serialNum = i+1});
         this.totalItems = response.data.totalElements;
@@ -193,7 +194,7 @@ export class VendorListComponent implements OnInit {
         case 'AddedBy':
           return (
             (isAsc ? 1 : -1) *
-            (a.addedby || '').localeCompare(b.addedby || '')
+            (a.pseudoname || '').localeCompare(b.pseudoname || '')
           );
         case 'AddedOn':
             return (

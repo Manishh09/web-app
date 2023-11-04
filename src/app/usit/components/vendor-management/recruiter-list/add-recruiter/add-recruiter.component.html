@@ -1,1 +1,103 @@
-<p>add-recruiter works!</p>
+<div class="header-container mat-elevation-z1">
+  <span class="header-text" mat-dialog-title>
+    {{ data.title }}
+  </span>
+  <button mat-icon-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-card class="center-card">
+  <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()" class="vendor-form">
+    <div class="form">
+      <div class="form-column-left">
+        <!-- Company -->
+        <mat-form-field appearance="fill">
+          <mat-label>Company Name</mat-label>
+          <input
+            matInput
+            formControlName="company"
+            [matAutocomplete]="companyAutoCmp"
+          />
+          <mat-autocomplete #companyAutoCmp="matAutocomplete">
+            <!-- <mat-select formControlName="company"> -->
+            <!-- <mat-option *ngFor="let option of []"
+                  [value]="option[0]">
+                  {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
+                </mat-option> -->
+            <!-- </mat-select> -->
+          </mat-autocomplete>
+          <!-- <mat-error *ngIf="vendorForm.get('company')!.hasError('required')"
+            >Company Name is Required
+          </mat-error> -->
+        </mat-form-field>
+
+        <!-- Location - HeadQuarters -->
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="headquerter" />
+          <!-- <mat-error *ngIf="vendorForm.get('headquerter')!.hasError('required')"
+            >Email is required</mat-error
+          > -->
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Company Contact Number </mat-label>
+            <!-- <input matInput formControlName="personalcontactnumber"> -->
+            <ngx-mat-intl-tel-input class="intl-input"  formControlName="personalcontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
+            name="personalcontactnumber" id="intlInput" #personalcontactnumber #pNumb>
+          </ngx-mat-intl-tel-input>
+            <!-- <mat-error
+              *ngIf="vendorForm.get('personalcontactnumber')!.hasError('required')">Personal
+              Contact
+              Number is required</mat-error> -->
+          </mat-form-field>
+
+      </div>
+
+      <div class="form-column-right">
+        <!-- OTHER DETAILS SECTION -->
+        <!-- staff   -->
+        <mat-form-field appearance="fill">
+          <mat-label>Recruiter Name</mat-label>
+          <input matInput formControlName="staff" />
+        </mat-form-field>
+        <!-- website -->
+        <mat-form-field appearance="fill">
+          <mat-label>Extension</mat-label>
+          <input matInput formControlName="website" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Select Designation</mat-label>
+            <!-- <input matInput formControlName="vendortype" [matAutocomplete]="vendorAutoCmp" > -->
+            <!-- <mat-autocomplete #vendorAutoCmp="matAutocomplete"> -->
+            <mat-select formControlName="vendortype">
+              <!-- <mat-option *ngFor="let option of []"
+                    [value]="option[0]">
+                    {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
+                  </mat-option> -->
+            </mat-select>
+            <!-- </mat-autocomplete> -->
+            <mat-error *ngIf="vendorForm.get('vendortype')!.hasError('required')"
+              >Vendor Type is Required
+            </mat-error>
+          </mat-form-field>
+      </div>
+    </div>
+    <div class="form-details">
+        <div class="form-details-textarea">
+            <mat-form-field>
+                <mat-label>Other Details</mat-label>
+                <textarea matInput></textarea>
+            </mat-form-field>
+        </div>
+    </div>
+  </form>
+  <div class="form-button-right">
+    <!-- <div class="form-button-inner"> -->
+    <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()">
+      Submit
+    </button>
+    <!-- </div> -->
+  </div>
+</mat-card>

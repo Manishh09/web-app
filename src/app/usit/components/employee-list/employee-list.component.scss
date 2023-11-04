@@ -160,11 +160,23 @@ tbody{
 
 .action-buttons {
   display: flex;
-  justify-content: space-between;
+  //justify-content: space-between;
   align-items: center;
 }
 
 .action-buttons button {
   margin: 0;
   padding: 0;
+  width: 30px;
+}
+
+::ng-deep .action-button-ed .mat-mdc-button-touch-target {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+::ng-deep .action-button-ed .mat-mdc-focus-indicator {
+  width: 30px !important;
+  height: 30px !important;
+  top: 10px;
 }
