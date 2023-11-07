@@ -39,12 +39,12 @@
         <!-- actions -->
       <ng-container matColumnDef="Actions">
         <th mat-header-cell *matHeaderCellDef> Action </th>
-        <td mat-cell *matCellDef="let role">
-          <button mat-icon-button (click)="editRole(role)">
+        <td mat-cell *matCellDef="let role" class="action-buttons">
+          <button mat-icon-button (click)="editRole(role)" class="action-button-ed">
             <mat-icon>edit</mat-icon>
           </button>
 
-          <button mat-icon-button (click)="deleteRole(role)">
+          <button mat-icon-button (click)="deleteRole(role)" class="action-button-ed">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

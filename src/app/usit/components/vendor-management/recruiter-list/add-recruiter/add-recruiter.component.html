@@ -1,1 +1,104 @@
-<p>add-recruiter works!</p>
+<div class="header-container mat-elevation-z1">
+  <span class="header-text" mat-dialog-title>
+    {{ data.title }}
+  </span>
+  <button mat-icon-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<mat-card class="center-card">
+  <form [formGroup]="recruiterForm" (ngSubmit)="onSubmit()" class="vendor-form">
+    <div class="form">
+      <div class="form-column-left">
+        <!-- Company Name-->
+        <mat-form-field appearance="fill">
+          <mat-label>Company Name</mat-label>
+          <mat-autocomplete #companyAutoCmp="matAutocomplete">
+          <input matInput formControlName="autoInput" [matAutocomplete]="companyAutoCmp" />
+          </mat-autocomplete>
+          <button matSuffix mat-icon-button><mat-icon>add</mat-icon></button>
+          <mat-error *ngIf="recruiterForm.get('autoInput')!.hasError('required')">Company Name is Required</mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" (change)="emailDuplicate($event)"/>
+          <mat-error *ngIf="recruiterForm.get('email')!.hasError('required')">Email is required</mat-error>
+          <mat-error *ngIf="recruiterForm.get('email')!.hasError('pattern')">Invalid Email Address</mat-error>
+        </mat-form-field>
+
+        <!-- Company Contact Number -->
+        <mat-form-field appearance="fill">
+          <mat-label>Company Contact Number </mat-label>
+          <ngx-mat-intl-tel-input  matInput class="intl-input" formControlName="contactnumber" [enablePlaceholder]="true"
+            [enableSearch]="true" name="contactnumber" id="intlInput" #personalcontactnumber #pNumb>
+          </ngx-mat-intl-tel-input>
+          <!-- <mat-error
+              *ngIf="vendorForm.get('personalcontactnumber')!.hasError('required')">Personal
+              Contact
+              Number is required</mat-error> -->
+        </mat-form-field>
+
+        <!-- staff   -->
+        <mat-form-field appearance="fill">
+          <mat-label>Recruiter Name</mat-label>
+          <input matInput formControlName="recruiter" />
+        </mat-form-field>
+
+      </div>
+
+      <div class="form-column-right">
+        <!-- OTHER DETAILS SECTION -->
+        
+        <!-- website -->
+        <mat-form-field appearance="fill">
+          <mat-label>Extension</mat-label>
+          <input matInput formControlName="extension" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Select Recruiter Type</mat-label>
+          <mat-select formControlName="recruitertype">
+            <mat-option value="Recruiter">Recruiter</mat-option>
+            <mat-option value="Bench Sales">Sales</mat-option>
+            <mat-option value="Both">Both</mat-option>
+          </mat-select>
+          <mat-error *ngIf="recruiterForm.get('recruitertype')!.hasError('required')">Recruiter Type is Required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
+          <mat-label>Recruiter Id</mat-label>
+            <input matInput formControlName="recid" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
+          <mat-label>Select Status</mat-label>
+            <mat-select formControlName="rec_stat">
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Inactive">Inactive</mat-option>
+
+            </mat-select>
+        </mat-form-field>
+
+
+      </div>
+    </div>
+    <div class="form-details">
+      <div class="form-details-textarea">
+        <mat-form-field>
+          <mat-label>Other Details</mat-label>
+          <textarea matInput></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+  <div class="form-button-right">
+    <!-- <div class="form-button-inner"> -->
+    <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()">
+      Submit
+    </button>
+    <!-- </div> -->
+  </div>
+</mat-card>

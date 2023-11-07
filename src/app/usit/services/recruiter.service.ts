@@ -66,7 +66,7 @@ export class RecruiterService {
     return this.apiServ.get("recruiter/status?id=" + id + "&status=" + status + "&remarks=" + remarks);
   }
 
-  approve(role: number, action: string, id: number) {//this.role,action,id
+  approve(action: string, id: number, userid:number) {//this.role,action,id
     return this.apiServ.get("recruiter/approve?stat=" + action + "&id=" + id);
   }
 
@@ -77,4 +77,9 @@ export class RecruiterService {
   uploadexcels(file: any, id:number) {
     return this.apiServ.post("recruiter/excelUpload", file);
   }
+
+  addOrUpdateRecruiter(entity: any, action: string){
+    return action === "edit-recruiter" ? this.updateEntity(entity) : this.registerEntity(entity);
+ 
+   }
 }

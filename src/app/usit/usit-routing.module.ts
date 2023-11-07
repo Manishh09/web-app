@@ -4,6 +4,7 @@ import { EmployeeListComponent } from './components/employee-list/employee-list.
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RolesListComponent } from './components/role-list/roles-list.component';
 import { VendorListComponent } from './components/vendor-management/vendor-list/vendor-list.component';
+import { RecruiterListComponent } from './components/vendor-management/recruiter-list/recruiter-list.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent , pathMatch: 'full'},
@@ -13,7 +14,8 @@ const routes: Routes = [
   },
   { path: 'employees', component: EmployeeListComponent},
   { path: 'vendors', component: VendorListComponent },
-  { path: 'roles', component: RolesListComponent }
+  { path: 'roles', component: RolesListComponent },
+  { path: 'recruiters', component: RecruiterListComponent}
 ];
 
 @NgModule({
