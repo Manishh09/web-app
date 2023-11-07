@@ -7,89 +7,90 @@
   </button>
 </div>
 <mat-card class="center-card">
-  <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()" class="vendor-form">
+  <form [formGroup]="recruiterForm" (ngSubmit)="onSubmit()" class="vendor-form">
     <div class="form">
       <div class="form-column-left">
-        <!-- Company -->
+        <!-- Company Name-->
         <mat-form-field appearance="fill">
           <mat-label>Company Name</mat-label>
-          <input
-            matInput
-            formControlName="company"
-            [matAutocomplete]="companyAutoCmp"
-          />
           <mat-autocomplete #companyAutoCmp="matAutocomplete">
-            <!-- <mat-select formControlName="company"> -->
-            <!-- <mat-option *ngFor="let option of []"
-                  [value]="option[0]">
-                  {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
-                </mat-option> -->
-            <!-- </mat-select> -->
+          <input matInput formControlName="autoInput" [matAutocomplete]="companyAutoCmp" />
           </mat-autocomplete>
-          <!-- <mat-error *ngIf="vendorForm.get('company')!.hasError('required')"
-            >Company Name is Required
-          </mat-error> -->
+          <button matSuffix mat-icon-button><mat-icon>add</mat-icon></button>
+          <mat-error *ngIf="recruiterForm.get('autoInput')!.hasError('required')">Company Name is Required</mat-error>
         </mat-form-field>
 
-        <!-- Location - HeadQuarters -->
+        <!-- Email -->
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="headquerter" />
-          <!-- <mat-error *ngIf="vendorForm.get('headquerter')!.hasError('required')"
-            >Email is required</mat-error
-          > -->
+          <input matInput formControlName="email" (change)="emailDuplicate($event)"/>
+          <mat-error *ngIf="recruiterForm.get('email')!.hasError('required')">Email is required</mat-error>
+          <mat-error *ngIf="recruiterForm.get('email')!.hasError('pattern')">Invalid Email Address</mat-error>
         </mat-form-field>
+
+        <!-- Company Contact Number -->
         <mat-form-field appearance="fill">
-            <mat-label>Company Contact Number </mat-label>
-            <!-- <input matInput formControlName="personalcontactnumber"> -->
-            <ngx-mat-intl-tel-input class="intl-input"  formControlName="personalcontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
-            name="personalcontactnumber" id="intlInput" #personalcontactnumber #pNumb>
+          <mat-label>Company Contact Number </mat-label>
+          <ngx-mat-intl-tel-input  matInput class="intl-input" formControlName="contactnumber" [enablePlaceholder]="true"
+            [enableSearch]="true" name="contactnumber" id="intlInput" #personalcontactnumber #pNumb>
           </ngx-mat-intl-tel-input>
-            <!-- <mat-error
+          <!-- <mat-error
               *ngIf="vendorForm.get('personalcontactnumber')!.hasError('required')">Personal
               Contact
               Number is required</mat-error> -->
-          </mat-form-field>
+        </mat-form-field>
+
+        <!-- staff   -->
+        <mat-form-field appearance="fill">
+          <mat-label>Recruiter Name</mat-label>
+          <input matInput formControlName="recruiter" />
+        </mat-form-field>
 
       </div>
 
       <div class="form-column-right">
         <!-- OTHER DETAILS SECTION -->
-        <!-- staff   -->
-        <mat-form-field appearance="fill">
-          <mat-label>Recruiter Name</mat-label>
-          <input matInput formControlName="staff" />
-        </mat-form-field>
+        
         <!-- website -->
         <mat-form-field appearance="fill">
           <mat-label>Extension</mat-label>
-          <input matInput formControlName="website" />
+          <input matInput formControlName="extension" />
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>Select Designation</mat-label>
-            <!-- <input matInput formControlName="vendortype" [matAutocomplete]="vendorAutoCmp" > -->
-            <!-- <mat-autocomplete #vendorAutoCmp="matAutocomplete"> -->
-            <mat-select formControlName="vendortype">
-              <!-- <mat-option *ngFor="let option of []"
-                    [value]="option[0]">
-                    {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
-                  </mat-option> -->
+          <mat-label>Select Recruiter Type</mat-label>
+          <mat-select formControlName="recruitertype">
+            <mat-option value="Recruiter">Recruiter</mat-option>
+            <mat-option value="Bench Sales">Sales</mat-option>
+            <mat-option value="Both">Both</mat-option>
+          </mat-select>
+          <mat-error *ngIf="recruiterForm.get('recruitertype')!.hasError('required')">Recruiter Type is Required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
+          <mat-label>Recruiter Id</mat-label>
+            <input matInput formControlName="recid" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
+          <mat-label>Select Status</mat-label>
+            <mat-select formControlName="rec_stat">
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Inactive">Inactive</mat-option>
+
             </mat-select>
-            <!-- </mat-autocomplete> -->
-            <mat-error *ngIf="vendorForm.get('vendortype')!.hasError('required')"
-              >Vendor Type is Required
-            </mat-error>
-          </mat-form-field>
+        </mat-form-field>
+
+
       </div>
     </div>
     <div class="form-details">
-        <div class="form-details-textarea">
-            <mat-form-field>
-                <mat-label>Other Details</mat-label>
-                <textarea matInput></textarea>
-            </mat-form-field>
-        </div>
+      <div class="form-details-textarea">
+        <mat-form-field>
+          <mat-label>Other Details</mat-label>
+          <textarea matInput></textarea>
+        </mat-form-field>
+      </div>
     </div>
   </form>
   <div class="form-button-right">
