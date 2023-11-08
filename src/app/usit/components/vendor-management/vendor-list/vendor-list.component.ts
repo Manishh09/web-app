@@ -43,6 +43,7 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
     MatSortModule,
     MatPaginatorModule,
     CommonModule,
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -50,7 +51,9 @@ export class VendorListComponent implements OnInit {
   dataTableColumns: string[] = [
     'SerialNum', 'Company',
     'HeadQuarter','Fed-Id','VendorType', 'TierType',
-    'AddedBy', 'AddedOn','LastUpdated','Status', 'Action','Approve/Reject'
+    'AddedBy', 'AddedOn','LastUpdated',
+    // 'Status',
+    'Action','Approve/Reject'
   ];
   dataSource = new MatTableDataSource([]);
   // paginator
@@ -81,6 +84,7 @@ export class VendorListComponent implements OnInit {
    itemsPerPage = 50;
    AssignedPageNum !: any;
    field = "empty";
+  isRejected: boolean = false;
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
     this.loginId = localStorage.getItem('userid');
@@ -206,10 +210,10 @@ export class VendorListComponent implements OnInit {
               (isAsc ? 1 : -1) *
               (a.updateddate || '').localeCompare(b.updateddate || '')
             );
-        case 'Status':
-          return (
-            (isAsc ? 1 : -1) * (a.status || '').localeCompare(b.status || '')
-          );
+        // case 'Status':
+        //   return (
+        //     (isAsc ? 1 : -1) * (a.status || '').localeCompare(b.status || '')
+        //   );
         case 'Approve/Reject':
           return (
             (isAsc ? 1 : -1) * (a.vms_stat || '').localeCompare(b.vms_stat || '')
@@ -218,6 +222,12 @@ export class VendorListComponent implements OnInit {
           return 0;
       }
     });
+  }
+  /**uplload
+   *
+   */
+  uploadVendor() {
+
   }
   /**
    * add
@@ -371,6 +381,7 @@ export class VendorListComponent implements OnInit {
   // approve initiate reject
   //public action(id: number, ctype: string, action: string) {
   onApproveOrRejectVMS(vendor: any, rejectVendor = false) {
+    this.isRejected = rejectVendor;
     if(vendor.vms_stat !== 'Approved'){
 
 
@@ -440,9 +451,18 @@ export class VendorListComponent implements OnInit {
    * @param endor
    */
   handlePageEvent(e: PageEvent) {
+    console.log("page.event", e)
     this.pageEvent = e;
     this.length = e.length;
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
+    this.assignToPage = e.pageIndex;
+    return this.vendorServ.getAllVendorsByPagination(this.hasAcces, this.loginId, e.pageIndex, e.pageSize, this.field).subscribe(
+      ((response: any) => {
+        this.datarr = response.data.content;
+        this.dataSource.data.map( (x:any, i)=> {x.serialNum = i+1});
+        this.totalItems = response.data.totalElements;
+      })
+    );
   }
 }

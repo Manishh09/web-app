@@ -1,13 +1,4 @@
-<!-- <ul class="breadcrumb">
-  <li><a href="#" routerLink="/dashboard">Home</a></li>
-  <li><a href="#" routerLink="/users">Add User</a></li>
-</ul> -->
 
-<!-- <div class="header-container mat-elevation-z1">
-  <span class="header-text">
-    Add User
-  </span>
-</div> -->
 <div class="header-container mat-elevation-z1">
     <span class="header-text" mat-dialog-title>
       {{data.title}}
@@ -26,13 +17,12 @@
             <mat-label>Company</mat-label>
            <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" >
             <mat-autocomplete #companyAutoCmp="matAutocomplete">
-              <!-- <mat-select formControlName="company"> -->
-                <!-- <mat-option *ngFor="let option of []"
-                  [value]="option[0]">
-                  {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
-                </mat-option> -->
-              <!-- </mat-select> -->
+                <mat-option *ngFor="let option of (searchObs$ | async)"
+                  [value]="option.company.trim()">
+                  {{ option.company.trim() }}
+                </mat-option>
             </mat-autocomplete>
+              <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found</mat-hint>
               <mat-error *ngIf="vendorForm.get('company')!.hasError('required')">Company Type
                 is Required
               </mat-error>
@@ -41,7 +31,7 @@
             <!-- Location - HeadQuarters -->
             <mat-form-field appearance="fill">
               <mat-label>Location</mat-label>
-              <input matInput formControlName="headquerter">
+              <input matInput formControlName="headquerter" ngx-gp-autocomplete [options]='options' (onAddressChange)="handleAddressChange($event)">
               <mat-error *ngIf="vendorForm.get('headquerter')!.hasError('required')">Location
                 Name is required</mat-error>
 
@@ -59,10 +49,10 @@
            <!-- <input matInput formControlName="vendortype" [matAutocomplete]="vendorAutoCmp" > -->
             <!-- <mat-autocomplete #vendorAutoCmp="matAutocomplete"> -->
               <mat-select formControlName="vendortype">
-                <!-- <mat-option *ngFor="let option of []"
-                  [value]="option[0]">
-                  {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
-                </mat-option> -->
+                <mat-option *ngFor="let option of selectOptionObj.vendorType"
+                  [value]="option">
+                  {{ option }}
+                </mat-option>
               </mat-select>
             <!-- </mat-autocomplete> -->
               <mat-error *ngIf="vendorForm.get('vendortype')!.hasError('required')">Vendor Type
@@ -76,9 +66,9 @@
            <!-- <input matInput formControlName="tyretype" [matAutocomplete]="vendorAutoCmp" > -->
             <!-- <mat-autocomplete #vendorAutoCmp="matAutocomplete"> -->
                <mat-select formControlName="tyretype">
-                <mat-option *ngFor="let option of []"
-                  [value]="option[0]">
-                  {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
+                <mat-option *ngFor="let option of selectOptionObj.tierType"
+                  [value]="option">
+                  {{ option }}
                 </mat-option>
               </mat-select>
             <!-- </mat-autocomplete> -->
@@ -93,10 +83,10 @@
          <!-- <input matInput formControlName="companytype" [matAutocomplete]="companyTypeAutoCmp" > -->
           <!-- <mat-autocomplete #companyTypeAutoCmp="matAutocomplete"> -->
             <mat-select formControlName="companytype">
-              <!-- <mat-option *ngFor="let option of []"
-                [value]="option[0]">
-                {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
-              </mat-option> -->
+              <mat-option *ngFor="let option of selectOptionObj.companyType"
+                  [value]="option">
+                  {{ option }}
+                </mat-option>
             </mat-select>
           <!-- </mat-autocomplete> -->
             <mat-error *ngIf="vendorForm.get('companytype')!.hasError('required')">Company Type
@@ -117,13 +107,15 @@
           <mat-label>Select Status</mat-label>
          <!-- <input matInput formControlName="companytype" [matAutocomplete]="companyTypeAutoCmp" > -->
           <!-- <mat-autocomplete #companyTypeAutoCmp="matAutocomplete"> -->
-            <mat-select formControlName="vms_stat">
-              <!-- <mat-option *ngFor="let option of []"
-                [value]="option[0]">
-                {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
-              </mat-option> -->
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let option of selectOptionObj.statusType"
+              [value]="option">
+              {{ option }}
+            </mat-option>
             </mat-select>
           <!-- </mat-autocomplete> -->
+            <mat-error *ngIf="vendorForm.get('status')!.hasError('required')">Status
+            is required</mat-error>
         </mat-form-field>
          <!-- details   -->
          <mat-form-field appearance="fill">

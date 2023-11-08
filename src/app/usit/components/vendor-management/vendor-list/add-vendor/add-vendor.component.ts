@@ -4,7 +4,7 @@ import { VendorService } from 'src/app/usit/services/vendor.service';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -17,6 +17,10 @@ import { SearchPipe } from 'src/app/pipes/search.pipe';
 import { Vms } from 'src/app/usit/models/vms';
 import { MatCardModule } from '@angular/material/card';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
+import { NgxGpAutocompleteModule} from '@angular-magic/ngx-gp-autocomplete';
+import { Loader } from '@googlemaps/js-api-loader';
+import { Observable, debounceTime, distinctUntilChanged, tap, switchMap, of } from 'rxjs';
+import { Company } from 'src/app/usit/models/company';
 
 @Component({
   selector: 'app-add-vendor',
@@ -35,10 +39,20 @@ import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
     MatSelectModule,
     SearchPipe,
     MatCardModule,
-    NgxMatIntlTelInputComponent
+    NgxMatIntlTelInputComponent,
+    NgxGpAutocompleteModule,
+  ],
+  providers: [
+    {
+      provide: Loader,
+      useValue: new Loader({
+        apiKey: 'AIzaSyCT0z0QHwdq202psuLbL99GGd-QZMTm278',
+        libraries: ['places'],
+      }),
+    },
   ],
   templateUrl: './add-vendor.component.html',
-  styleUrls: ['./add-vendor.component.scss']
+  styleUrls: ['./add-vendor.component.scss'],
 })
 export class AddVendorComponent implements OnInit {
   entity = new Vms();
@@ -52,165 +66,189 @@ export class AddVendorComponent implements OnInit {
   private snackBarServ = inject(SnackBarService);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
+  options = {
+    componentRestrictions: { country: ['IN', 'US'] },
+  };
 
+  companySearchData: any[] = [];
+  searchObs$! : Observable<any>;
+  selectOptionObj = {
+    companyType: COMPANY_TYPE,
+    tierType: TIER_TYPE,
+    vendorType: VENDOR_TYPE,
+    statusType: STATUS_TYPE
+  }
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
     public dialogRef: MatDialogRef<AddVendorComponent>
   ) {}
   ngOnInit(): void {
+    this.getvendorcompanydetails(); //This method will be  called for company auto-complete search
     this.iniVendorForm();
   }
-
 
   /**
    * initializes vendor Form
    */
   private iniVendorForm() {
-    this.vendorForm = this.formBuilder.group(
-      {
-        company: ['', [Validators.required]],
-        fedid: [this.vendorForm.fedid],
-        vendortype: ['', Validators.required],
-        companytype: ['', Validators.required],
-        tyretype: [''],
-        client: [this.entity.client],
-        addedby: [this.entity.addedby],
-        updatedby: [this.entity.updatedby],
-        details: [this.vendorForm.details],
-        staff: [this.entity.staff],
-        revenue: [this.entity.revenue],
-        website: [this.entity.website],
-        facebook: [this.entity.facebook],
-        industrytype: [this.entity.industrytype],
-        linkedinid: [this.entity.linkedinid],
-        twitterid: [this.entity.twitterid],
-        user: this.formBuilder.group({
-          userid: localStorage.getItem('userid'),
-        }),
-        headquerter: ['', Validators.required],
-
-
-          // edit form
-          vmsid: [this.entity.vmsid],
-          vms_stat: [this.entity.vms_stat],
-      }
-    );
-    if(this.data.actionName === 'edit'){
-      this.vendorForm.addControl('vmsid', this.formBuilder.control(this.entity.vmsid));
-      this.vendorForm.addControl('vms_stat', this.formBuilder.control(this.entity.vms_stat));
+    this.vendorForm = this.formBuilder.group({
+      company: [
+        this.data.vendorData ? this.data.vendorData.company : '',
+        [Validators.required],
+      ],
+      fedid: [this.data.vendorData ? this.data.vendorData.fedid : ''],
+      vendortype: [this.data.vendorData ? this.data.vendorData.vendortype : '', Validators.required],
+      companytype: [this.data.vendorData ? this.data.vendorData.companytype : ''],
+      tyretype: [this.data.vendorData ? this.data.vendorData.tyretype : ''],
+      client: [this.data.vendorData ? this.data.vendorData.client : ''],
+      addedby: [this.data.vendorData ? this.data.vendorData.addedby : ''],
+      updatedby: [this.data.vendorData ? this.data.vendorData.updatedby : ''],
+      details: [this.data.vendorData ? this.data.vendorData.details : ''],
+      staff: [this.data.vendorData ? this.data.vendorData.staff : ''],
+      revenue: [this.data.vendorData ? this.data.vendorData.revenue : ''],
+      website: [this.data.vendorData ? this.data.vendorData.website : ''],
+      facebook: [this.data.vendorData ? this.data.vendorData.facebook : ''],
+      industrytype: [
+        this.data.vendorData ? this.data.vendorData.industrytype : '',
+      ],
+      linkedinid: [this.data.vendorData ? this.data.vendorData.linkedinid : ''],
+      twitterid: [this.data.vendorData ? this.data.vendorData.twitterid : ''],
+      user: this.formBuilder.group({
+        userid: localStorage.getItem('userid'),
+      }),
+      headquerter: [
+        this.data.vendorData ? this.data.vendorData.headquerter : '',
+        Validators.required,
+      ],
+    });
+    if (this.data.actionName === 'edit') {
+      this.vendorForm.addControl(
+        'status',
+        this.formBuilder.control(
+          this.data.vendorData ? this.data.vendorData.status : ''
+        )
+      );
+      this.vendorForm.addControl(
+        'vmsid',
+        this.formBuilder.control(
+          this.data.vendorData ? this.data.vendorData.vmsid : ''
+        )
+      );
+      this.vendorForm.addControl(
+        'vms_stat',
+        this.formBuilder.control(
+          this.data.vendorData ? this.data.vendorData.vms_stat : ''
+        )
+      );
     }
-    this.validateControls(this.data.actionName)
+    this.validateControls(this.data.actionName);
   }
 
-  validateControls(action = "add"){
-    if(action! == 'add'){
+  validateControls(action = 'add') {
+    if (action === 'edit') {
       this.vendorForm.get('status').valueChanges.subscribe((res: any) => {
         const remarks = this.vendorForm.get('remarks');
-        if (res === "Rejected") {
+        if (res === 'Rejected') {
           //this.rejectionflg = true;
           remarks.setValidators(Validators.required);
-        }
-        else {
+        } else {
           //this.rejectionflg = false;
           remarks.clearValidators();
         }
         remarks.updateValueAndValidity();
-        if (res == "Active") {
-          this.vendorForm.get("vms_stat").setValue("Initiated");
+        if (res == 'Active') {
+          this.vendorForm.get('vms_stat').setValue('Initiated');
         }
       });
-      return
+      return;
     }
     this.vendorForm.get('vendortype').valueChanges.subscribe((res: any) => {
       const vntype = this.vendorForm.get('vendortype').value;
       const trtype = this.vendorForm.get('tyretype');
       if (vntype == 'Primary Vendor') {
         trtype.setValue('Primary Vendor');
-      }
-      else if (vntype == 'Implementation Partner') {
+      } else if (vntype == 'Implementation Partner') {
         trtype.setValue('Implementation Partner');
-      }
-      else if (vntype == 'Client') {
+      } else if (vntype == 'Client') {
         trtype.setValue('Client');
-      }
-      else {
+      } else {
         trtype.setValue('');
       }
-      if (res == "Tier") {
+      if (res == 'Tier') {
         trtype.setValidators(Validators.required);
-      }
-      else {
+      } else {
         trtype.clearValidators();
       }
       trtype.updateValueAndValidity();
     });
+    this.companyAutoCompleteSearch()
   }
 
   /**
    * getVendor Company Details
    */
   getvendorcompanydetails() {
-    this.vendorServ.getCompanies().subscribe(
-      (response: any) => {
+    this.vendorServ.getCompanies().subscribe({
+      next: (response: any) => {
         this.rolearr = response.data;
-        console.log('add-vendor.data', response.data)
+        console.log('rolearr.data', response.data);
+        },
+        error: err => {
+          // error
+        }
       }
-    )
+    );
   }
 
   dupcheck(event: any) {
     const vendor = event.target.value;
-    this.vendorServ.duplicatecheck(vendor, 0).subscribe(
-      (response: any) => {
-        if (response.status == 'success') {
-          // this.message = '';
-        }
-        else if (response.status == 'duplicate') {
-          const cn = this.vendorForm.get('company');
-          cn.setValue('');
-          // this.message = 'Vendor Company already exist';
-          // alertify.error("Vendor Company already exist");
-        }
-        else {
-          // alertify.error("Internal Server Error");
-        }
+    this.vendorServ.duplicatecheck(vendor, 0).subscribe((response: any) => {
+      if (response.status == 'success') {
+        // this.message = '';
+      } else if (response.status == 'duplicate') {
+        const cn = this.vendorForm.get('company');
+        cn.setValue('');
+        // this.message = 'Vendor Company already exist';
+        // alertify.error("Vendor Company already exist");
+      } else {
+        // alertify.error("Internal Server Error");
       }
-    )
+    });
   }
 
   /**
    * Submit
    */
-  onSubmit(){
+  onSubmit() {
+    this.submitted = true;
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 2500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
+
     if (this.vendorForm.invalid) {
       // this.blur = "enable"
       this.displayFormErrors();
       return;
-    }
-    else {
+    } else {
       // this.blur = "Active"
     }
-    // this.ngxService.start();
-   // console.log(JSON.stringify(this.form.value, null, 2));
-    this.vendorServ.registerEntity(this.vendorForm.value)
-      .subscribe(
-        (data: any) => {
-          // this.ngxService.stop();
-          // this.blur = "Active";
-          if (data.status == 'success') {
-            // alertify.success("Vendor Added successfully");
-            // this.form.reset();
-            // this.router.navigate(['list-vendor']);
-            this.dialogRef.close();
-          }
-          else {
-            // this.ngxService.stop();
-            // this.blur = "enable"
-            // this.message = data.message;
-            // alertify.error("Vendor Already Exists");
-          }
+    console.log("form.value  ===", this.vendorForm.value)
+    this.vendorServ
+      .addORUpdateVendor(this.vendorForm.value, this.data.actionName)
+      .subscribe((data: any) => {
+        if (data.status == 'success') {
+          dataToBeSentToSnackBar.message = 'Vendor Added successfully';
+          this.dialogRef.close();
+        } else {
+          dataToBeSentToSnackBar.message = 'Vendor Already Exists';
         }
-      );
+        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar)
+      });
   }
 
   /** to display form validation messages */
@@ -223,13 +261,90 @@ export class AddVendorComponent implements OnInit {
     });
   }
 
-  onContryChange(event: unknown){
+  companyAutoCompleteSearch() {
+   this.searchObs$= this.vendorForm.get('company').valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap((term: any) => {
+        if (term) {
+          console.log(term)
+          return this.getFilteredValue(term);
+        }
+        else {
+          this.companySearchData = [];
+          return of<any>([]);
+        }
+      }
+      ),
+      // Uncomment below to verify the searched result
+      // tap((res) => {
+      //   console.log({res})
 
+      // }),
+
+     );
+
+
+
+  }
+  /**
+   * filters the data for searched input query
+   * @param term
+   * @returns
+   */
+  getFilteredValue(term: any): Observable<any> {
+    if(term && this.rolearr){
+      const sampleArr = this.rolearr.filter((val: any) => val.company.trim().toLowerCase().includes(term.trim().toLowerCase()) == true)
+      this.companySearchData = sampleArr;
+      return of(this.companySearchData);
+    }
+    return of([])
+  }
+
+  /**
+   * handle address change
+   * @param address
+   */
+
+  handleAddressChange(address: any) {
+    console.log('address', address.formatted_address);
+    this.vendorForm.constrols.headquerter.setValue(address.formatted_address)
+   // this.entity.headquerter = address.formatted_address;
   }
   /**
    * Cancel
    */
-  onCancel(){
+  onCancel() {
     this.dialogRef.close();
   }
 }
+
+export const VENDOR_TYPE = [
+'Primary Vendor',
+'Implementation Partner',
+'Client',
+'Tier'
+] as const
+
+export const TIER_TYPE = [
+  'Tier One',
+  'Tier Two',
+  'Tier Three',
+  'Primary Vendor',
+  'Implementation Partner',
+  'Client',
+] as const
+
+export const COMPANY_TYPE = [
+  'Recruiting',
+  'Bench Sales',
+  'Both'
+
+] as const
+
+export const STATUS_TYPE = [
+  'Active',
+  'Approved',
+  'Rejected'
+
+] as const
