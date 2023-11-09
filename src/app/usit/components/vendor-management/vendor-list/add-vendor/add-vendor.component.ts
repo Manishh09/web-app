@@ -96,7 +96,7 @@ export class AddVendorComponent implements OnInit {
         this.data.vendorData ? this.data.vendorData.company : '',
         [Validators.required],
       ],
-      fedid: [this.data.vendorData ? this.data.vendorData.fedid : ''],
+    //  fedid: [this.data.vendorData ? this.data.vendorData.fedid : ''],
       vendortype: [this.data.vendorData ? this.data.vendorData.vendortype : '', Validators.required],
       companytype: [this.data.vendorData ? this.data.vendorData.companytype : ''],
       tyretype: [this.data.vendorData ? this.data.vendorData.tyretype : ''],

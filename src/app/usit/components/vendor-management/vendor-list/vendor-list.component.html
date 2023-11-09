@@ -48,10 +48,10 @@
         </ng-container>
 
         <!-- Fed-Id Column -->
-         <ng-container matColumnDef="Fed-Id">
+         <!-- <ng-container matColumnDef="Fed-Id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Fed-Id "> Fed-Id  </th>
           <td mat-cell *matCellDef="let element"> {{element.fedid}} </td>
-        </ng-container>
+        </ng-container> -->
 
         <!-- VendorType Column -->
         <ng-container matColumnDef="VendorType">
@@ -157,7 +157,6 @@
       <hr>
       <!-- paginator -->
       <mat-paginator #paginator
-              [length]="dataSource.data.length"
               (page)="handlePageEvent($event)"
               [length]="length"
               [pageSize]="pageSize"
