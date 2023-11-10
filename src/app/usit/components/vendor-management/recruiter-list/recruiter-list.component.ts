@@ -58,7 +58,7 @@ export class RecruiterListComponent implements OnInit {
     'AddedBy',
     'AddedOn',
     'LastUpdated',
-    'Status',
+    // 'Status',
     'Action',
     'Approve/Reject',
   ];
@@ -147,6 +147,7 @@ export class RecruiterListComponent implements OnInit {
           x.serialNum = i + 1;
         });
         this.totalItems = response.data.totalElements;
+        //this.getRecruiterRowClass();
       });
   }
   gty(page: any) {
@@ -228,10 +229,10 @@ export class RecruiterListComponent implements OnInit {
             (isAsc ? 1 : -1) *
             (a.updateddate || '').localeCompare(b.updateddate || '')
           );
-        case 'Status':
-          return (
-            (isAsc ? 1 : -1) * (a.status || '').localeCompare(b.status || '')
-          );
+        // case 'Status':
+        //   return (
+        //     (isAsc ? 1 : -1) * (a.status || '').localeCompare(b.status || '')
+        //   );
         case 'Approve/Reject':
           return (
             (isAsc ? 1 : -1) *
@@ -242,6 +243,22 @@ export class RecruiterListComponent implements OnInit {
       }
     });
   }
+
+  // uploadRecruiterExcel() {
+  //   const actionData = {
+  //     title: 'Upload Recruiter',
+  //     vendorData: null,
+  //     actionName: 'upload-recruiter',
+  //   };
+  //   const dialogConfig = new MatDialogConfig();
+  //   dialogConfig.width = '65vw';
+  //   // dialogConfig.height = "100vh";
+  //   dialogConfig.disableClose = false;
+  //   dialogConfig.panelClass = 'upload-recruiter';
+  //   dialogConfig.data = actionData;
+
+  //   this.dialogServ.openDialogWithComponent(UploadRecuiterExcelComponent, dialogConfig);
+  // }
 
   /**
    * add
@@ -485,4 +502,20 @@ export class RecruiterListComponent implements OnInit {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
   }
+
+  getRecruiterRowClass(row : any){
+    const recruitertype = row.recruitertype;
+    //console.log('rowwwwwwwww', recruitertype);
+
+    if (recruitertype === 'Recruiter') {
+        return 'technical-recruiter';
+    } else if (recruitertype === 'Bench Sales Recruiter') {
+        return 'bench-sales-recruiter';
+    } else if (recruitertype === 'Both') {
+        return 'both-recruiters';
+    } else {
+        return '';
+    }
+  }
+  
 }

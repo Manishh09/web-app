@@ -13,11 +13,18 @@
         <!-- Company Name-->
         <mat-form-field appearance="fill">
           <mat-label>Company Name</mat-label>
-          <mat-autocomplete #companyAutoCmp="matAutocomplete">
           <input matInput formControlName="autoInput" [matAutocomplete]="companyAutoCmp" />
+          <mat-autocomplete #companyAutoCmp="matAutocomplete">
+            <mat-option *ngFor="let option of rolearr" [value]="option.company">{{ option.company }}</mat-option>
           </mat-autocomplete>
           <button matSuffix mat-icon-button><mat-icon>add</mat-icon></button>
           <mat-error *ngIf="recruiterForm.get('autoInput')!.hasError('required')">Company Name is Required</mat-error>
+        </mat-form-field>
+
+        <!-- staff   -->
+        <mat-form-field appearance="fill">
+          <mat-label>Recruiter Name</mat-label>
+          <input matInput formControlName="recruiter" />
         </mat-form-field>
 
         <!-- Email -->
@@ -40,12 +47,6 @@
               Number is required</mat-error> -->
         </mat-form-field>
 
-        <!-- staff   -->
-        <mat-form-field appearance="fill">
-          <mat-label>Recruiter Name</mat-label>
-          <input matInput formControlName="recruiter" />
-        </mat-form-field>
-
       </div>
 
       <div class="form-column-right">
@@ -57,8 +58,16 @@
           <input matInput formControlName="extension" />
         </mat-form-field>
 
+        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
+          <mat-label>Select Status</mat-label>
+            <mat-select formControlName="rec_stat">
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Inactive">Inactive</mat-option>
+            </mat-select>
+        </mat-form-field>
+
         <mat-form-field appearance="fill">
-          <mat-label>Select Recruiter Type</mat-label>
+          <mat-label>Select Designation</mat-label>
           <mat-select formControlName="recruitertype">
             <mat-option value="Recruiter">Recruiter</mat-option>
             <mat-option value="Bench Sales">Sales</mat-option>
@@ -67,20 +76,10 @@
           <mat-error *ngIf="recruiterForm.get('recruitertype')!.hasError('required')">Recruiter Type is Required</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
+        <!-- <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
           <mat-label>Recruiter Id</mat-label>
             <input matInput formControlName="recid" />
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
-          <mat-label>Select Status</mat-label>
-            <mat-select formControlName="rec_stat">
-            <mat-option value="Active">Active</mat-option>
-            <mat-option value="Inactive">Inactive</mat-option>
-
-            </mat-select>
-        </mat-form-field>
-
+        </mat-form-field> -->
 
       </div>
     </div>
