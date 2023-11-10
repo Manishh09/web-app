@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
   private initializeLoginForm() {
     this.form = this.formBuilder.group({
       email: [
-        '',
+        'saikiran@narveetech.com', // remove later
         [
           Validators.required,
           Validators.email,
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
         ],
       ],
       password: [
-        '',
+        'Kiran@123$',
         [
           Validators.required,
           // Validators.minLength(8),
@@ -100,7 +100,7 @@ export class LoginComponent implements OnInit {
       email: this.form.controls.email.value,
       password: this.form.controls.password.value,
     };
-    this.userManagementServ.loginV2(userObj).subscribe({
+    this.userManagementServ.login(userObj).subscribe({
      next: (result: any) => {
       console.log("result", result)
         if (result.status == 'success') {

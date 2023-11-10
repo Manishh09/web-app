@@ -70,4 +70,8 @@ export class VendorService {
   uploadexcel(file: any) {
     return this.apiServ.post("vendor/upload", file);
   }
+
+  addORUpdateVendor(entity: any, action: 'edit-vendor' | 'add-vendor'){
+    return action === 'edit-vendor' ? this.updateEntity(entity): this.registerEntity(entity);
+  }
 }
