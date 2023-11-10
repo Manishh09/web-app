@@ -64,7 +64,7 @@ export class VendorListComponent implements OnInit {
     'Action',
     'Approve/Reject',
   ];
-  dataSource = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<any>([]);
   // paginator
   length = 50;
   pageSize = 0;
@@ -325,10 +325,11 @@ export class VendorListComponent implements OnInit {
           };
 
           this.vendorServ
-            .deleteEntity(vendor.userid)
+            .deleteEntity(vendor.id)
             .subscribe((response: any) => {
               if (response.status == 'Success') {
-                this.gty(this.page);
+                // this.gty(this.page);
+                this.getAllData();
                 dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
               } else {
                 dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -455,19 +456,21 @@ export class VendorListComponent implements OnInit {
           .approvevms(statReqObj.action, statReqObj.id, statReqObj.loginId)
           .subscribe((response: any) => {
             console.log(JSON.stringify(response));
-            if (response.status == 'Approved') {
-              dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-              dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-              this.snackBarServ.openSnackBarFromComponent(
-                dataToBeSentToSnackBar
-              );
-            } else {
-              //  alertify.success("Vendor " + response.data + " successfully");
-              dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-              dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-              this.snackBarServ.openSnackBarFromComponent(
-                dataToBeSentToSnackBar
-              );
+            if (dialogRef.componentInstance.allowAction) {
+              if (response.status == 'Approved') {
+                dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              } else {
+                //  alertify.success("Vendor " + response.data + " successfully");
+                dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              }
             }
             this.gty(this.page);
           });
@@ -507,5 +510,29 @@ export class VendorListComponent implements OnInit {
         });
     }
     return;
+  }
+
+  getVendorRowClass(row : any){
+    const companytype = row.companytype;
+    // console.log('rowwwwwwwww', recruitertype);
+
+    if (companytype === 'Recruiting') {
+        return 'recruiting-companies';
+    } else if (companytype === 'Bench Sales') {
+        return 'bench-sales-recruiter';
+    } else if (companytype === 'Both') {
+        return 'both';
+    } else {
+        return '';
+    }
+  }
+
+  filterVendors(vendorType: string | null): void {
+    if (vendorType) {
+      const filteredData = this.datarr.filter((vendor) => vendor.companytype === vendorType);
+      this.dataSource.data = filteredData;
+    } else {
+      this.dataSource.data = this.datarr;
+    }
   }
 }

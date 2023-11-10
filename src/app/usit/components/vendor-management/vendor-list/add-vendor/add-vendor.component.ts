@@ -308,7 +308,7 @@ export class AddVendorComponent implements OnInit {
 
   handleAddressChange(address: any) {
     console.log('address', address.formatted_address);
-    this.vendorForm.constrols.headquerter.setValue(address.formatted_address)
+    this.vendorForm.controls.headquerter.setValue(address.formatted_address)
    // this.entity.headquerter = address.formatted_address;
   }
   /**
