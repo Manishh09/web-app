@@ -122,8 +122,9 @@ tbody{
 }
 
 .vendor-table-style {
-  width: 100%;
-  height: calc(100% - 86px);
+  padding: 0 2px;
+  width: max-content;
+  height: calc(100% - 0px);
   overflow: auto;
 }
 
@@ -185,4 +186,33 @@ tbody{
   width: 30px !important;
   height: 30px !important;
   top: 10px;
+}
+
+.filter-vendors{
+  display: flex;
+  column-gap: 5px;
+}
+
+@media screen and (min-width: 1400px) {
+  .vendor-table-style {
+    width: 100%;
+    height: calc(100% - 0px);
+    overflow: auto;
+  }
+}
+
+.recruiting-companies {
+  color: #f44336; 
+}
+
+.bench-sales-recruiter {
+  color: #3f51b5; 
+}
+
+.both {
+  color: black;
+}
+
+.edit-icon, .delete-icon {
+  color: rgb(99, 98, 98);
 }

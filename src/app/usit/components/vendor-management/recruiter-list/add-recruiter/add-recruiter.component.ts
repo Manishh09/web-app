@@ -17,6 +17,9 @@ import { Vms } from 'src/app/usit/models/vms';
 import { MatCardModule } from '@angular/material/card';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 import { RecruiterService } from 'src/app/usit/services/recruiter.service';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+import {AsyncPipe} from '@angular/common';
 
 @Component({
   selector: 'app-add-recruiter',
@@ -44,10 +47,15 @@ export class AddRecruiterComponent implements OnInit {
   entity = new Vms();
   recruiterForm: any = FormGroup;
   submitted = false;
-  rolearr: any = [];
+  rolearr: { company: string }[] = [
+    { company: 'abc tech' },
+    { company: 'narvee solutions' },
+    { company: 'hcl' },
+  ];
   cityarr: any = [];
   pinarr: any = [];
   statearr: any = [];
+  filteredOptions: any;
   private recruiterServ = inject(RecruiterService);
   private snackBarServ = inject(SnackBarService);
   private router = inject(Router);
@@ -58,13 +66,24 @@ export class AddRecruiterComponent implements OnInit {
     public dialogRef: MatDialogRef<AddRecruiterComponent>
   ) {}
   ngOnInit(): void {
+    this.getvendorcompanydetails()
     if (this.data.actionName === 'edit-recruiter') {
       this.iniRecruiterForm(this.data.RecruiterData);
       console.log(this.data.RecruiterData);
     } else {
       this.iniRecruiterForm(null);
     }
+    // this.filteredOptions = this.autoInput.valueChanges.pipe(
+    //   startWith(''),
+    //   map(value => this._filter(value || '')),
+    // );
   }
+
+  // private _filter(value: any) {
+  //   const filterValue = value.toLowerCase();
+
+  //   return this.rolearr.filter(option => option.toLowerCase().includes(filterValue));
+  // }
 
   /**
    * initializes Recruiter Form
@@ -152,6 +171,35 @@ export class AddRecruiterComponent implements OnInit {
         //   this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         // },
       );
+  }
+
+  flg!: any;
+  dept = 'all';
+
+  getvendorcompanydetails() {
+    this.flg = localStorage.getItem('department');
+    const role = localStorage.getItem('role');
+
+    if (role == 'Super Admin' || role == 'Admin') {
+      this.dept = "all";
+    }
+    if (this.flg == 'Recruiting') {
+      this.dept = 'Recruiting'
+    }
+    if (this.flg == 'Bench Sales') {
+      this.dept = 'Bench Sales'
+    }
+    this.recruiterServ.getCompanies(this.dept).subscribe(
+      (response: any) => {
+        console.log(response.data);
+        this.rolearr = response.data;
+        console.log(this.rolearr)
+        // for( let i =0 ; i< this.rolearr.length; i++){
+        //   console.log(this.rolearr[i]);
+        //   this.rolearr = this.rolearr[i];
+        // }
+      }
+    )
   }
 
   displayFormErrors() {
