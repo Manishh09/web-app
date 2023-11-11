@@ -7,7 +7,7 @@
 
 .nav-list .is-active {
   background-color: rgb(188, 218, 252) !important;
-  border-left: 4px solid rgb(84, 43, 167);
+  border-left-color: rgb(84, 43, 167);
   box-sizing: border-box;
 }
 
@@ -37,6 +37,7 @@
   justify-content: center;
   flex-direction: row;
   background-color: rgb(230, 236, 244);
+  border-left: 4px solid rgb(230, 236, 244);
 
   // & > span {
   //   margin-left: 4px;

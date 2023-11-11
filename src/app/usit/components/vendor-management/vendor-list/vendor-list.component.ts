@@ -328,8 +328,8 @@ export class VendorListComponent implements OnInit {
             .deleteEntity(vendor.id)
             .subscribe((response: any) => {
               if (response.status == 'Success') {
-                // this.gty(this.page);
-                this.getAllData();
+                this.gty(this.page);
+                // this.getAllData();
                 dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
               } else {
                 dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
