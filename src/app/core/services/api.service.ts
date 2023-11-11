@@ -29,7 +29,7 @@ export class ApiService {
     );
   }
   put(url: string, data: any) {
-    return this.http.post(this.apiUrl + url, data).pipe(
+    return this.http.put(this.apiUrl + url, data).pipe(
       map((x) => x),
       retry(1),
       catchError(x=> of(this.handleHttpError(x)))

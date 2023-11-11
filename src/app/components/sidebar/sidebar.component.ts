@@ -1,8 +1,12 @@
 
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 import {    Component, OnInit, inject } from '@angular/core'
+import { ThemePalette } from '@angular/material/core';
+import { ProgressBarMode } from '@angular/material/progress-bar';
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { LoaderService } from 'src/app/services/loader.service';
 import { PermissionsService } from 'src/app/services/permissions.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
@@ -29,6 +33,13 @@ export class SidebarComponent implements OnInit {
   protected permissionServ = inject(PermissionsService);
   protected userManagementServ = inject(UserManagementService)
   private router = inject(Router);
+  // loader
+  loaderServ = inject(LoaderService);
+  isLoading$ = this.loaderServ.isLoading$;
+  color: ThemePalette = 'primary';
+  progressBarMode: ProgressBarMode = 'indeterminate';
+  progressSpinnerMode: ProgressSpinnerMode = 'indeterminate';
+  value = 50;
   ngOnInit() {
 
   }

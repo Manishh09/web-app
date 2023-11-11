@@ -91,21 +91,22 @@ export class VendorListComponent implements OnInit {
   // pagination code
   page: number = 1;
   itemsPerPage = 50;
-  AssignedPageNum!: any;
+  // AssignedPageNum!: any;
   field = 'empty';
   isRejected: boolean = false;
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
     this.loginId = localStorage.getItem('userid');
     this.department = localStorage.getItem('department');
-    this.AssignedPageNum = localStorage.getItem('vnum');
+    // this.AssignedPageNum = localStorage.getItem('vnum');
     //this.getall();
-    if (this.AssignedPageNum == null) {
-      this.getAllData();
-    } else {
-      this.gty(this.AssignedPageNum);
-      this.page = this.AssignedPageNum;
-    }
+    // if (this.AssignedPageNum == null) {
+    //   this.getAllData();
+    // } else {
+    //   this.gty(this.AssignedPageNum);
+    //   this.page = this.AssignedPageNum;
+    // }
+    this.getAllData();
 
     // this.getAllVendors();
   }
@@ -116,13 +117,7 @@ export class VendorListComponent implements OnInit {
   }
   getAllData() {
     return this.vendorServ
-      .getAllVendorsByPagination(
-        this.hasAcces,
-        this.loginId,
-        1,
-        this.itemsPerPage,
-        this.field
-      )
+      .getAllVendorsByPagination(this.hasAcces, this.loginId, 1, 50, this.field)
       .subscribe((response: any) => {
         this.datarr = response.data.content;
         this.dataSource.data = response.data.content;
@@ -132,17 +127,17 @@ export class VendorListComponent implements OnInit {
           x.serialNum = i + 1;
         });
         this.totalItems = response.data.totalElements;
-        this.length = response.data.totalPages;
+        //  this.length = response.data.totalElements;
       });
   }
   gty(page: any) {
-    this.assignToPage = page;
+    // this.assignToPage = page;
     return this.vendorServ
       .getAllVendorsByPagination(
         this.hasAcces,
         this.loginId,
         page,
-        this.itemsPerPage,
+        this.pageSize,
         this.field
       )
       .subscribe((response: any) => {
@@ -151,7 +146,7 @@ export class VendorListComponent implements OnInit {
           x.serialNum = i + 1;
         });
         this.totalItems = response.data.totalElements;
-        this.length = response.data.totalPages;
+        this.length = response.data.totalElements;
       });
   }
   /**
@@ -259,7 +254,7 @@ export class VendorListComponent implements OnInit {
     const actionData = {
       title: 'Add Vendor',
       vendorData: null,
-      actionName: 'add',
+      actionName: 'add-vendor',
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
@@ -278,7 +273,7 @@ export class VendorListComponent implements OnInit {
     const actionData = {
       title: 'Update Vendor',
       vendorData: vendor,
-      actionName: 'edit',
+      actionName: 'edit-vendor',
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
@@ -324,21 +319,17 @@ export class VendorListComponent implements OnInit {
             panelClass: ['custom-snack-success'],
           };
 
-          this.vendorServ
-            .deleteEntity(vendor.id)
-            .subscribe((response: any) => {
-              if (response.status == 'Success') {
-                this.gty(this.page);
-                // this.getAllData();
-                dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
-              } else {
-                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-                dataToBeSentToSnackBar.message = 'Record Deletion failed';
-              }
-              this.snackBarServ.openSnackBarFromComponent(
-                dataToBeSentToSnackBar
-              );
-            });
+          this.vendorServ.deleteEntity(vendor.id).subscribe((response: any) => {
+            if (response.status == 'Success') {
+              // this.gty(this.page);
+              this.getAllData();
+              dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
+            } else {
+              dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              dataToBeSentToSnackBar.message = 'Record Deletion failed';
+            }
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          });
         }
       },
     });
@@ -383,7 +374,8 @@ export class VendorListComponent implements OnInit {
             .changeStatus2(vendor.id, vendor.status, vendor.remarks)
             .subscribe((response: any) => {
               if (response.status == 'Success') {
-                this.gty(this.page);
+                // this.gty(this.page);
+                this.getAllData();
                 dataToBeSentToSnackBar.message = 'Status updated successfully';
               } else {
                 dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -472,7 +464,8 @@ export class VendorListComponent implements OnInit {
                 );
               }
             }
-            this.gty(this.page);
+            // this.gty(this.page);
+            this.getAllData();
           });
       });
       // after closing popup
@@ -485,51 +478,55 @@ export class VendorListComponent implements OnInit {
    * @param endor
    */
   handlePageEvent(event: PageEvent) {
-    console.log('page.event', event.pageSize);
+    console.log('page.event', event);
     if (event && event.pageIndex && event.pageSize) {
       this.pageEvent = event;
       this.pageSize = event.pageSize;
-      this.assignToPage = event.pageIndex;
-      const pageIndex = event.pageIndex === 0 ? 1 : event.pageIndex;
+      // this.assignToPage = event.pageIndex;
+      const pageIndex = event.pageIndex === 0 ? 1 : event.pageIndex + 1;
       this.pageIndex = pageIndex;
       return this.vendorServ
         .getAllVendorsByPagination(
           this.hasAcces,
           this.loginId,
           pageIndex,
-          event.length,
+          event.pageSize,
           this.field
         )
         .subscribe((response: any) => {
           this.datarr = response.data.content;
           this.dataSource.data = response.data.content;
+          console.log('after page click', response.data.content);
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = i + 1;
           });
           this.totalItems = response.data.totalElements;
+          // this.length =  response.data.totalElements;
         });
     }
     return;
   }
 
-  getVendorRowClass(row : any){
+  getVendorRowClass(row: any) {
     const companytype = row.companytype;
     // console.log('rowwwwwwwww', recruitertype);
 
     if (companytype === 'Recruiting') {
-        return 'recruiting-companies';
+      return 'recruiting-companies';
     } else if (companytype === 'Bench Sales') {
-        return 'bench-sales-recruiter';
+      return 'bench-sales-recruiter';
     } else if (companytype === 'Both') {
-        return 'both';
+      return 'both';
     } else {
-        return '';
+      return '';
     }
   }
 
   filterVendors(vendorType: string | null): void {
     if (vendorType) {
-      const filteredData = this.datarr.filter((vendor) => vendor.companytype === vendorType);
+      const filteredData = this.datarr.filter(
+        (vendor) => vendor.companytype === vendorType
+      );
       this.dataSource.data = filteredData;
     } else {
       this.dataSource.data = this.datarr;

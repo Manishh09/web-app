@@ -14,10 +14,12 @@ import { catchError, finalize, retry } from 'rxjs/operators';
 import { TimeoutError } from 'rxjs';
 import { PermissionsService } from 'src/app/services/permissions.service';
 import { HttpErrors } from '../models/http-errors';
+import { LoaderService } from 'src/app/services/loader.service';
 @Injectable()
 export class HttpInterceptorService implements HttpInterceptor {
   constructor(
-    private authService: PermissionsService
+    private authService: PermissionsService,
+    private loaderServ: LoaderService
   ) //private ngxService: NgxUiLoaderService
   {}
 
@@ -25,6 +27,7 @@ export class HttpInterceptorService implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    this.loaderServ.showLoader()
     if (this.authService.getToken() && this.authService.isUserSignedin()  ) {
       const request = req.clone({
         headers: new HttpHeaders({
@@ -35,13 +38,14 @@ export class HttpInterceptorService implements HttpInterceptor {
       return next.handle(request).pipe(
         retry(1),
         finalize(() => {
-          //this.loaderService.loaderHide();
+          this.loaderServ.hideLoader();
         }),
-      //   catchError((error: HttpErrorResponse) => {
-      //     // this.ngxService.stop();
-      //     const errorMessage = this.handleServerSideError(error);
-      //     return throwError(() => error);
-      //   })
+        catchError((error: HttpErrorResponse) => {
+          // this.ngxService.stop();
+          // const errorMessage = this.handleServerSideError(error);
+          console.log("error-message", error)
+          return throwError(() => error );
+        })
      );
     }
     return next.handle(req);

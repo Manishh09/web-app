@@ -353,27 +353,22 @@ export class AddEmployeeComponent {
       panelClass: ['custom-snack-success'],
     };
     if (this.employeeForm.invalid) {
-      this.blur = 'enable';
       this.displayFormErrors();
       return;
-    } else {
-      this.blur = 'Active';
     }
     console.log(this.data.actionName+" employeeForm.value",this.employeeForm.value);
     this.empManagementServ.addOrUpdateEmployee(this.employeeForm.value, this.data.actionName).subscribe({
       next: (data: any) => {
         this.blur = 'Active';
         if (data.status == 'Success') {
-          //   alertify.success("Employee Added successfully");
           dataToBeSentToSnackBar.message =
             this.data.actionName === 'add-employee'
               ? 'Employee added successfully'
               : 'Employee updated successfully';
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
           this.employeeForm.reset();
+          this.dialogRef.close();
         } else {
-          this.blur = 'enable';
-
           dataToBeSentToSnackBar.message =
             this.data.actionName === 'add-employee'
               ? 'Employee addition is failed'
@@ -381,10 +376,9 @@ export class AddEmployeeComponent {
           dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         }
-        this.dialogRef.close();
+
       },
       error: (err) => {
-        this.blur = 'enable';
         dataToBeSentToSnackBar.message =
           this.data.actionName === 'add-employee'
             ? 'Employee addition is failed'

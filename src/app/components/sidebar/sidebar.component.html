@@ -42,8 +42,24 @@
     <mat-sidenav #sidenav mode="side"   opened="true" class="sidnav"  [fixedBottomGap]="10">
       <app-side-navbar></app-side-navbar>
     </mat-sidenav>
-    <mat-sidenav-content class="router-container">
+    <!-- spinner -->
+
+
+    <mat-sidenav-content   class="router-container">
+      <!-- spinner -->
+      <!-- <mat-progress-spinner *ngIf="isLoading$ | async"
+        class="spinner"
+        [color]="color"
+        [mode]="progressSpinnerMode"
+        [value]="value">
+      </mat-progress-spinner> -->
+      <!-- progress-bar -->
+      <mat-progress-bar class="progress-bar"
+        [color]="color" *ngIf="isLoading$ | async"
+        [mode]="progressBarMode">
+      </mat-progress-bar>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
+
   </mat-sidenav-container>
 </div>
