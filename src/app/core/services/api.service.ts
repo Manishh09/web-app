@@ -17,7 +17,7 @@ export class ApiService {
     return this.http.get(this.apiUrl + url).pipe(
       map((x) => x),
 
-      catchError(x=> of({errorMessage: this.handleHttpError(x)}))
+      catchError(x=> of({message: this.handleHttpError(x)}))
     );
   }
 
@@ -25,14 +25,14 @@ export class ApiService {
     return this.http.post(this.apiUrl + url, data).pipe(
       map((x) => x),
 
-      catchError(x=> of(this.handleHttpError(x)))
+      catchError(x=> of({message: this.handleHttpError(x)}))
     );
   }
   put(url: string, data: any) {
     return this.http.put(this.apiUrl + url, data).pipe(
       map((x) => x),
       retry(1),
-      catchError(x=> of(this.handleHttpError(x)))
+      catchError(x=> of({message: this.handleHttpError(x)}))
     );
   }
 
@@ -40,14 +40,14 @@ export class ApiService {
     return this.http.patch(this.apiUrl + url, data).pipe(
       map((x) => x),
       retry(1),
-      catchError(x=> of(this.handleHttpError(x)))
+      catchError(x=> of({message: this.handleHttpError(x)}))
     );
   }
 
   delete(url: string, data?: any) {
     return this.http.delete(this.apiUrl + url).pipe(
       map((x) => x),
-      catchError(x=> of(this.handleHttpError(x)))
+      catchError(x=> of({message: this.handleHttpError(x)}))
     );
   }
 
@@ -60,7 +60,7 @@ export class ApiService {
   }
 
   private errorHandler(x: any) {
-    if (x.hasOwnProperty('errorMessage') && !x['errorMessage']) {
+    if (x.hasOwnProperty('message') && !x['errorMessage']) {
       throw new HandledError(x['errorMessage']);
     } else {
       throw new UnHandledError('unhandled error');

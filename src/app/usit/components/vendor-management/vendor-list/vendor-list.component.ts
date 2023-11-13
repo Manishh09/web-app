@@ -30,6 +30,7 @@ import { AddVendorComponent } from './add-vendor/add-vendor.component';
 import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-vendor-list',
@@ -94,6 +95,8 @@ export class VendorListComponent implements OnInit {
   // AssignedPageNum!: any;
   field = 'empty';
   isRejected: boolean = false;
+   // to clear subscriptions
+   private destroyed$ = new Subject<void>();
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
     this.loginId = localStorage.getItem('userid');
@@ -116,18 +119,34 @@ export class VendorListComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
   getAllData() {
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
     return this.vendorServ
       .getAllVendorsByPagination(this.hasAcces, this.loginId, 1, 50, this.field)
-      .subscribe((response: any) => {
-        this.datarr = response.data.content;
-        this.dataSource.data = response.data.content;
-        console.log(this.dataSource.data);
-        // for serial-num {}
-        this.dataSource.data.map((x: any, i) => {
-          x.serialNum = i + 1;
-        });
-        this.totalItems = response.data.totalElements;
-        //  this.length = response.data.totalElements;
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+          this.datarr = response.data.content;
+          this.dataSource.data = response.data.content;
+          console.log(this.dataSource.data);
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
+          this.totalItems = response.data.totalElements;
+          //  this.length = response.data.totalElements;
+        },
+        error: (err) => {
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          dataToBeSentToSnackBar.message = err.message;
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
       });
   }
   gty(page: any) {
@@ -139,7 +158,7 @@ export class VendorListComponent implements OnInit {
         page,
         this.pageSize,
         this.field
-      )
+      ).pipe(takeUntil(this.destroyed$))
       .subscribe((response: any) => {
         this.datarr = response.data.content;
         this.dataSource.data.map((x: any, i) => {
@@ -154,12 +173,24 @@ export class VendorListComponent implements OnInit {
    * @returns vendor data
    */
   getAllVendors() {
-    return this.vendorServ.getAll().subscribe((response: any) => {
+    return this.vendorServ.getAll().pipe(takeUntil(this.destroyed$))
+    .subscribe({next:(response: any) => {
       console.log('vendor.data', response.data);
       if (response.data) {
         this.dataSource.data = response.data;
       }
-    });
+    },error: err =>{
+      const dataToBeSentToSnackBar: ISnackBarData = {
+        message: '',
+        duration: 1500,
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+        direction: 'above',
+        panelClass: ['custom-snack-failure'],
+      };
+      dataToBeSentToSnackBar.message = err.message;
+      this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+    }});
   }
 
   /**
@@ -311,7 +342,7 @@ export class VendorListComponent implements OnInit {
       next: (resp) => {
         if (dialogRef.componentInstance.allowAction) {
           const dataToBeSentToSnackBar: ISnackBarData = {
-            message: 'Status updated successfully!',
+            message: '',
             duration: 1500,
             verticalPosition: 'top',
             horizontalPosition: 'center',
@@ -319,7 +350,8 @@ export class VendorListComponent implements OnInit {
             panelClass: ['custom-snack-success'],
           };
 
-          this.vendorServ.deleteEntity(vendor.id).subscribe((response: any) => {
+          this.vendorServ.deleteEntity(vendor.id).pipe(takeUntil(this.destroyed$))
+          .subscribe({next:(response: any) => {
             if (response.status == 'Success') {
               // this.gty(this.page);
               this.getAllData();
@@ -329,7 +361,11 @@ export class VendorListComponent implements OnInit {
               dataToBeSentToSnackBar.message = 'Record Deletion failed';
             }
             this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-          });
+          }, error: err => {
+            dataToBeSentToSnackBar.message = err.message;
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }});
         }
       },
     });
@@ -372,18 +408,29 @@ export class VendorListComponent implements OnInit {
           vendor.remarks = dialogRef.componentInstance.remarks;
           this.vendorServ
             .changeStatus2(vendor.id, vendor.status, vendor.remarks)
-            .subscribe((response: any) => {
-              if (response.status == 'Success') {
-                // this.gty(this.page);
-                this.getAllData();
-                dataToBeSentToSnackBar.message = 'Status updated successfully';
-              } else {
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe({
+              next: (response: any) => {
+                if (response.status == 'Success') {
+                  // this.gty(this.page);
+                  this.getAllData();
+                  dataToBeSentToSnackBar.message =
+                    'Status updated successfully';
+                } else {
+                  dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                  dataToBeSentToSnackBar.message = 'Status update failed';
+                }
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              },
+              error: (err) => {
+                dataToBeSentToSnackBar.message = err.message;
                 dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-                dataToBeSentToSnackBar.message = 'Status update failed';
-              }
-              this.snackBarServ.openSnackBarFromComponent(
-                dataToBeSentToSnackBar
-              );
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              },
             });
         }
       },
@@ -444,30 +491,43 @@ export class VendorListComponent implements OnInit {
         loginId: this.loginId,
       };
       dialogRef.afterClosed().subscribe(() => {
-        this.vendorServ
-          .approvevms(statReqObj.action, statReqObj.id, statReqObj.loginId)
-          .subscribe((response: any) => {
-            console.log(JSON.stringify(response));
-            if (dialogRef.componentInstance.allowAction) {
-              if (response.status == 'Approved') {
-                dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+        if (dialogRef.componentInstance.allowAction) {
+          this.vendorServ
+            .approvevms(statReqObj.action, statReqObj.id, statReqObj.loginId)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe({
+              next: (response: any) => {
+                console.log(JSON.stringify(response));
+
+                  if (response.status == 'Approved') {
+                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                    dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                    this.snackBarServ.openSnackBarFromComponent(
+                      dataToBeSentToSnackBar
+                    );
+                  } else {
+                    //  alertify.success("Vendor " + response.data + " successfully");
+                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                    dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                    this.snackBarServ.openSnackBarFromComponent(
+                      dataToBeSentToSnackBar
+                    );
+                  }
+
+                // this.gty(this.page);
+                this.getAllData();
+              },
+              error: (err) => {
+                dataToBeSentToSnackBar.message = err.message;
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
                 this.snackBarServ.openSnackBarFromComponent(
                   dataToBeSentToSnackBar
                 );
-              } else {
-                //  alertify.success("Vendor " + response.data + " successfully");
-                dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                this.snackBarServ.openSnackBarFromComponent(
-                  dataToBeSentToSnackBar
-                );
-              }
-            }
-            // this.gty(this.page);
-            this.getAllData();
-          });
+              },
+            });
+        }
       });
+
       // after closing popup
     }
     return;
@@ -493,7 +553,8 @@ export class VendorListComponent implements OnInit {
           event.pageSize,
           this.field
         )
-        .subscribe((response: any) => {
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe({next:(response: any) => {
           this.datarr = response.data.content;
           this.dataSource.data = response.data.content;
           console.log('after page click', response.data.content);
@@ -502,7 +563,18 @@ export class VendorListComponent implements OnInit {
           });
           this.totalItems = response.data.totalElements;
           // this.length =  response.data.totalElements;
-        });
+        }, error: (err) => {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: '',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-failure'],
+          };
+          dataToBeSentToSnackBar.message = err.message;
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },});
     }
     return;
   }
@@ -532,4 +604,11 @@ export class VendorListComponent implements OnInit {
       this.dataSource.data = this.datarr;
     }
   }
+
+  /** clean up subscriptions */
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
+
 }

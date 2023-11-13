@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  OnDestroy,
   OnInit,
   ViewChild,
   inject,
@@ -33,6 +34,8 @@ import {
   SnackBarService,
 } from 'src/app/services/snack-bar.service';
 import { CustomSnackbarComponent } from 'src/app/components/custom-snackbar/custom-snackbar.component';
+import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-employee-list',
@@ -52,7 +55,9 @@ import { CustomSnackbarComponent } from 'src/app/components/custom-snackbar/cust
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class EmployeeListComponent implements OnInit, AfterViewInit {
+export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
+
+
   dataTableColumns: string[] = [
     'Name',
     'Email',
@@ -77,19 +82,29 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
   pageSize = 25;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25];
-
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
-
   pageEvent!: PageEvent;
   @ViewChild(MatSort) sort!: MatSort;
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  // snack bar data
+  dataTobeSentToSnackBarService: ISnackBarData = {
+    message: '',
+    duration: 2500,
+    verticalPosition: 'top',
+    horizontalPosition: 'center',
+    direction: 'above',
+    panelClass: ['custom-snack-success'],
+  };
+  // datalog-config data
+
+  // services
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private empManagementServ = inject(EmployeeManagementService);
-
+  // for subscrition clean up
+  private destroyed$ = new Subject<void>();
   ngOnInit(): void {
     this.getAllEmployees();
   }
@@ -104,14 +119,19 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
    * @returns employee data
    */
   getAllEmployees() {
-    return this.empManagementServ
-      .getAllEmployees()
-      .subscribe((response: any) => {
+    return this.empManagementServ.getAllEmployees().pipe(takeUntil(this.destroyed$)).subscribe({
+      next: (response: any) => {
         console.log('employee.data', response.data);
         if (response.data) {
           this.dataSource.data = response.data;
         }
-      });
+      },
+      error: (err) => {
+        this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+        this.dataTobeSentToSnackBarService.message = err.message;
+        this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
+      },
+    });
   }
 
   onSort(event: Sort) {
@@ -170,32 +190,22 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
   }
 
   addEmployee() {
-    const actionData = {
+    const dataToBeSentToDailog = {
       title: 'Add Employee',
       empployeeData: null,
       actionName: 'add-employee',
     };
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '65vw';
-    // dialogConfig.height = "100vh";
-    dialogConfig.disableClose = false;
-    dialogConfig.panelClass = 'add-employee';
-    dialogConfig.data = actionData;
-
+    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog,{delete: false, edit: false, add: true});
     this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
   }
 
   editEmployee(emp: Employee) {
-    const actionData = {
+    const dataToBeSentToDailog = {
       title: 'Update Employee',
       employeeData: emp,
       actionName: 'edit-employee',
     };
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '65vw';
-    // dialogConfig.height = '100vh';
-    dialogConfig.panelClass = 'edit-employee';
-    dialogConfig.data = actionData;
+    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog,{delete: false, edit: true, add: false});
     this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
   }
 
@@ -206,57 +216,55 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
       confirmText: 'Yes',
       cancelText: 'No',
       actionData: emp,
+      actionName: 'delete-employee'
     };
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '400px';
-    dialogConfig.height = 'auto';
-    dialogConfig.disableClose = false;
-    dialogConfig.panelClass = 'delete-employee';
-    dialogConfig.data = dataToBeSentToDailog;
+
+    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog,{delete: true, edit: false, add: false});
     const dialogRef = this.dialogServ.openDialogWithComponent(
       ConfirmComponent,
       dialogConfig
     );
-    const dataToBeSentToSnackBar: ISnackBarData = {
-      message: 'Status updated successfully!',
-      duration: 1500,
-      verticalPosition: 'top',
-      horizontalPosition: 'center',
-      direction: 'above',
-      panelClass: ['custom-snack-success'],
-    };
     // call delete api after  clicked 'Yes' on dialog click
 
     dialogRef.afterClosed().subscribe({
       next: (resp) => {
         if (dialogRef.componentInstance.allowAction) {
-          const dataToBeSentToSnackBar: ISnackBarData = {
-            message: 'Status updated successfully!',
-            duration: 1500,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-            direction: 'above',
-            panelClass: ['custom-snack-success'],
-          };
-
-          this.empManagementServ
-            .deleteEmployeeById(emp.userid)
-            .subscribe((response: any) => {
+          // call delete api
+          this.empManagementServ.deleteEmployeeById(emp.userid).pipe(takeUntil(this.destroyed$)).subscribe({
+            next: (response: any) => {
               if (response.status == 'Success') {
                 this.getAllEmployees();
-                dataToBeSentToSnackBar.message =
+                this.dataTobeSentToSnackBarService.message =
                   'Employee Deleted successfully';
-                this.snackBarServ.openSnackBarFromComponent(
-                  dataToBeSentToSnackBar
-                );
               } else {
-                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-                dataToBeSentToSnackBar.message = 'Record Deletion failed';
+                this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+                this.dataTobeSentToSnackBarService.message = 'Record Deletion failed';
               }
-            });
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataTobeSentToSnackBarService
+              );
+            },
+            error: (err) => {
+              this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+              this.dataTobeSentToSnackBarService.message = err.message;
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataTobeSentToSnackBarService
+              );
+            },
+          });
         }
       },
     });
+  }
+
+  private getDialogConfigData(dataToBeSentToDailog: Partial<IConfirmDialogData>, action: {delete: boolean; edit: boolean; add: boolean, updateSatus?: boolean}) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = action.edit ||  action.add  ? '65vw' : '400px';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = dataToBeSentToDailog.actionName;
+    dialogConfig.data = dataToBeSentToDailog;
+    return dialogConfig;
   }
 
   // status update
@@ -267,14 +275,9 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
       type: 'Employee',
       buttonText: 'Update',
       actionData: emp,
+      actionName: 'update-employee-status'
     };
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '400px';
-    dialogConfig.height = 'auto';
-    dialogConfig.disableClose = false;
-    dialogConfig.panelClass = 'update-employee-status';
-    dialogConfig.data = dataToBeSentToDailog;
-
+    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog, {delete: false, edit: false, add: false, updateSatus: true});
     const dialogRef = this.dialogServ.openDialogWithComponent(
       StatusComponent,
       dialogConfig
@@ -283,29 +286,29 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe({
       next: (resp) => {
         if (dialogRef.componentInstance.submitted) {
-          const dataToBeSentToSnackBar: ISnackBarData = {
-            message: 'Status updated successfully!',
-            duration: 1500,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-            direction: 'above',
-            panelClass: ['custom-snack-success'],
-          };
           emp.remarks = dialogRef.componentInstance.remarks;
-          this.empManagementServ
-            .changeEmployeeStatus(emp)
-            .subscribe((response: any) => {
+          this.empManagementServ.changeEmployeeStatus(emp).pipe(takeUntil(this.destroyed$)).subscribe({
+            next: (response: any) => {
               if (response.status == 'Success') {
                 this.getAllEmployees();
-                dataToBeSentToSnackBar.message = 'Status updated successfully';
-                this.snackBarServ.openSnackBarFromComponent(
-                  dataToBeSentToSnackBar
-                );
+                this.dataTobeSentToSnackBarService.message = 'Status updated successfully';
               } else {
-                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-                dataToBeSentToSnackBar.message = 'Status update failed';
+                this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+                this.dataTobeSentToSnackBarService.message = 'Status update failed';
               }
-            });
+              this.dataTobeSentToSnackBarService.duration = 1500;
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataTobeSentToSnackBarService
+              );
+            },
+            error: (err) => {
+              this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+              this.dataTobeSentToSnackBarService.message = err.message;
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataTobeSentToSnackBarService
+              );
+            },
+          });
         }
       },
     });
@@ -317,4 +320,13 @@ export class EmployeeListComponent implements OnInit, AfterViewInit {
     this.pageSize = e.pageSize;
     this.pageIndex = e.pageIndex;
   }
+
+  /** clean up subscriptions */
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
+
 }
+
+

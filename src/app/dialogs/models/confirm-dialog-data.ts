@@ -3,5 +3,6 @@ export interface IConfirmDialogData {
   message: string;
   confirmText: string;
   cancelText: string;
-  actionData?: any
+  actionData?: any;
+  actionName?: string
 }

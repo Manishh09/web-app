@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VendorService } from 'src/app/usit/services/vendor.service';
 import {
@@ -36,6 +36,8 @@ import {
   tap,
   switchMap,
   of,
+  Subject,
+  takeUntil,
 } from 'rxjs';
 import { Company } from 'src/app/usit/models/company';
 
@@ -71,7 +73,7 @@ import { Company } from 'src/app/usit/models/company';
   templateUrl: './add-vendor.component.html',
   styleUrls: ['./add-vendor.component.scss'],
 })
-export class AddVendorComponent implements OnInit {
+export class AddVendorComponent implements OnInit, OnDestroy {
   entity = new Vms();
   vendorForm: any = FormGroup;
   submitted = false;
@@ -95,10 +97,14 @@ export class AddVendorComponent implements OnInit {
     vendorType: VENDOR_TYPE,
     statusType: STATUS_TYPE,
   };
-  constructor(
-    @Inject(MAT_DIALOG_DATA) protected data: any,
-    public dialogRef: MatDialogRef<AddVendorComponent>
-  ) {}
+  data = inject(MAT_DIALOG_DATA);
+  dialogRef = inject(MatDialogRef<AddVendorComponent>);
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
+  // constructor(
+  //   @Inject(MAT_DIALOG_DATA) protected data: any,
+  //   public dialogRef: MatDialogRef<AddVendorComponent>
+  // ) {}
   ngOnInit(): void {
     this.getvendorcompanydetails(); //This method will be  called for company auto-complete search
     this.iniVendorForm();
@@ -210,31 +216,48 @@ export class AddVendorComponent implements OnInit {
    * getVendor Company Details
    */
   getvendorcompanydetails() {
-    this.vendorServ.getCompanies().subscribe({
-      next: (response: any) => {
-        this.rolearr = response.data;
-        console.log('rolearr.data', response.data);
-      },
-      error: (err) => {
-        // error
-      },
-    });
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 2500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
+    this.vendorServ
+      .getCompanies()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+          this.rolearr = response.data;
+          console.log('rolearr.data', response.data);
+        },
+        error: (err) => {
+          dataToBeSentToSnackBar.message = err.message;
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+      });
   }
 
+  // not used
   dupcheck(event: any) {
     const vendor = event.target.value;
-    this.vendorServ.duplicatecheck(vendor, 0).subscribe((response: any) => {
-      if (response.status == 'success') {
-        // this.message = '';
-      } else if (response.status == 'duplicate') {
-        const cn = this.vendorForm.get('company');
-        cn.setValue('');
-        // this.message = 'Vendor Company already exist';
-        // alertify.error("Vendor Company already exist");
-      } else {
-        // alertify.error("Internal Server Error");
-      }
-    });
+    this.vendorServ
+      .duplicatecheck(vendor, 0)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((response: any) => {
+        if (response.status == 'success') {
+          // this.message = '';
+        } else if (response.status == 'duplicate') {
+          const cn = this.vendorForm.get('company');
+          cn.setValue('');
+          // this.message = 'Vendor Company already exist';
+          // alertify.error("Vendor Company already exist");
+        } else {
+          // alertify.error("Internal Server Error");
+        }
+      });
   }
 
   /**
@@ -259,6 +282,7 @@ export class AddVendorComponent implements OnInit {
     console.log('form.value  ===', this.vendorForm.value);
     this.vendorServ
       .addORUpdateVendor(this.vendorForm.value, this.data.actionName)
+      .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: (data: any) => {
           if (data.status == 'success') {
@@ -348,6 +372,12 @@ export class AddVendorComponent implements OnInit {
    */
   onCancel() {
     this.dialogRef.close();
+  }
+
+  /** clean up subscriptions */
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }
 

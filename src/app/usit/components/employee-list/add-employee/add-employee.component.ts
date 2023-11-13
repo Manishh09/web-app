@@ -3,6 +3,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
   Inject,
+  InjectionToken,
   inject,
 } from '@angular/core';
 import {
@@ -22,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import { Router } from '@angular/router';
-import { Observable, startWith, map } from 'rxjs';
+import { Observable, startWith, map, takeUntil, Subject } from 'rxjs';
 import { EmployeeManagementService } from 'src/app/usit/services/employee-management.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
@@ -31,6 +32,7 @@ import {
 } from 'src/app/services/snack-bar.service';
 import { SearchPipe } from 'src/app/pipes/search.pipe';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-add-employee',
@@ -94,15 +96,23 @@ export class AddEmployeeComponent {
   teamleadflg = false;
   managerarr: any = [];
   tlarr: any = [];
-
+  // snack bar data
+  dataTobeSentToSnackBarService: ISnackBarData = {
+    message: '',
+    duration: 2500,
+    verticalPosition: 'top',
+    horizontalPosition: 'center',
+    direction: 'above',
+    panelClass: ['custom-snack-success'],
+  };
+  // services
   private empManagementServ = inject(EmployeeManagementService);
   private snackBarServ = inject(SnackBarService);
-  private router = inject(Router);
   private formBuilder = inject(FormBuilder);
-  constructor(
-    @Inject(MAT_DIALOG_DATA) protected data: any,
-    public dialogRef: MatDialogRef<AddEmployeeComponent>
-  ) {}
+  data = inject(MAT_DIALOG_DATA);
+  dialogRef = inject(MatDialogRef<AddEmployeeComponent>);
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
 
   ngOnInit(): void {
     console.log('empdata, ', this.data);
@@ -308,21 +318,49 @@ export class AddEmployeeComponent {
   }
 
   getRoles() {
-    this.empManagementServ.getRolesDropdown().subscribe((response: any) => {
-      this.rolearr = response.data;
-      this.roleOptions = response.data;
-    //TBD: auto-complete -
-    // this.optionsMethod("roles")
-    });
+    this.empManagementServ
+      .getRolesDropdown()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+          this.rolearr = response.data;
+          this.roleOptions = response.data;
+          //TBD: auto-complete -
+          // this.optionsMethod("roles")
+        },
+        error: (err) => {
+          this.dataTobeSentToSnackBarService.message = err.message;
+          this.dataTobeSentToSnackBarService.panelClass = [
+            'custom-snack-failure',
+          ];
+          this.snackBarServ.openSnackBarFromComponent(
+            this.dataTobeSentToSnackBarService
+          );
+        },
+      });
   }
 
   getManager() {
-    this.empManagementServ.getManagerDropdown().subscribe((response: any) => {
-      this.managerarr = response.data;
-      this.managerOptions = response.data;
-       //TBD: auto-complete -
-       //  this.optionsMethod("manager")
-    });
+    this.empManagementServ
+      .getManagerDropdown()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+          this.managerarr = response.data;
+          this.managerOptions = response.data;
+          //TBD: auto-complete -
+          //  this.optionsMethod("manager")
+        },
+        error: (err) => {
+          this.dataTobeSentToSnackBarService.message = err.message;
+          this.dataTobeSentToSnackBarService.panelClass = [
+            'custom-snack-failure',
+          ];
+          this.snackBarServ.openSnackBarFromComponent(
+            this.dataTobeSentToSnackBarService
+          );
+        },
+      });
   }
 
   managerid(event: MatSelectChange) {
@@ -333,58 +371,64 @@ export class AddEmployeeComponent {
   }
 
   getTeamLead(id: number) {
-    this.empManagementServ.getTLdropdown(id).subscribe((response: any) => {
-      this.tlarr = response.data;
-      this.teamLeadOptions = response.data;
-      //  console.log(response.data)
-     // TBD autocomplete:
-     // this.optionsMethod("teamLead")
-    });
+    this.empManagementServ
+      .getTLdropdown(id)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+          this.tlarr = response.data;
+          this.teamLeadOptions = response.data;
+          //  console.log(response.data)
+          // TBD autocomplete:
+          // this.optionsMethod("teamLead")
+        },
+        error: (err) => {
+          this.dataTobeSentToSnackBarService.message = err.message;
+          this.dataTobeSentToSnackBarService.panelClass = [
+            'custom-snack-failure',
+          ];
+          this.snackBarServ.openSnackBarFromComponent(
+            this.dataTobeSentToSnackBarService
+          );
+        },
+      });
   }
 
   onSubmit() {
     this.submitted = true;
-    const dataToBeSentToSnackBar: ISnackBarData = {
-      message: '',
-      duration: 2500,
-      verticalPosition: 'top',
-      horizontalPosition: 'center',
-      direction: 'above',
-      panelClass: ['custom-snack-success'],
-    };
     if (this.employeeForm.invalid) {
       this.displayFormErrors();
       return;
     }
     console.log(this.data.actionName+" employeeForm.value",this.employeeForm.value);
-    this.empManagementServ.addOrUpdateEmployee(this.employeeForm.value, this.data.actionName).subscribe({
+    this.empManagementServ.addOrUpdateEmployee(this.employeeForm.value, this.data.actionName).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (data: any) => {
         this.blur = 'Active';
         if (data.status == 'Success') {
-          dataToBeSentToSnackBar.message =
+          this.dataTobeSentToSnackBarService.message =
             this.data.actionName === 'add-employee'
               ? 'Employee added successfully'
               : 'Employee updated successfully';
-          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
           this.employeeForm.reset();
           this.dialogRef.close();
         } else {
-          dataToBeSentToSnackBar.message =
+          this.dataTobeSentToSnackBarService.message =
             this.data.actionName === 'add-employee'
               ? 'Employee addition is failed'
               : 'Employee updation is failed';
-          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+            this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
         }
 
       },
       error: (err) => {
-        dataToBeSentToSnackBar.message =
+        this.dataTobeSentToSnackBarService.message =
           this.data.actionName === 'add-employee'
             ? 'Employee addition is failed'
             : 'Employee updation is failed';
-        dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+        this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
       },
     });
   }
