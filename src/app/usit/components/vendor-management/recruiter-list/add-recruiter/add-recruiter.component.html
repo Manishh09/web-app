@@ -15,9 +15,10 @@
           <mat-label>Company Name</mat-label>
           <input matInput formControlName="autoInput" [matAutocomplete]="companyAutoCmp" />
           <mat-autocomplete #companyAutoCmp="matAutocomplete">
-            <mat-option *ngFor="let option of rolearr" [value]="option.company">{{ option.company }}</mat-option>
+            <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company.trim()">{{ option.company.trim() }}</mat-option>
           </mat-autocomplete>
-          <button matSuffix mat-icon-button><mat-icon>add</mat-icon></button>
+          <button matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
+          <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found, click '+' to add vendor</mat-hint>
           <mat-error *ngIf="recruiterForm.get('autoInput')!.hasError('required')">Company Name is Required</mat-error>
         </mat-form-field>
 
