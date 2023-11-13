@@ -7,6 +7,10 @@ import {
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from './services/auth.service';
 import { PermissionsService } from './services/permissions.service';
+// import { LoaderService } from './services/loader.service';
+// import { ThemePalette } from '@angular/material/core';
+// import { ProgressBarMode } from '@angular/material/progress-bar';
+// import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +23,12 @@ export class AppComponent implements OnInit, OnDestroy {
   protected router = inject(Router);
   protected isUserSignedIn = false;
   protected permServ = inject(PermissionsService);
+//   loaderServ = inject(LoaderService);
+//   isLoading$ = this.loaderServ.isLoading$;
+//   color: ThemePalette = 'warn';
+//  // mode: ProgressBarMode = 'determinate';
+//   mode: ProgressSpinnerMode = 'determinate';
+//   value = 50;
   currentURL: string = '';
   ngOnInit(): void {
      //this.getCurrentURL();

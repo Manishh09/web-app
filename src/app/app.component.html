@@ -1,3 +1,9 @@
+<!-- Progress bar  -->
+<!-- <mat-progress-bar
+      [color]="color" *ngIf="isLoading$ | async"
+      mode="indeterminate">
+</mat-progress-bar> -->
+
 <app-sidebar *ngIf="!['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></app-sidebar>
 <router-outlet *ngIf="['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></router-outlet>
 <app-footer></app-footer>
