@@ -59,6 +59,7 @@ export class AddRecruiterComponent implements OnInit {
   pinarr: any = [];
   statearr: any = [];
   filteredOptions: any;
+  vmsid!: any;
   private recruiterServ = inject(RecruiterService);
   private snackBarServ = inject(SnackBarService);
   private dialogServ = inject(DialogService);
@@ -171,39 +172,40 @@ export class AddRecruiterComponent implements OnInit {
       return;
     }
     console.log(this.data.actionName + " recruiterForm.value", this.recruiterForm.value);
-    // this.recruiterServ.addOrUpdateRecruiter(this.recruiterForm.value, this.data.actionName)
-    //   .subscribe(
-    //     (data: any) => {
-    //       // this.blur = "Active";
-    //       if (data.status == 'success') {
-    //         dataToBeSentToSnackBar.message =
-    //           this.data.actionName === 'add-recruiter'
-    //             ? 'Recruiter added successfully'
-    //             : 'Recruiter updated successfully';
-    //         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-    //         this.recruiterForm.reset();
-    //       }
-    //       else {
-    //         // this.blur = "enable"
-    //         dataToBeSentToSnackBar.message =
-    //           this.data.actionName === 'add-recruiter'
-    //             ? 'Recruiter addition is failed'
-    //             : 'Recruiter updation is failed';
-    //         dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-    //         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-    //       }
-    //       this.dialogRef.close();
-    //     },
-    //     // error: (err) => {
-    //     //   //this.blur = 'enable';
-    //     //   dataToBeSentToSnackBar.message =
-    //     //     this.data.actionName === 'add-recruiter'
-    //     //       ? 'Employee addition is failed'
-    //     //       : 'Employee updation is failed';
-    //     //   dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-    //     //   this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-    //     // },
-    //   );
+    this.recruiterServ.addOrUpdateRecruiter(this.recruiterForm.value, this.data.actionName)
+      .subscribe({
+         next: (data: any) => {
+          // this.blur = "Active";
+          if (data.status == 'success') {
+            dataToBeSentToSnackBar.message =
+              this.data.actionName === 'add-recruiter'
+                ? 'Recruiter added successfully'
+                : 'Recruiter updated successfully';
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+            this.recruiterForm.reset();
+          }
+          else {
+            // this.blur = "enable"
+            dataToBeSentToSnackBar.message =
+              this.data.actionName === 'add-recruiter'
+                ? 'Recruiter addition is failed'
+                : 'Recruiter updation is failed';
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }
+          this.dialogRef.close();
+        },
+        error: (err) => {
+          //this.blur = 'enable';
+          dataToBeSentToSnackBar.message =
+            this.data.actionName === 'add-recruiter'
+              ? 'Employee addition is failed'
+              : 'Employee updation is failed';
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+  });
+      
   }
 
   flg!: any;
@@ -302,6 +304,11 @@ export class AddRecruiterComponent implements OnInit {
   goToVendorList() {
     this.dialogRef.close();
     this.router.navigate(['/usit/vendors']);
+  }
+
+  onVendorSelect(vendor: any){
+    console.log(vendor);
+    this.recruiterForm.get('vendor.vmsid').setValue(vendor.id);
   }
 
 }

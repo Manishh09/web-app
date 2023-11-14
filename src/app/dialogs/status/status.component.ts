@@ -21,6 +21,7 @@ export class StatusComponent implements OnInit {
   protected showValidationError = false;
   remarks = '';
   submitted = false;
+  allowAction = false;
   constructor(@Inject(MAT_DIALOG_DATA) protected data: IStatusData,
   public dialogRef: MatDialogRef<StatusComponent>){
 
@@ -47,6 +48,7 @@ export class StatusComponent implements OnInit {
       }
       if(this.statusForm.valid){
         this.submitted =true;
+        this.allowAction = true;
 
 
        // this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);

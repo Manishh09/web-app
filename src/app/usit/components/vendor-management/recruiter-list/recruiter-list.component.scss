@@ -136,8 +136,9 @@ tbody {
 
 .recruiter-table-style {
   width: max-content;
-  height: calc(100% - 0px);
+  max-height: calc(100% - 2px);
   overflow: auto;
+  display: block;
 }
 
 .mdc-data-table__cell,

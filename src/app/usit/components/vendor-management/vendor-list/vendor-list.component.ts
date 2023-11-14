@@ -294,7 +294,15 @@ export class VendorListComponent implements OnInit {
     dialogConfig.panelClass = 'add-vendor';
     dialogConfig.data = actionData;
 
-    this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
+    //this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
+
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllData();
+      }
+    })
   }
   /**
    * edit
@@ -311,7 +319,13 @@ export class VendorListComponent implements OnInit {
     //dialogConfig.height = '100vh';
     dialogConfig.panelClass = 'edit-vendor';
     dialogConfig.data = actionData;
-    this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllData();
+      }
+    })
   }
   /**
    * delete
@@ -458,20 +472,26 @@ export class VendorListComponent implements OnInit {
         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         return;
       }
-
-      const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
-        title:
-          vendor.vms_stat == 'Initiated' && !rejectVendor
-            ? 'Approve Vendor'
-            : 'Reject Vendor',
-        message:
-          vendor.vms_stat == 'Initiated' && !rejectVendor
-            ? 'Are you sure you want to Approve the Vendor ?'
-            : 'Are you sure you want to Reject the Vendor ?',
-        confirmText: 'Yes',
-        cancelText: 'No',
+      let dataToBeSentToDailogForReject, dataToBeSentToDailogForStatus = {}; 
+      if(vendor.vms_stat === 'Initiated'){
+        dataToBeSentToDailogForStatus = {
+          title: 'Approve Vendor',
+          message: 'Are you sure you want to Approve the Vendor ?',
+          confirmText: 'Yes',
+          cancelText: 'No',
+          actionData: vendor,
+        };
+      
+      }else {
+        dataToBeSentToDailogForReject = {
+        title: 'Reject Vendor',
+        updateText:  'rejecting',
+        type: 'Vendor',
+        buttonText: 'Update',
         actionData: vendor,
       };
+    }
+       
       const dialogConfig = new MatDialogConfig();
       dialogConfig.width = 'fit-content';
       dialogConfig.height = 'auto';
@@ -479,9 +499,10 @@ export class VendorListComponent implements OnInit {
       dialogConfig.panelClass = `${
         vendor.vms_stat == 'Initiated' && !rejectVendor ? 'approve' : 'reject'
       }-vendor`;
-      dialogConfig.data = dataToBeSentToDailog;
-      const dialogRef = this.dialogServ.openDialogWithComponent(
-        ConfirmComponent,
+      const isApprove =  vendor.vms_stat == 'Initiated' ? dataToBeSentToDailogForStatus : dataToBeSentToDailogForReject;
+      dialogConfig.data =  isApprove;
+      const dialogRef = this.dialogServ.openDialogWithComponent( 
+        isApprove ? StatusComponent : ConfirmComponent,
         dialogConfig
       );
 
@@ -489,25 +510,28 @@ export class VendorListComponent implements OnInit {
         action: vendor.vms_stat === 'Initiated' ? 'Approved' : 'Reject',
         id: vendor.id,
         loginId: this.loginId,
+        remarks: dialogRef.componentInstance.remarks
       };
       dialogRef.afterClosed().subscribe(() => {
         if (dialogRef.componentInstance.allowAction) {
           this.vendorServ
-            .approvevms(statReqObj.action, statReqObj.id, statReqObj.loginId)
+            .approveORRejectVendor(statReqObj, statReqObj.action as 'Approved' | 'Reject')
             .pipe(takeUntil(this.destroyed$))
             .subscribe({
               next: (response: any) => {
-                console.log(JSON.stringify(response));
+                // console.log(JSON.stringify(response));
 
                   if (response.status == 'Approved') {
-                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                    // dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                    dataToBeSentToSnackBar.message = `Vendor Updated successfully`;
+
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
                     this.snackBarServ.openSnackBarFromComponent(
                       dataToBeSentToSnackBar
                     );
                   } else {
                     //  alertify.success("Vendor " + response.data + " successfully");
-                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                    dataToBeSentToSnackBar.message = `Vendor Updated successfully`;
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
                     this.snackBarServ.openSnackBarFromComponent(
                       dataToBeSentToSnackBar

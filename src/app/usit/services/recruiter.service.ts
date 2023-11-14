@@ -82,4 +82,8 @@ export class RecruiterService {
     return action === "edit-recruiter" ? this.updateEntity(entity) : this.registerEntity(entity);
  
    }
+
+   approveORRejectRecruiter(entity: any, action: 'Approved' | 'Reject'){
+    return action === 'Approved' ? this.approve(entity.action, entity.id, entity.userid): this.rejectRecruiter(entity.id, entity.remarks);
+  }
 }

@@ -23,7 +23,7 @@
                 </mat-option>
             </mat-autocomplete>
               <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found</mat-hint>
-              <mat-error *ngIf="vendorForm.get('company')!.hasError('required')">Company Type
+              <mat-error *ngIf="vendorForm.get('company')!.hasError('required')">Company Name
                 is Required
               </mat-error>
           </mat-form-field>
@@ -155,7 +155,7 @@
           </mat-form-field>
           <!-- revinue -->
           <mat-form-field appearance="fill">
-            <mat-label>Revinue</mat-label>
+            <mat-label>Revenue</mat-label>
             <input matInput formControlName="revenue">
           </mat-form-field>
           <!-- linkedinid -->

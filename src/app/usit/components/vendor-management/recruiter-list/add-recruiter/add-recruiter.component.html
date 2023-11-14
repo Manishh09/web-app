@@ -15,7 +15,7 @@
           <mat-label>Company Name</mat-label>
           <input matInput formControlName="autoInput" [matAutocomplete]="companyAutoCmp" />
           <mat-autocomplete #companyAutoCmp="matAutocomplete">
-            <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company.trim()">{{ option.company.trim() }}</mat-option>
+            <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company.trim()" (onSelectionChange)="onVendorSelect(option)">{{ option.company.trim() }}</mat-option>
           </mat-autocomplete>
           <button matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
           <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found, click '+' to add vendor</mat-hint>
@@ -88,7 +88,7 @@
       <div class="form-details-textarea">
         <mat-form-field>
           <mat-label>Other Details</mat-label>
-          <textarea matInput></textarea>
+          <textarea matInput formControlName="details"></textarea>
         </mat-form-field>
       </div>
     </div>
