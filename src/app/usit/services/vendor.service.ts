@@ -74,4 +74,8 @@ export class VendorService {
   addORUpdateVendor(entity: any, action: 'edit-vendor' | 'add-vendor'){
     return action === 'edit-vendor' ? this.updateEntity(entity): this.registerEntity(entity);
   }
+
+  approveORRejectVendor(entity: any, action: 'Approved' | 'Reject'){
+    return action === 'Approved' ? this.approvevms(entity.action, entity.id, entity.userid): this.rejectVendor(entity.id, entity.remarks, entity.userid);
+  }
 }

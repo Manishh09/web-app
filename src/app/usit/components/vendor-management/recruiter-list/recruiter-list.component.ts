@@ -279,10 +279,18 @@ export class RecruiterListComponent implements OnInit {
     dialogConfig.panelClass = 'add-recruiter';
     dialogConfig.data = actionData;
 
-    this.dialogServ.openDialogWithComponent(
-      AddRecruiterComponent,
-      dialogConfig
-    );
+    // this.dialogServ.openDialogWithComponent(
+    //   AddRecruiterComponent,
+    //   dialogConfig
+    // );
+
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddRecruiterComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllData();
+      }
+    })
   }
   /**
    * edit
@@ -299,10 +307,17 @@ export class RecruiterListComponent implements OnInit {
     //dialogConfig.height = '100vh';
     dialogConfig.panelClass = 'edit-recruiter';
     dialogConfig.data = actionData;
-    this.dialogServ.openDialogWithComponent(
-      AddRecruiterComponent,
-      dialogConfig
-    );
+    // this.dialogServ.openDialogWithComponent(
+    //   AddRecruiterComponent,
+    //   dialogConfig
+    // );
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddRecruiterComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllData();
+      }
+    })
   }
 
   /**
@@ -341,21 +356,21 @@ export class RecruiterListComponent implements OnInit {
             panelClass: ['custom-snack-success'],
           };
 
-          // this.recruiterServ
-          //   .deleteEntity(recruiter.userid)
-          //   .subscribe((response: any) => {
-          //     if (response.status == 'Success') {
-          //       this.getAllRecruiters();
-          //       dataToBeSentToSnackBar.message =
-          //         'Recruiter Deleted successfully';
-          //       this.snackBarServ.openSnackBarFromComponent(
-          //         dataToBeSentToSnackBar
-          //       );
-          //     } else {
-          //       dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-          //       dataToBeSentToSnackBar.message = 'Record Deletion failed';
-          //     }
-          //   });
+          this.recruiterServ
+            .deleteEntity(recruiter.userid)
+            .subscribe((response: any) => {
+              if (response.status == 'Success') {
+                this.getAllRecruiters();
+                dataToBeSentToSnackBar.message =
+                  'Recruiter Deleted successfully';
+              } else {
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                dataToBeSentToSnackBar.message = 'Record Deletion failed';
+              }
+              this.snackBarServ.openSnackBarFromComponent(
+                dataToBeSentToSnackBar
+              );
+            });
         }
       },
     });
@@ -417,7 +432,7 @@ export class RecruiterListComponent implements OnInit {
   }
 
   // approve initiate reject
-  onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
+  _onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
     if (recruiter.rec_stat !== 'Approved') {
       const dataToBeSentToSnackBar: ISnackBarData = {
         message: 'Status updated successfully!',
@@ -491,6 +506,110 @@ export class RecruiterListComponent implements OnInit {
             this.gty(this.page);
           });
       });
+      // after closing popup
+    }
+    return;
+  }
+
+  onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
+    // this.isRejected = rejectVendor;
+    if (recruiter.rec_stat !== 'Approved') {
+      const dataToBeSentToSnackBar: ISnackBarData = {
+        message: 'Status updated successfully!',
+        duration: 1500,
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+        direction: 'above',
+        panelClass: ['custom-snack-success'],
+      };
+      if (this.department == recruiter.ctype) {
+        // alertify.error("Your not Authorized to approve the Vendor");
+        dataToBeSentToSnackBar.message =
+          'You are not Authorized to approve the Recruiter';
+        dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        return;
+      }
+      let dataToBeSentToDailogForReject, dataToBeSentToDailogForStatus = {}; 
+      if(recruiter.rec_stat === 'Initiated'){
+        dataToBeSentToDailogForStatus = {
+          title: 'Approve Recruiter',
+          message: 'Are you sure you want to Approve the Recruiter ?',
+          confirmText: 'Yes',
+          cancelText: 'No',
+          actionData: recruiter,
+        };
+      
+      }else {
+        dataToBeSentToDailogForReject = {
+        title: 'Reject Recruiter',
+        updateText:  'rejecting',
+        type: 'Recruiter',
+        buttonText: 'Update',
+        actionData: recruiter,
+      };
+    }
+       
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.width = 'fit-content';
+      dialogConfig.height = 'auto';
+      dialogConfig.disableClose = false;
+      dialogConfig.panelClass = `${
+        recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? 'approve' : 'reject'
+      }-vendor`;
+      const isApprove =   recruiter.rec_stat == 'Initiated' ? dataToBeSentToDailogForStatus : dataToBeSentToDailogForReject;
+      dialogConfig.data =  isApprove;
+      const dialogRef = this.dialogServ.openDialogWithComponent( 
+        isApprove ? StatusComponent : ConfirmComponent,
+        dialogConfig
+      );
+
+      const statReqObj = {
+        action: recruiter.rec_stat === 'Initiated' ? 'Approved' : 'Reject',
+        id: recruiter.id,
+        loginId: this.loginId,
+        remarks: dialogRef.componentInstance.remarks
+      };
+      dialogRef.afterClosed().subscribe(() => {
+        if (dialogRef.componentInstance.allowAction) {
+          this.recruiterServ
+            .approveORRejectRecruiter(statReqObj, statReqObj.action as 'Approved' | 'Reject')
+            // .pipe(takeUntil(this.destroyed$))
+            .subscribe({
+              next: (response: any) => {
+                // console.log(JSON.stringify(response));
+
+                  if (response.status == 'Approved') {
+                    // dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
+                    dataToBeSentToSnackBar.message = `Vendor Updated successfully`;
+
+                    dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                    this.snackBarServ.openSnackBarFromComponent(
+                      dataToBeSentToSnackBar
+                    );
+                  } else {
+                    //  alertify.success("Vendor " + response.data + " successfully");
+                    dataToBeSentToSnackBar.message = `Vendor Updated successfully`;
+                    dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                    this.snackBarServ.openSnackBarFromComponent(
+                      dataToBeSentToSnackBar
+                    );
+                  }
+
+                // this.gty(this.page);
+                this.getAllData();
+              },
+              error: (err) => {
+                dataToBeSentToSnackBar.message = err.message;
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              },
+            });
+        }
+      });
+
       // after closing popup
     }
     return;
