@@ -17,9 +17,12 @@ import { Vms } from 'src/app/usit/models/vms';
 import { MatCardModule } from '@angular/material/card';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 import { RecruiterService } from 'src/app/usit/services/recruiter.service';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
-import {AsyncPipe} from '@angular/common';
+import { Observable, debounceTime, distinctUntilChanged, tap, switchMap, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
+import { AddVendorComponent } from '../../vendor-list/add-vendor/add-vendor.component';
+import { DialogService } from 'src/app/services/dialog.service';
+import { MatDialogConfig } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-recruiter',
@@ -48,9 +51,9 @@ export class AddRecruiterComponent implements OnInit {
   recruiterForm: any = FormGroup;
   submitted = false;
   rolearr: { company: string }[] = [
-    { company: 'abc tech' },
-    { company: 'narvee solutions' },
-    { company: 'hcl' },
+    // { company: 'abc tech' },
+    // { company: 'narvee solutions' },
+    // { company: 'hcl' },
   ];
   cityarr: any = [];
   pinarr: any = [];
@@ -58,13 +61,16 @@ export class AddRecruiterComponent implements OnInit {
   filteredOptions: any;
   private recruiterServ = inject(RecruiterService);
   private snackBarServ = inject(SnackBarService);
+  private dialogServ = inject(DialogService);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
+  searchObs$!: Observable<any>;
+  companySearchData: any[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
     public dialogRef: MatDialogRef<AddRecruiterComponent>
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.getvendorcompanydetails()
     if (this.data.actionName === 'edit-recruiter') {
@@ -91,16 +97,16 @@ export class AddRecruiterComponent implements OnInit {
   private iniRecruiterForm(recruiterData: any) {
     this.recruiterForm = this.formBuilder.group(
       {
-        autoInput: [recruiterData ? recruiterData.company: '', Validators.required],
-        recruiter: [recruiterData ? recruiterData.recruiter: ''],
-        email: [recruiterData ? recruiterData.email: '', [Validators.required, Validators.email, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]],
-        usnumber: [recruiterData ? recruiterData.usnumber: ''],
-        contactnumber: [recruiterData ? recruiterData.usnumber: ''],
-        extension: [recruiterData ? recruiterData.extension: ''],
-        recruitertype: [recruiterData ? recruiterData.recruitertype: '', Validators.required],
-        details: [recruiterData ? recruiterData.details: ''],
-        addedby: [recruiterData ? recruiterData.addedby: ''],
-        updatedby: [recruiterData ? recruiterData.updatedby: ''],
+        autoInput: [recruiterData ? recruiterData.company : '', Validators.required],
+        recruiter: [recruiterData ? recruiterData.recruiter : ''],
+        email: [recruiterData ? recruiterData.email : '', [Validators.required, Validators.email, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]],
+        usnumber: [recruiterData ? recruiterData.usnumber : ''],
+        contactnumber: [recruiterData ? recruiterData.usnumber : ''],
+        extension: [recruiterData ? recruiterData.extension : ''],
+        recruitertype: [recruiterData ? recruiterData.recruitertype : '', Validators.required],
+        details: [recruiterData ? recruiterData.details : ''],
+        addedby: [this.entity.addedby],
+        updatedby: [this.entity.updatedby],
         vendor: this.formBuilder.group({
           vmsid: [this.recruiterForm.vmsid],
         }),
@@ -109,18 +115,48 @@ export class AddRecruiterComponent implements OnInit {
         })
       }
     );
-    if(this.data.actionName === 'edit-recruiter') {
-      this.recruiterForm.addControl('recid', new FormControl(recruiterData ? recruiterData.recid: ''));
-      this.recruiterForm.addControl('status', new FormControl(recruiterData ? recruiterData.status: ''));
-      this.recruiterForm.addControl('remarks', new FormControl(recruiterData ? recruiterData.remarks: ''));
-      this.recruiterForm.addControl('rec_stat', new FormControl(recruiterData ? recruiterData.rec_stat: ''));
+    if (this.data.actionName === 'edit-recruiter') {
+      this.recruiterForm.addControl('recid', new FormControl(recruiterData ? recruiterData.recid : ''));
+      this.recruiterForm.addControl('status', new FormControl(recruiterData ? recruiterData.status : ''));
+      this.recruiterForm.addControl('remarks', new FormControl(recruiterData ? recruiterData.remarks : ''));
+      this.recruiterForm.addControl('rec_stat', new FormControl(recruiterData ? recruiterData.rec_stat : ''));
       console.log(this.recruiterForm.value)
     }
-    //this.validateControls()
+    this.validateControls()
   }
 
+  validateControls() {
 
-  onSubmit(){
+    this.companyAutoCompleteSearch()
+  }
+
+  companyAutoCompleteSearch() {
+    this.searchObs$ = this.recruiterForm.get('autoInput').valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap((term: any) => {
+        if (term) {
+          console.log(term)
+          return this.getFilteredValue(term);
+        }
+        else {
+          this.companySearchData = [];
+          return of<any>([]);
+        }
+      }
+      ),
+      // Uncomment below to verify the searched result
+      // tap((res) => {
+      //   console.log({res})
+
+      // }),
+
+    );
+
+
+
+  }
+  onSubmit() {
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 2500,
@@ -134,43 +170,40 @@ export class AddRecruiterComponent implements OnInit {
       this.displayFormErrors();
       return;
     }
-    else {
-      // this.blur = "Active"
-    }
-    console.log(this.data.actionName+" recruiterForm.value",this.recruiterForm.value);
-    this.recruiterServ.addOrUpdateRecruiter(this.recruiterForm.value, this.data.actionName)
-      .subscribe(
-        (data: any) => {
-          // this.blur = "Active";
-          if (data.status == 'success') {
-            dataToBeSentToSnackBar.message =
-              this.data.actionName === 'add-recruiter'
-                ? 'Recruiter added successfully'
-                : 'Recruiter updated successfully';
-            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-            this.recruiterForm.reset();
-          }
-          else {
-            // this.blur = "enable"
-            dataToBeSentToSnackBar.message =
-              this.data.actionName === 'add-recruiter'
-                ? 'Recruiter addition is failed'
-                : 'Recruiter updation is failed';
-            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-          }
-          this.dialogRef.close();
-        },
-        // error: (err) => {
-        //   //this.blur = 'enable';
-        //   dataToBeSentToSnackBar.message =
-        //     this.data.actionName === 'add-recruiter'
-        //       ? 'Employee addition is failed'
-        //       : 'Employee updation is failed';
-        //   dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-        //   this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-        // },
-      );
+    console.log(this.data.actionName + " recruiterForm.value", this.recruiterForm.value);
+    // this.recruiterServ.addOrUpdateRecruiter(this.recruiterForm.value, this.data.actionName)
+    //   .subscribe(
+    //     (data: any) => {
+    //       // this.blur = "Active";
+    //       if (data.status == 'success') {
+    //         dataToBeSentToSnackBar.message =
+    //           this.data.actionName === 'add-recruiter'
+    //             ? 'Recruiter added successfully'
+    //             : 'Recruiter updated successfully';
+    //         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+    //         this.recruiterForm.reset();
+    //       }
+    //       else {
+    //         // this.blur = "enable"
+    //         dataToBeSentToSnackBar.message =
+    //           this.data.actionName === 'add-recruiter'
+    //             ? 'Recruiter addition is failed'
+    //             : 'Recruiter updation is failed';
+    //         dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+    //         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+    //       }
+    //       this.dialogRef.close();
+    //     },
+    //     // error: (err) => {
+    //     //   //this.blur = 'enable';
+    //     //   dataToBeSentToSnackBar.message =
+    //     //     this.data.actionName === 'add-recruiter'
+    //     //       ? 'Employee addition is failed'
+    //     //       : 'Employee updation is failed';
+    //     //   dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+    //     //   this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+    //     // },
+    //   );
   }
 
   flg!: any;
@@ -231,8 +264,44 @@ export class AddRecruiterComponent implements OnInit {
   }
 
 
-  onCancel(){
+  onCancel() {
     this.dialogRef.close();
+  }
+
+  /**
+   * filters the data for searched input query
+   * @param term
+   * @returns
+   */
+  getFilteredValue(term: any): Observable<any> {
+    if (term && this.rolearr) {
+      const sampleArr = this.rolearr.filter((val: any) => val.company.trim().toLowerCase().includes(term.trim().toLowerCase()) == true)
+      this.companySearchData = sampleArr;
+      return of(this.companySearchData);
+    }
+    return of([])
+  }
+
+  navigateToAddVendor() {
+    const actionData = {
+      title: 'Add Vendor',
+      vendorData: null,
+      actionName: 'add',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    // dialogConfig.height = "100vh";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'add-vendor';
+    dialogConfig.data = actionData;
+
+    this.dialogServ.openDialogWithComponent(AddVendorComponent, dialogConfig);
+
+  }
+
+  goToVendorList() {
+    this.dialogRef.close();
+    this.router.navigate(['/usit/vendors']);
   }
 
 }

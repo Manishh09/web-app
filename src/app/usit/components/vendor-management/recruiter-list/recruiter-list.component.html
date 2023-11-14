@@ -5,11 +5,12 @@
   </ul>
   <div class="header-container mat-elevation-z1">
     <span class="header-text"> Recruiters </span>
-    <span class="filter-recruiters">
-      <button mat-raised-button color="warn">Technical Recruiter</button>
-      <button mat-raised-button color="primary">Bench Sales Recruiter</button>
-      <button mat-raised-button >Both Technical & Bench Sales Recruiters</button>
-    </span>
+    <div class="filter-recruiters">
+      <button mat-raised-button color="warn" (click)="filterRecruiters('Recruiter')">Technical Recruiter</button>
+      <button mat-raised-button color="primary" (click)="filterRecruiters('Bench Sales Recruiter')">Bench Sales Recruiter</button>
+      <button mat-raised-button style="background-color: black; color: white;"  (click)="filterRecruiters('Both')">Both Technical & Bench Sales Recruiters</button>
+    </div>
+    
     <div class="recruiter-actions">
       <!-- <button mat-icon-button (click)="uploadRecruiterExcel()">
         <mat-icon>upload</mat-icon> 

@@ -63,7 +63,7 @@ export class RecruiterListComponent implements OnInit {
     'Approve/Reject',
   ];
 
-  dataSource = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<any>([]);
 
   length = 50;
   pageSize = 25;
@@ -86,6 +86,8 @@ export class RecruiterListComponent implements OnInit {
   recrData: Recruiter[] = [];
   entity: any[] = [];
   totalItems: any;
+  selectedRecruiterType: string | null = null;
+
 
   // pagination code
   page: number = 1;
@@ -106,7 +108,7 @@ export class RecruiterListComponent implements OnInit {
       this.gty(this.AssignedPageNum);
       this.page = this.AssignedPageNum;
     }
-    this.getAllData();
+    //this.getAllData();
   }
 
   ngAfterViewInit() {
@@ -470,19 +472,21 @@ export class RecruiterListComponent implements OnInit {
           .approve(statReqObj.action, statReqObj.id, statReqObj.loginId)
           .subscribe((response: any) => {
             console.log(JSON.stringify(response));
-            if (response.status == 'Approved') {
-              dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-              dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-              this.snackBarServ.openSnackBarFromComponent(
-                dataToBeSentToSnackBar
-              );
-            } else {
-              //  alertify.success("recruiter " + response.data + " successfully");
-              dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-              dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-              this.snackBarServ.openSnackBarFromComponent(
-                dataToBeSentToSnackBar
-              );
+            if (dialogRef.componentInstance.allowAction) {
+              if (response.status == 'Approved') {
+                dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              } else {
+                //  alertify.success("recruiter " + response.data + " successfully");
+                dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              }
             }
             this.gty(this.page);
           });
@@ -492,20 +496,20 @@ export class RecruiterListComponent implements OnInit {
     return;
   }
 
-  /**
-   * handle page event - pagination
-   * @param recruiter
-   */
-  handlePageEvent(e: PageEvent) {
-    this.pageEvent = e;
-    this.length = e.length;
-    this.pageSize = e.pageSize;
-    this.pageIndex = e.pageIndex;
-  }
+  // /**
+  //  * handle page event - pagination
+  //  * @param recruiter
+  //  */
+  // handlePageEvent(e: PageEvent) {
+  //   this.pageEvent = e;
+  //   this.length = e.length;
+  //   this.pageSize = e.pageSize;
+  //   this.pageIndex = e.pageIndex;
+  // }
 
   getRecruiterRowClass(row : any){
     const recruitertype = row.recruitertype;
-    //console.log('rowwwwwwwww', recruitertype);
+    // console.log('rowwwwwwwww', recruitertype);
 
     if (recruitertype === 'Recruiter') {
         return 'technical-recruiter';
@@ -516,6 +520,47 @@ export class RecruiterListComponent implements OnInit {
     } else {
         return '';
     }
+  }
+
+  filterRecruiters(recruiterType: string | null): void {
+    if (recruiterType) {
+      const filteredData = this.datarr.filter((recruiter) => recruiter.recruitertype === recruiterType);
+      this.dataSource.data = filteredData;
+    } else {
+      this.dataSource.data = this.datarr;
+    }
+  }
+
+   /**
+   * handle page event - pagination
+   * @param endor
+   */
+   handlePageEvent(event: PageEvent) {
+    console.log('page.event', event.pageSize);
+    if (event && event.pageIndex && event.pageSize) {
+      this.pageEvent = event;
+      this.pageSize = event.pageSize;
+      this.assignToPage = event.pageIndex;
+      const pageIndex = event.pageIndex === 0 ? 1 : event.pageIndex;
+      this.pageIndex = pageIndex;
+      return this.recruiterServ
+        .getAllRecruitersPagination(
+          this.hasAcces,
+          this.loginId,
+          pageIndex,
+          event.length,
+          this.field
+        )
+        .subscribe((response: any) => {
+          this.datarr = response.data.content;
+          this.dataSource.data = response.data.content;
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
+          this.totalItems = response.data.totalElements;
+        });
+    }
+    return;
   }
   
 }

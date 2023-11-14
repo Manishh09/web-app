@@ -136,7 +136,7 @@ tbody {
 
 .recruiter-table-style {
   width: max-content;
-  height: calc(100% - 86px);
+  height: calc(100% - 0px);
   overflow: auto;
 }
 
@@ -165,6 +165,8 @@ tbody {
 td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.mat-mdc-cell.mdc-data-table__cell.ng-star-inserted {
   display: flex;
   column-gap: 5px;
+  height: 49px;
+  align-items: center;
 }
 
 @media screen and (max-width: 768px) {
@@ -222,5 +224,37 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
 }
 
 .both-recruiters {
-  color: purple;
+  color: black;
+}
+
+@media screen and (min-width: 1600px) {
+  .recruiter-table-style {
+    width: 100%;
+    height: calc(100% - 0px);
+    overflow: auto;
+  }
+}
+
+@media only screen and (min-width: 900px) and (max-width: 1228px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 83vh;
+  }
+}
+
+@media only screen and (min-width: 1228px) and (max-width: 1440px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 85vh;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 87.5vh;
+  }
 }
