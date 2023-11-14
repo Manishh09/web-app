@@ -287,29 +287,33 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
       next: (resp) => {
         if (dialogRef.componentInstance.submitted) {
           emp.remarks = dialogRef.componentInstance.remarks;
-          this.empManagementServ.changeEmployeeStatus(emp).pipe(takeUntil(this.destroyed$)).subscribe({
-            next: (response: any) => {
-              if (response.status == 'Success') {
-                this.getAllEmployees();
-                this.dataTobeSentToSnackBarService.message = 'Status updated successfully';
-              } else {
-                this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
-                this.dataTobeSentToSnackBarService.message = 'Status update failed';
-              }
-              this.dataTobeSentToSnackBarService.duration = 1500;
-              this.snackBarServ.openSnackBarFromComponent(
-                this.dataTobeSentToSnackBarService
-              );
-            },
-            error: (err) => {
-              this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
-              this.dataTobeSentToSnackBarService.message = err.message;
-              this.snackBarServ.openSnackBarFromComponent(
-                this.dataTobeSentToSnackBarService
-              );
-            },
-          });
+          this.callChangeEmpStatusAPI(emp);
         }
+      },
+    });
+  }
+
+  private callChangeEmpStatusAPI(emp: Employee) {
+    this.empManagementServ.changeEmployeeStatus(emp).pipe(takeUntil(this.destroyed$)).subscribe({
+      next: (response: any) => {
+        if (response.status == 'Success') {
+          this.getAllEmployees();
+          this.dataTobeSentToSnackBarService.message = 'Status updated successfully';
+        } else {
+          this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+          this.dataTobeSentToSnackBarService.message = 'Status update failed';
+        }
+        this.dataTobeSentToSnackBarService.duration = 1500;
+        this.snackBarServ.openSnackBarFromComponent(
+          this.dataTobeSentToSnackBarService
+        );
+      },
+      error: (err) => {
+        this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+        this.dataTobeSentToSnackBarService.message = err.message;
+        this.snackBarServ.openSnackBarFromComponent(
+          this.dataTobeSentToSnackBarService
+        );
       },
     });
   }
