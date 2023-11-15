@@ -6,4 +6,4 @@
 
 <app-sidebar *ngIf="!['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></app-sidebar>
 <router-outlet *ngIf="['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></router-outlet>
-<app-footer></app-footer>
+<app-footer *ngIf="!['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></app-footer>

@@ -85,7 +85,9 @@ export class RolesListComponent implements OnInit , AfterViewInit{
     dialogConfig.data = actionData;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
-      this.getAllRoles();
+      if(dialogRef.componentInstance.alloAction){
+        this.getAllRoles();
+      }
     })
   }
   // search
@@ -132,7 +134,10 @@ export class RolesListComponent implements OnInit , AfterViewInit{
     dialogConfig.data = actionData;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddRoleComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
-      this.getAllRoles();
+      if(dialogRef.componentInstance.alloAction){
+        this.getAllRoles();
+      }
+
     })
   }
   // delete

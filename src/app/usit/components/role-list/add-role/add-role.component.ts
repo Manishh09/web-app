@@ -54,6 +54,7 @@ export class AddRoleComponent {
   protected isFormSubmitted: boolean = false;
   roleDescription = ''
   roleName = ''
+  alloAction = false;
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
     public dialogRef: MatDialogRef<AddRoleComponent>
@@ -85,6 +86,7 @@ export class AddRoleComponent {
   }
   onSubmit() {
     this.isFormSubmitted = true;
+    this.alloAction = true;
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 1500,
@@ -108,6 +110,7 @@ export class AddRoleComponent {
       ...this.data.roleData,
       rolename: this.addRoleForm.get('rolename').value,
       updatedby: userId,
+      description: this.addRoleForm.get('description').value
     };
     const saveObj = this.data.actionName === "update-role" ? updateObj : addObj;
 
