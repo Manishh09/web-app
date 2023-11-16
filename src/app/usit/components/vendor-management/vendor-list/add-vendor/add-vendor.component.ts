@@ -107,7 +107,50 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   // ) {}
   ngOnInit(): void {
     this.getvendorcompanydetails(); //This method will be  called for company auto-complete search
+    if(this.data.actionName === "edit-vendor"){
+      this.bindFormControlValueOnEdit();
+    }
     this.iniVendorForm();
+
+  }
+
+  private bindFormControlValueOnEdit() {
+    // snackbar
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 2500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
+    // api call
+    this.vendorServ.getEntity(this.data.vendorData.id).subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.entity = response.data;
+          const resp = response.data;
+          this.data.vendorData = {
+            ...this.data.vendorData,
+            client: resp.client,
+            details: resp.details,
+            staff: resp.staff,
+            revenue: resp.revenue,
+            website: resp.website,
+            facebook: resp.facebook,
+            industrytype: resp.industrytype,
+            linkedinid: resp.linkedinid,
+            twitterid: resp.twitterid,
+          };
+          //init form and  update control values on edit
+          this.iniVendorForm();
+        }
+      }, error: err =>{
+        dataToBeSentToSnackBar.message = err.message;
+        dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+      }
+    });
   }
 
   /**

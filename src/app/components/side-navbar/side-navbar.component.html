@@ -10,7 +10,7 @@
   <mat-nav-list class="nav-list">
     <mat-list-item class="nav-list-item"  [routerLink]="menu.routerLink" routerLinkActive="is-active"
       [routerLinkActiveOptions]="{exact:
-        true}" [matTooltip]="menu.text" matTooltipPosition="above">
+        true}" [matTooltip]="menu.text" matTooltipPosition="right">
       <!-- <div class="nav-list-item">
         <mat-icon class="item-icon">{{menu.icon}}</mat-icon>
         <span> {{menu.text}} </span>
@@ -24,7 +24,7 @@
 
 <ng-template #childMenu let-menu="menu">
   <mat-expansion-panel [class.mat-elevation-z0]="true" #pannel [ngClass]="pannel.expanded ? 'expansion-panel-2': 'expansion-panel'">
-    <mat-expansion-panel-header class="expansion-panel-header" [matTooltip]="menu.text" matTooltipPosition="above">
+    <mat-expansion-panel-header class="expansion-panel-header" [matTooltip]="menu.text" matTooltipPosition="right">
       <mat-icon mat-list-icon class="item-icon">{{menu.icon}}</mat-icon>
       {{menu.text}}
     </mat-expansion-panel-header>
@@ -34,7 +34,7 @@
 
       <mat-list-item class="nav-list-item" [routerLink]="submenu.routerLink" *ngFor="let submenu of menu.children"
         routerLinkActive="is-active" [routerLinkActiveOptions]="{exact:
-                true}" [matTooltip]="submenu.text" matTooltipPosition="above">
+                true}" [matTooltip]="submenu.text" matTooltipPosition="right">
         <!-- <div class="nav-list-item">
           <mat-icon class="item-icon">{{submenu.icon}}</mat-icon><span>
           {{submenu.text}}</span>

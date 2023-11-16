@@ -36,6 +36,7 @@ import {
 import { CustomSnackbarComponent } from 'src/app/components/custom-snackbar/custom-snackbar.component';
 import { Subject, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-employee-list',
@@ -103,6 +104,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private empManagementServ = inject(EmployeeManagementService);
+  private router = inject(Router);
   // for subscrition clean up
   private destroyed$ = new Subject<void>();
   ngOnInit(): void {
@@ -325,6 +327,10 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
     this.pageIndex = e.pageIndex;
   }
 
+  goToUserInfo(id: number){
+
+    this.router.navigate([`usit/user/info/${id}`])
+  }
   /** clean up subscriptions */
   ngOnDestroy(): void {
     this.destroyed$.next();

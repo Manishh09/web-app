@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  height: 86vh; 
+  height: 86vh;
 }
 
 ul{
@@ -70,11 +70,25 @@ tbody{
 
 }
 .mat-column-Name {
-
   border-right: 1px solid lightgray;
+  width: fit-content;
+}
 
+td:first-child {
+
+  .user-info{
+    cursor: pointer;
+    margin-bottom: 2px;
+    color: #0275d8;
+  }
+  span{
+    display: flex;
+    flex-direction: column;
+
+  }
 
 }
+
 .mat-column-Name, .mat-column-Email, .mat-column-PersonalOrCompanyNumber, .mat-column-Department, .mat-column-Status{
 
   border-right: 1px solid lightgray;

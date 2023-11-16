@@ -472,8 +472,8 @@ export class VendorListComponent implements OnInit {
         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         return;
       }
-      let dataToBeSentToDailogForReject, dataToBeSentToDailogForStatus = {}; 
-      if(vendor.vms_stat === 'Initiated'){
+      let dataToBeSentToDailogForReject, dataToBeSentToDailogForStatus = {};
+      if(vendor.vms_stat === 'Initiated' && !rejectVendor){
         dataToBeSentToDailogForStatus = {
           title: 'Approve Vendor',
           message: 'Are you sure you want to Approve the Vendor ?',
@@ -481,7 +481,7 @@ export class VendorListComponent implements OnInit {
           cancelText: 'No',
           actionData: vendor,
         };
-      
+
       }else {
         dataToBeSentToDailogForReject = {
         title: 'Reject Vendor',
@@ -491,7 +491,7 @@ export class VendorListComponent implements OnInit {
         actionData: vendor,
       };
     }
-       
+
       const dialogConfig = new MatDialogConfig();
       dialogConfig.width = 'fit-content';
       dialogConfig.height = 'auto';
@@ -499,15 +499,15 @@ export class VendorListComponent implements OnInit {
       dialogConfig.panelClass = `${
         vendor.vms_stat == 'Initiated' && !rejectVendor ? 'approve' : 'reject'
       }-vendor`;
-      const isApprove =  vendor.vms_stat == 'Initiated' ? dataToBeSentToDailogForStatus : dataToBeSentToDailogForReject;
+      const isApprove =  vendor.vms_stat == 'Initiated'  && !rejectVendor ? dataToBeSentToDailogForStatus : dataToBeSentToDailogForReject;
       dialogConfig.data =  isApprove;
-      const dialogRef = this.dialogServ.openDialogWithComponent( 
-        isApprove ? StatusComponent : ConfirmComponent,
+      const dialogRef = this.dialogServ.openDialogWithComponent(
+        vendor.vms_stat == 'Initiated'  && !rejectVendor ? ConfirmComponent : StatusComponent ,
         dialogConfig
       );
 
       const statReqObj = {
-        action: vendor.vms_stat === 'Initiated' ? 'Approved' : 'Reject',
+        action: vendor.vms_stat === 'Initiated' && !rejectVendor ? 'Approved' : 'Reject',
         id: vendor.id,
         loginId: this.loginId,
         remarks: dialogRef.componentInstance.remarks
