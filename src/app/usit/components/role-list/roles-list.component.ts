@@ -20,6 +20,7 @@ import { AddRoleComponent } from './add-role/add-role.component';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { RoleManagementService } from '../../services/role-management.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
+import {MatTooltipModule} from '@angular/material/tooltip';
 @Component({
   selector: 'app-roles-list',
   templateUrl: './roles-list.component.html',
@@ -35,7 +36,8 @@ standalone: true,
     MatFormFieldModule,
     MatSortModule,
     MatPaginatorModule,
-    CommonModule
+    CommonModule,
+    MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

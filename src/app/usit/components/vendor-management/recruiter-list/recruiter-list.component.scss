@@ -64,9 +64,9 @@ tbody {
   color: #1a1717;
 }
 
-.mat-mdc-row {
-  height: 48px !important;
-}
+// .mat-mdc-row {
+//   height: 48px !important;
+// }
 
 .mat-mdc-column {
   border-right: 1px solid currentColor;
@@ -166,7 +166,7 @@ tbody {
 td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.mat-mdc-cell.mdc-data-table__cell.ng-star-inserted {
   display: flex;
   column-gap: 5px;
-  height: 49px;
+  height: 43px;
   align-items: center;
 }
 
@@ -190,14 +190,16 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
 }
 
 .action-buttons {
-  //display: flex;
+  // display: flex;
   align-items: center;
+  height: 43px;
 }
 
 .action-buttons button {
   margin: 0;
   padding: 0;
   width: 30px;
+  height: 30px;
 }
 
 ::ng-deep .action-button-ed .mat-mdc-button-touch-target {
@@ -258,4 +260,22 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
     flex-direction: column;
     height: 87.5vh;
   }
+}
+
+.mat-mdc-header-row {
+  height: 30px !important; 
+}
+
+.mat-mdc-row {
+  height: 30px !important; 
+}
+
+.filter-button{
+  width: fit-content;
+  height: 25px;
+}
+
+.approve-reject-buttons{
+  width: fit-content;
+  height: auto;
 }

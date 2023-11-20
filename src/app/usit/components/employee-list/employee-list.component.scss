@@ -74,7 +74,7 @@ tbody{
   width: fit-content;
 }
 
-td:first-child {
+td:nth-child(2) {
 
   .user-info{
     cursor: pointer;
@@ -89,7 +89,7 @@ td:first-child {
 
 }
 
-.mat-column-Name, .mat-column-Email, .mat-column-PersonalOrCompanyNumber, .mat-column-Department, .mat-column-Status{
+.mat-column-SerialNum, .mat-column-Name, .mat-column-Email, .mat-column-PersonalOrCompanyNumber, .mat-column-Department, .mat-column-Status{
 
   border-right: 1px solid lightgray;
 
@@ -176,12 +176,14 @@ td:first-child {
   display: flex;
   //justify-content: space-between;
   align-items: center;
+  height: 43px;
 }
 
 .action-buttons button {
   margin: 0;
   padding: 0;
   width: 30px;
+  height: 30px;
 }
 
 ::ng-deep .action-button-ed .mat-mdc-button-touch-target {
@@ -193,4 +195,13 @@ td:first-child {
   width: 30px !important;
   height: 30px !important;
   top: 10px;
+}
+
+
+.mat-mdc-header-row {
+  height: 30px !important; 
+}
+
+.mat-mdc-row {
+  height: 30px !important; 
 }

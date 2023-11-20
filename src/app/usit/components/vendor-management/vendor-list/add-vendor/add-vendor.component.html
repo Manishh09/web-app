@@ -15,7 +15,7 @@
           <!-- Company -->
           <mat-form-field appearance="fill">
             <mat-label>Company</mat-label>
-           <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" >
+           <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" max-length="75">
             <mat-autocomplete #companyAutoCmp="matAutocomplete">
                 <mat-option *ngFor="let option of (searchObs$ | async)"
                   [value]="option.company.trim()">
@@ -97,7 +97,7 @@
          <!-- client   -->
          <mat-form-field appearance="fill">
           <mat-label>Client Details</mat-label>
-          <input matInput formControlName="client">
+          <input matInput formControlName="client" maxlength="50">
           <!-- <mat-error *ngIf="vendorForm.get('client')!.hasError('required')">Client
             is required</mat-error> -->
         </mat-form-field>
@@ -120,7 +120,7 @@
          <!-- details   -->
          <mat-form-field appearance="fill">
           <mat-label>Other Details</mat-label>
-          <input matInput formControlName="details">
+          <input matInput formControlName="details" maxlength="250">
         </mat-form-field>
 
 
@@ -136,32 +136,32 @@
           <!-- website -->
           <mat-form-field appearance="fill">
             <mat-label>Website</mat-label>
-            <input matInput formControlName="website">
+            <input matInput formControlName="website" maxlength="50">
           </mat-form-field>
           <!-- facebook -->
           <mat-form-field appearance="fill">
             <mat-label>Facebook</mat-label>
-            <input matInput formControlName="facebook">
+            <input matInput formControlName="facebook" maxlength="100">
           </mat-form-field>
            <!-- industrytype -->
            <mat-form-field appearance="fill">
             <mat-label>Industry</mat-label>
-            <input matInput formControlName="industrytype">
+            <input matInput formControlName="industrytype" maxlength="25">
           </mat-form-field>
            <!-- twitterid -->
            <mat-form-field appearance="fill">
             <mat-label>Twitter Id</mat-label>
-            <input matInput formControlName="twitterid">
+            <input matInput formControlName="twitterid" maxlength="100">
           </mat-form-field>
           <!-- revinue -->
           <mat-form-field appearance="fill">
-            <mat-label>Revenue</mat-label>
-            <input matInput formControlName="revenue">
+            <mat-label>Revenue</mat-label >
+            <input matInput formControlName="revenue" maxlength="20">
           </mat-form-field>
           <!-- linkedinid -->
           <mat-form-field appearance="fill">
             <mat-label>LinkedIn Id</mat-label>
-            <input matInput formControlName="linkedinid">
+            <input matInput formControlName="linkedinid" maxlength="100">
           </mat-form-field>
 
 

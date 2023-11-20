@@ -8,9 +8,9 @@
       Vendors
     </span>
     <span class="filter-vendors">
-      <button mat-raised-button color="warn" (click)="filterVendors('Recruiting')">Recruiting Companies</button>
-      <button mat-raised-button color="primary" (click)="filterVendors('Bench Sales')">Bench Companies</button>
-      <button mat-raised-button style="background-color: black; color: white;" (click)="filterVendors('Both')">Both Recruiting & Staffing</button>
+      <button mat-raised-button class="filter-button" color="warn" (click)="filterVendors('Recruiting')">Recruiting Companies</button>
+      <button mat-raised-button class="filter-button" color="primary" (click)="filterVendors('Bench Sales')">Bench Companies</button>
+      <button mat-raised-button class="filter-button" style="background-color: black; color: white;" (click)="filterVendors('Both')">Both Recruiting & Staffing</button>
     </span>
     <div class="vendor-actions">
       <!-- <button mat-icon-button class="add-user" (click)="uploadVendor()">
@@ -110,11 +110,11 @@
         <ng-container matColumnDef="Action">
           <th mat-header-cell *matHeaderCellDef> Action </th>
           <td mat-cell *matCellDef="let vendor">
-            <button mat-icon-button (click)="editVendor(vendor)">
+            <button mat-icon-button (click)="editVendor(vendor)" class="action-button-ed">
               <mat-icon class="edit-icon">edit</mat-icon>
             </button>
 
-            <button mat-icon-button (click)="deleteVendor(vendor)">
+            <button mat-icon-button (click)="deleteVendor(vendor)" class="action-button-ed">
               <mat-icon class="delete-icon">delete</mat-icon>
             </button>
           </td>
@@ -123,10 +123,11 @@
         <!-- Approve/Reject Column -->
         <ng-container matColumnDef="Approve/Reject">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Approve/Reject"> Approve/Reject </th>
-          <td mat-cell *matCellDef="let vendor">
+          <td mat-cell *matCellDef="let vendor" class="approve-buttons">
             <ng-container *ngIf="['Approved'].includes(vendor.vms_stat);  else ifNotApproved">
 
-              <button  mat-raised-button (click)="onApproveOrRejectVMS(vendor)"
+              <button  mat-raised-button class="approve-reject-buttons" (click)="onApproveOrRejectVMS(vendor)"
+                style="width: 75px; height: 25px;"
                 [ngStyle]="{ color: 'white' }"
                 [ngClass]="vendor.vms_stat === 'Approved'  ?   'mat-primary' : vendor.vms_stat === 'Initiated'  ?  'mat-secondary' : 'mat-warn'">
                 {{vendor.vms_stat}}
@@ -135,15 +136,17 @@
             </ng-container >
               <ng-template #ifNotApproved>
                 <!-- Initiated BUTTON -->
-                <button  *ngIf="['Initiated', 'Approved'].includes(vendor.vms_stat)" mat-raised-button (click)="onApproveOrRejectVMS(vendor)"
+                <button  *ngIf="['Initiated', 'Approved'].includes(vendor.vms_stat)" mat-raised-button class="approve-reject-buttons" (click)="onApproveOrRejectVMS(vendor)"
                 [ngStyle]="{ color: 'white' }"
+                style="width: 75px; height: 25px;"
                 [ngClass]="'mat-primary'"> {{vendor.vms_stat}}
               </button>
 
               <!-- Reject BUTTON -->
 
-                <button  *ngIf="vendor.vms_stat !== 'Approved'" mat-raised-button (click)="onApproveOrRejectVMS(vendor ,true)"
+                <button  *ngIf="vendor.vms_stat !== 'Approved'" mat-raised-button class="approve-reject-buttons" (click)="onApproveOrRejectVMS(vendor ,true)"
                 [ngStyle]="{ color: 'white' }"
+                style="width: 75px; height: 25px;"
                 [ngClass]="'mat-warn'"> {{'Reject'}}
               </button>
 

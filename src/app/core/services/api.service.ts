@@ -70,7 +70,14 @@ export class ApiService {
   getJson(path: string): Observable<any> {
     return this.http.get(path);
   }
+  
+  uploadFile(url : string, formData : any){
+    return this.http.post(this.apiUrl + url, formData, {observe: "response"}).pipe(
+      map((x) => x),
 
+      catchError(x=> of({message: this.handleHttpError(x)}))
+    );
+  }
   // get data from ready-made api endpoints
   getFakeAPI(url: string): Observable<unknown> {
     return this.http.get(url);
