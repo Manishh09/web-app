@@ -68,7 +68,7 @@ export class VendorListComponent implements OnInit {
   dataSource = new MatTableDataSource<any>([]);
   // paginator
   length = 50;
-  pageSize = 0;
+  pageSize = 25;
   pageIndex = 1;
   pageSizeOptions = [5, 10, 25];
   hidePageSize = false;

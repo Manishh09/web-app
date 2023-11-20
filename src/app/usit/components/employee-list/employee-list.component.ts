@@ -60,6 +60,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
 
 
   dataTableColumns: string[] = [
+    'SerialNum',
     'Name',
     'Email',
     'PersonalOrCompanyNumber',
@@ -126,6 +127,9 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
         console.log('employee.data', response.data);
         if (response.data) {
           this.dataSource.data = response.data;
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
         }
       },
       error: (err) => {
@@ -150,7 +154,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
         case 'Name':
           return (
             (isAsc ? 1 : -1) *
-            (a.pseudoname || '').localeCompare(b.pseudoname || '')
+            (a.fullname || '').localeCompare(b.fullname || '')
           );
         case 'Email':
           return (

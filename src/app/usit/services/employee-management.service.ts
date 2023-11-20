@@ -67,5 +67,11 @@ export class EmployeeManagementService {
    return action === "edit-employee" ? this.updateEmployee(entity) : this.registerEmployee(entity);
 
   }
+
+  uploadFile(formData:any, id: number) {
+    return this.apiServ.uploadFile(`usit/auth/users/uploadmultipleFiles/${id}`, formData)
+
+  }
+
   /** EMPLOYEE SERVICES - END */
 }

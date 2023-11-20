@@ -57,9 +57,9 @@ tbody{
 .mat-sort-header-arrow {
   color: #1a1717;
 }
-.mat-mdc-row  {
-  height: 48px !important;
-}
+// .mat-mdc-row  {
+//   height: 48px !important;
+// }
 .mat-mdc-column {
   border-right: 1px solid currentColor;
 }
@@ -124,8 +124,9 @@ tbody{
 .vendor-table-style {
   padding: 0 2px;
   width: max-content;
-  height: calc(100% - 0px);
+  max-height: calc(100% - 2px);
   overflow: auto;
+  display: block;
 }
 
 .mdc-data-table__cell, .mdc-data-table__header-cell{
@@ -169,12 +170,14 @@ tbody{
   display: flex;
   //justify-content: space-between;
   align-items: center;
+  height: 43px;
 }
 
 .action-buttons button {
   margin: 0;
   padding: 0;
   width: 30px;
+  height: 30px;
 }
 
 ::ng-deep .action-button-ed .mat-mdc-button-touch-target {
@@ -215,4 +218,29 @@ tbody{
 
 .edit-icon, .delete-icon {
   color: rgb(99, 98, 98);
+}
+
+td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.mat-mdc-cell.mdc-data-table__cell.ng-star-inserted {
+  display: flex;
+  column-gap: 5px;
+  height: 49px;
+  align-items: center;
+}
+
+.mat-mdc-header-row {
+  height: 30px !important; 
+}
+
+.mat-mdc-row {
+  height: 30px !important; 
+}
+
+.filter-button {
+  width: fit-content;
+  height: 25px;
+}
+
+.approve-reject-buttons{
+  width: fit-content;
+  height: auto;
 }
