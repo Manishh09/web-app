@@ -340,7 +340,7 @@ export class VendorListComponent implements OnInit {
       actionData: vendor,
     };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '400px';
+    dialogConfig.width = 'fit-content';
     dialogConfig.height = 'auto';
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = 'delete-vendor';
@@ -366,7 +366,7 @@ export class VendorListComponent implements OnInit {
 
           this.vendorServ.deleteEntity(vendor.id).pipe(takeUntil(this.destroyed$))
           .subscribe({next:(response: any) => {
-            if (response.status == 'Success') {
+            if (response.status == 'success') {
               // this.gty(this.page);
               this.getAllData();
               dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
@@ -574,7 +574,7 @@ export class VendorListComponent implements OnInit {
           this.hasAcces,
           this.loginId,
           pageIndex,
-          event.pageSize,
+          50,
           this.field
         )
         .pipe(takeUntil(this.destroyed$))

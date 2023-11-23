@@ -1,0 +1,420 @@
+import {
+  AfterViewInit,
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import {
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
+} from '@angular/material/paginator';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Subject, takeUntil } from 'rxjs';
+import { Consultantinfo } from 'src/app/usit/models/consultantinfo';
+import {
+  ISnackBarData,
+  SnackBarService,
+} from 'src/app/services/snack-bar.service';
+import { DialogService } from 'src/app/services/dialog.service';
+import { ConsultantService } from 'src/app/usit/services/consultant.service';
+import { StatusComponent } from 'src/app/dialogs/status/status.component';
+import { MatDialogConfig } from '@angular/material/dialog';
+import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
+
+@Component({
+  selector: 'app-consultant-list',
+  standalone: true,
+  imports: [
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    MatCardModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSortModule,
+    MatPaginatorModule,
+    CommonModule,
+  ],
+  templateUrl: './consultant-list.component.html',
+  styleUrls: ['./consultant-list.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class ConsultantListComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
+  hasAcces!: any;
+  consultant: Consultantinfo[] = [];
+  consultant2 = new Consultantinfo();
+  message: any;
+  showAlert = false;
+  submitted = false;
+  flag!: any;
+  searchstring!: any;
+  ttitle!: string;
+  ttitle1!: string;
+  tclass!: string;
+  dept!: any;
+  consultant_track: any[] = [];
+  field = 'empty';
+  // pagination code
+  dataTableColumns: string[] = [
+    'SerialNum',
+    'Date',
+    'Id',
+    'Name',
+    'TrackSI',
+    'Email',
+    'ContactNumber',
+    'Visa',
+    'CurrentLocation',
+    'Company',
+    'Position',
+    'Experience',
+    'Relocation',
+    'Rate',
+    'Priority',
+    'Status',
+    'Action',
+  ];
+  dataSource = new MatTableDataSource<any>([]);
+  // paginator
+  length = 50;
+  pageSize = 25;
+  pageIndex = 1;
+  pageSizeOptions = [5, 10, 25];
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  pageEvent!: PageEvent;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  private dialogServ = inject(DialogService);
+  private snackBarServ = inject(SnackBarService);
+  private consultantServ = inject(ConsultantService);
+
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
+  totalItems: any;
+  userid: any;
+
+  ngOnInit(): void {
+    this.hasAcces = localStorage.getItem('role');
+    this.userid = localStorage.getItem('userid');
+    this.dept = localStorage.getItem('department');
+    this.getAllData();
+  }
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
+  getAllData() {
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
+    return this.consultantServ
+      .getAllConsultantData(
+        'sales',
+        this.hasAcces,
+        this.userid,
+        1,
+        50,
+        this.field
+      )
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+          this.consultant = response.data.content;
+          this.dataSource.data = response.data.content;
+          console.log(this.dataSource.data);
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
+          this.totalItems = response.data.totalElements;
+          //  this.length = response.data.totalElements;
+        },
+        error: (err: any) => {
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          dataToBeSentToSnackBar.message = err.message;
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+      });
+  }
+  /**
+   * on filter
+   * @param event
+   */
+  onFilter(event: any) {
+    this.dataSource.filter = event.target.value;
+  }
+  /**
+   * Sort
+   * @param event
+   */
+  onSort(event: Sort) {
+    const sortDirection = event.direction;
+    const activeSortHeader = event.active;
+
+    if (sortDirection === '' || !activeSortHeader) {
+      return;
+    }
+
+    const isAsc = sortDirection === 'asc';
+    this.dataSource.data = this.dataSource.data.sort((a: any, b: any) => {
+      switch (activeSortHeader) {
+        case 'SerialNum':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.serialNum || '').localeCompare(b.serialNum || '')
+          );
+        case 'Date':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.createddate || '').localeCompare(b.createddate || '')
+          );
+        case 'Company':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.companyname || '').localeCompare(b.companyname || '')
+          );
+        case 'Email':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.consultantemail || '').localeCompare(b.consultantemail || '')
+          );
+        case 'Id':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.consultantno || '').localeCompare(b.consultantno || '')
+          );
+        case 'Visa':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.visa_status || '').localeCompare(b.visa_status || '')
+          );
+        case 'ContactNumber':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.contactnumber || '').localeCompare(b.contactnumber || '')
+          );
+        case 'position':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.position || '').localeCompare(b.position || '')
+          );
+        case 'Status':
+          return (
+            (isAsc ? 1 : -1) * (a.status || '').localeCompare(b.status || '')
+          );
+        case 'CurrentLocation':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.currentlocation || '').localeCompare(b.currentlocation || '')
+          );
+
+        case 'Experience':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.experience || '').localeCompare(b.experience || '')
+          );
+        case 'Relocation':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.relocation || '').localeCompare(b.relocation || '')
+          );
+        case 'Rate':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.hourlyrate || '').localeCompare(b.hourlyrate || '')
+          );
+        case 'Priority':
+          return (
+            (isAsc ? 1 : -1) *
+            (a.priority || '').localeCompare(b.priority || '')
+          );
+        default:
+          return 0;
+      }
+    });
+  }
+  /**
+   *
+   * @param element
+   * @param type
+   */
+  goToConsultantInfo(element: any, type: 'id' | 'name') {}
+  /**
+   * on track
+   */
+  goToConsultantDrillDownReport(
+    element: any,
+    type: 'interview' | 'submission'
+  ) {
+    // open popup
+  }
+  consultant_data: any[] = [];
+  getDrilldownRport(id: any, status: any) {
+    const drilldownReportObj: ReportVo = {
+      id: id,
+      startDate: '2020-06-01',
+      endDate: '2030-06-01',
+      groupby: 'consultant',
+      status: status,
+    };
+
+    return this.consultantServ
+      .consultant_DrillDown_report(drilldownReportObj)
+      .subscribe((response: any) => {
+        this.consultant_data = response.data;
+        ///  console.log(JSON.stringify(response.data))
+      });
+  }
+
+  /**
+   * Add
+   */
+  addConsultant() {}
+  /**
+   * Edit / Update
+   */
+  editConsultant(consultant: any) {}
+  /**
+   * Delete
+   */
+  deleteConsultant(consultant: any) {}
+  // status update
+  onStatusUpdate(consultant: any) {
+    const dataToBeSentToDailog = {
+      title: 'Status Update',
+      updateText:
+        consultant.status !== 'Active' ? 'activating' : 'in-activating',
+      type: 'Consultant',
+      buttonText: 'Update',
+      actionData: consultant,
+      actionName: 'update-consultant-status',
+    };
+    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog, {
+      delete: false,
+      edit: false,
+      add: false,
+      updateSatus: true,
+    });
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      StatusComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.submitted) {
+          consultant.remarks = dialogRef.componentInstance.remarks;
+          // this.callChangeEmpStatusAPI(emp);
+        }
+      },
+    });
+  }
+  private getDialogConfigData(
+    dataToBeSentToDailog: Partial<IConfirmDialogData>,
+    action: {
+      delete: boolean;
+      edit: boolean;
+      add: boolean;
+      updateSatus?: boolean;
+    }
+  ) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width =
+      action.edit || action.add
+        ? '65vw'
+        : action.delete
+        ? 'fit-content'
+        : '400px';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = dataToBeSentToDailog.actionName;
+    dialogConfig.data = dataToBeSentToDailog;
+    return dialogConfig;
+  }
+  /**
+   * handle page event - pagination
+   * @param endor
+   */
+  handlePageEvent(event: PageEvent) {
+    console.log('page.event', event);
+    if (event && event.pageIndex && event.pageSize) {
+      this.pageEvent = event;
+      this.pageSize = event.pageSize;
+      // this.assignToPage = event.pageIndex;
+      const pageIndex = event.pageIndex === 0 ? 1 : event.pageIndex + 1;
+      this.pageIndex = pageIndex;
+      return this.consultantServ
+        .getAllConsultantData(
+          this.flag,
+          this.hasAcces,
+          this.userid,
+          pageIndex,
+          50,
+          this.field
+        )
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe({
+          next: (response: any) => {
+            this.consultant = response.data.content;
+            this.dataSource.data = response.data.content;
+            console.log('after page click', response.data.content);
+            this.dataSource.data.map((x: any, i) => {
+              x.serialNum = i + 1;
+            });
+            this.totalItems = response.data.totalElements;
+            // this.length =  response.data.totalElements;
+          },
+          error: (err: any) => {
+            const dataToBeSentToSnackBar: ISnackBarData = {
+              message: '',
+              duration: 1500,
+              verticalPosition: 'top',
+              horizontalPosition: 'center',
+              direction: 'above',
+              panelClass: ['custom-snack-failure'],
+            };
+            dataToBeSentToSnackBar.message = err.message;
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          },
+        });
+    }
+    return;
+  }
+  /**
+   * clean up
+   */
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
+}
+
+export interface ReportVo {
+  startDate: any;
+  endDate: any;
+  groupby: string;
+  status: string;
+  id: number;
+}
