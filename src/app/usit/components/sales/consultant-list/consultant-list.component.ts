@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
   MatPaginator,
+  MatPaginatorIntl,
   MatPaginatorModule,
   PageEvent,
 } from '@angular/material/paginator';
@@ -31,6 +32,7 @@ import { ConsultantService } from 'src/app/usit/services/consultant.service';
 import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
+import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 
 @Component({
   selector: 'app-consultant-list',
@@ -49,6 +51,8 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
   templateUrl: './consultant-list.component.html',
   styleUrls: ['./consultant-list.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
+
 })
 export class ConsultantListComponent
   implements OnInit, OnDestroy, AfterViewInit
@@ -89,11 +93,11 @@ export class ConsultantListComponent
   ];
   dataSource = new MatTableDataSource<any>([]);
   // paginator
-  length = 50;
-  pageSize = 25;
-  pageIndex = 1;
+  totalItems = 0;
+  pageSize = 50;
+  currentPageIndex = 0;
   pageSizeOptions = [5, 10, 25];
-  hidePageSize = false;
+  hidePageSize = true;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
   pageEvent!: PageEvent;
@@ -106,8 +110,9 @@ export class ConsultantListComponent
 
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
-  totalItems: any;
+
   userid: any;
+  page: number = 1;
 
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
@@ -117,10 +122,15 @@ export class ConsultantListComponent
   }
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+    //this.dataSource.paginator = this.paginator;
+    //this.paginator.firstPage()
   }
 
-  getAllData() {
+  /**
+   * pageIndex : default value is 1 , will get updated whenever the page number changes
+   * @returns number of records based on pagenumber
+   */
+  getAllData(pageIndex = 1) {
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 1500,
@@ -129,13 +139,14 @@ export class ConsultantListComponent
       direction: 'above',
       panelClass: ['custom-snack-success'],
     };
+
     return this.consultantServ
       .getAllConsultantData(
         'sales',
         this.hasAcces,
         this.userid,
-        1,
-        50,
+        pageIndex,
+        this.pageSize,
         this.field
       )
       .pipe(takeUntil(this.destroyed$))
@@ -146,7 +157,50 @@ export class ConsultantListComponent
           console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
-            x.serialNum = i + 1;
+            x.serialNum = this.generateSerialNumber(i);
+          });
+          this.totalItems = response.data.totalElements;
+          //  this.length = response.data.totalElements;
+        },
+        error: (err: any) => {
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          dataToBeSentToSnackBar.message = err.message;
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+      });
+  }
+
+  /**
+   * get data by pagination
+   */
+  getAllDataByPagination(pageIndex: number) {
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
+
+    return this.consultantServ
+      .getAllConsultantData(
+        'sales',
+        this.hasAcces,
+        this.userid,
+        pageIndex,
+        this.pageSize,
+        this.field
+      )
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+          this.consultant = response.data.content;
+          this.dataSource.data = response.data.content;
+          console.log(this.dataSource.data);
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = this.generateSerialNumber(i);
           });
           this.totalItems = response.data.totalElements;
           //  this.length = response.data.totalElements;
@@ -359,48 +413,17 @@ export class ConsultantListComponent
    */
   handlePageEvent(event: PageEvent) {
     console.log('page.event', event);
-    if (event && event.pageIndex && event.pageSize) {
+    if (event) {
       this.pageEvent = event;
-      this.pageSize = event.pageSize;
-      // this.assignToPage = event.pageIndex;
-      const pageIndex = event.pageIndex === 0 ? 1 : event.pageIndex + 1;
-      this.pageIndex = pageIndex;
-      return this.consultantServ
-        .getAllConsultantData(
-          this.flag,
-          this.hasAcces,
-          this.userid,
-          pageIndex,
-          50,
-          this.field
-        )
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe({
-          next: (response: any) => {
-            this.consultant = response.data.content;
-            this.dataSource.data = response.data.content;
-            console.log('after page click', response.data.content);
-            this.dataSource.data.map((x: any, i) => {
-              x.serialNum = i + 1;
-            });
-            this.totalItems = response.data.totalElements;
-            // this.length =  response.data.totalElements;
-          },
-          error: (err: any) => {
-            const dataToBeSentToSnackBar: ISnackBarData = {
-              message: '',
-              duration: 1500,
-              verticalPosition: 'top',
-              horizontalPosition: 'center',
-              direction: 'above',
-              panelClass: ['custom-snack-failure'],
-            };
-            dataToBeSentToSnackBar.message = err.message;
-            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-          },
-        });
+      this.currentPageIndex = event.pageIndex;
+      this.getAllData(event.pageIndex + 1)
     }
     return;
+  }
+  generateSerialNumber(index: number): number {
+    const pagIdx = this.currentPageIndex === 0 ? 1 : this.currentPageIndex + 1;
+    const serialNumber = (pagIdx - 1) * this.pageSize + index + 1;
+    return serialNumber;
   }
   /**
    * clean up

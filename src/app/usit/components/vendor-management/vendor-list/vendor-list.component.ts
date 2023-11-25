@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectorRef,
   Component,
   OnInit,
   ViewChild,
@@ -14,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
   MatPaginator,
+  MatPaginatorIntl,
   MatPaginatorModule,
   PageEvent,
 } from '@angular/material/paginator';
@@ -31,6 +33,7 @@ import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { Subject, takeUntil } from 'rxjs';
+import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 
 @Component({
   selector: 'app-vendor-list',
@@ -49,6 +52,7 @@ import { Subject, takeUntil } from 'rxjs';
     CommonModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 })
 export class VendorListComponent implements OnInit {
   dataTableColumns: string[] = [
@@ -67,10 +71,9 @@ export class VendorListComponent implements OnInit {
   ];
   dataSource = new MatTableDataSource<any>([]);
   // paginator
-  length = 50;
-  pageSize = 25;
-  pageIndex = 1;
-  pageSizeOptions = [5, 10, 25];
+  pageSize = 50; // items per page
+  currentPageIndex = 0;
+  pageSizeOptions = [5, 10, 25, 50];
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
@@ -78,6 +81,7 @@ export class VendorListComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  cdr = inject(PaginatorIntlService)
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private vendorServ = inject(VendorService);
@@ -88,7 +92,7 @@ export class VendorListComponent implements OnInit {
   datarr: any[] = [];
   recrData: Recruiter[] = [];
   entity: any[] = [];
-  totalItems: any;
+  totalItems: number = 0;
   // pagination code
   page: number = 1;
   itemsPerPage = 50;
@@ -116,9 +120,10 @@ export class VendorListComponent implements OnInit {
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+   // this.dataSource.paginator = this.paginator;
+
   }
-  getAllData() {
+  getAllData(currentPageIndex = 1) {
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 1500,
@@ -128,7 +133,7 @@ export class VendorListComponent implements OnInit {
       panelClass: ['custom-snack-success'],
     };
     return this.vendorServ
-      .getAllVendorsByPagination(this.hasAcces, this.loginId, 1, 50, this.field)
+      .getAllVendorsByPagination(this.hasAcces, this.loginId, currentPageIndex, this.pageSize, this.field)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: (response: any) => {
@@ -137,9 +142,10 @@ export class VendorListComponent implements OnInit {
           console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
-            x.serialNum = i + 1;
+            x.serialNum = this.generateSerialNumber(i);
           });
           this.totalItems = response.data.totalElements;
+
           //  this.length = response.data.totalElements;
         },
         error: (err) => {
@@ -156,7 +162,7 @@ export class VendorListComponent implements OnInit {
         this.hasAcces,
         this.loginId,
         page,
-        this.pageSize,
+        50,
         this.field
       ).pipe(takeUntil(this.destroyed$))
       .subscribe((response: any) => {
@@ -164,8 +170,8 @@ export class VendorListComponent implements OnInit {
         this.dataSource.data.map((x: any, i) => {
           x.serialNum = i + 1;
         });
-        this.totalItems = response.data.totalElements;
-        this.length = response.data.totalElements;
+       // this.totalItems = response.data.totalElements;
+       // this.length = response.data.totalElements;
       });
   }
   /**
@@ -367,7 +373,6 @@ export class VendorListComponent implements OnInit {
           this.vendorServ.deleteEntity(vendor.id).pipe(takeUntil(this.destroyed$))
           .subscribe({next:(response: any) => {
             if (response.status == 'success') {
-              // this.gty(this.page);
               this.getAllData();
               dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
             } else {
@@ -563,42 +568,11 @@ export class VendorListComponent implements OnInit {
    */
   handlePageEvent(event: PageEvent) {
     console.log('page.event', event);
-    if (event && event.pageIndex && event.pageSize) {
+    if (event) {
       this.pageEvent = event;
-      this.pageSize = event.pageSize;
-      // this.assignToPage = event.pageIndex;
-      const pageIndex = event.pageIndex === 0 ? 1 : event.pageIndex + 1;
-      this.pageIndex = pageIndex;
-      return this.vendorServ
-        .getAllVendorsByPagination(
-          this.hasAcces,
-          this.loginId,
-          pageIndex,
-          50,
-          this.field
-        )
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe({next:(response: any) => {
-          this.datarr = response.data.content;
-          this.dataSource.data = response.data.content;
-          console.log('after page click', response.data.content);
-          this.dataSource.data.map((x: any, i) => {
-            x.serialNum = i + 1;
-          });
-          this.totalItems = response.data.totalElements;
-          // this.length =  response.data.totalElements;
-        }, error: (err) => {
-          const dataToBeSentToSnackBar: ISnackBarData = {
-            message: '',
-            duration: 1500,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-            direction: 'above',
-            panelClass: ['custom-snack-failure'],
-          };
-          dataToBeSentToSnackBar.message = err.message;
-          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-        },});
+      const currentPageIndex = event.pageIndex;
+      this.currentPageIndex = currentPageIndex;
+        this.getAllData(event.pageIndex + 1);
     }
     return;
   }
@@ -628,7 +602,11 @@ export class VendorListComponent implements OnInit {
       this.dataSource.data = this.datarr;
     }
   }
-
+  generateSerialNumber(index: number): number {
+    const pagIdx = this.currentPageIndex === 0 ? 1 : this.currentPageIndex + 1;
+    const serialNumber = (pagIdx - 1) * 50 + index + 1;
+    return serialNumber;
+  }
   /** clean up subscriptions */
   ngOnDestroy(): void {
     this.destroyed$.next();
