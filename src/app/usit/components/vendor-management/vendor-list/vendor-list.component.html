@@ -1,7 +1,7 @@
 <div class="container">
   <ul class="breadcrumb">
     <li><a href="#" routerLink="/dashboard">Home</a></li>
-    <li><a href="#" routerLink="/users">Vendors</a></li>
+    <li class="last">Vendors</li>
   </ul>
   <div class="header-container mat-elevation-z1" >
     <span class="header-text">
@@ -16,7 +16,7 @@
       <!-- <button mat-icon-button class="add-user" (click)="uploadVendor()">
         <mat-icon class="item-icon">upload</mat-icon>
       </button> -->
-      <button mat-icon-button class="add-user" (click)="addVendor()">
+      <button mat-icon-button class="add-user" (click)="addVendor()" matTooltip="Add Vendor" matTooltipPosition="left">
         <mat-icon class="item-icon">person_add</mat-icon>
       </button>
 

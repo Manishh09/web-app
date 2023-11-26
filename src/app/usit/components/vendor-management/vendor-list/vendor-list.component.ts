@@ -31,6 +31,7 @@ import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { Subject, takeUntil } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-vendor-list',
@@ -47,6 +48,7 @@ import { Subject, takeUntil } from 'rxjs';
     MatSortModule,
     MatPaginatorModule,
     CommonModule,
+    MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -70,7 +72,7 @@ export class VendorListComponent implements OnInit {
   length = 50;
   pageSize = 25;
   pageIndex = 1;
-  pageSizeOptions = [5, 10, 25];
+  pageSizeOptions = [25, 50, 100];
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;

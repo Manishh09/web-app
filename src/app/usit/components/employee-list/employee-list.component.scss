@@ -166,9 +166,15 @@ td:nth-child(2) {
   }
 }
 
-@media screen and (min-width: 768px) and (max-width: 1024px) {
+@media screen and (min-width: 768px) and (max-width: 1024px) {ve
   .mdc-data-table__cell, .mdc-data-table__header-cell{
     padding: 0px 2px;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 82vh;
   }
 }
 
@@ -204,4 +210,9 @@ td:nth-child(2) {
 
 .mat-mdc-row {
   height: 30px !important; 
+}
+
+ul.breadcrumb li:last-child {
+  color: black;
+  pointer-events: none; 
 }

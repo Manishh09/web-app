@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { ApiService } from 'src/app/core/services/api.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -65,11 +66,6 @@ export class EmployeeManagementService {
 
   addOrUpdateEmployee(entity: any, action: string){
    return action === "edit-employee" ? this.updateEmployee(entity) : this.registerEmployee(entity);
-
-  }
-
-  uploadFile(formData:any, id: number) {
-    return this.apiServ.uploadFile(`usit/auth/users/uploadmultipleFiles/${id}`, formData)
 
   }
 
