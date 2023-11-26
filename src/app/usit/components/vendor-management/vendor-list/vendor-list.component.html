@@ -29,7 +29,7 @@
   </div>
   <div id="table-container" class="table-wrapper">
     <section class="vendor-table-style mat-elevation-z8">
-      <table mat-table [dataSource]="dataSource"  matSort  (matSortChange)="onSort($event)">
+      <table mat-table [dataSource]="dataSource"  matSort  (matSortChange)="onSort($event)" oncopy="return false">
 
         <!--- Note that these columns can be defined in any order.
               The actual rendered columns are set as a property on the row definition" -->
@@ -164,19 +164,18 @@
     </section>
       <hr>
   </div>
-
+<!-- paginator -->
   <div class="paginator">
-    <!-- paginator -->
-    <mat-paginator #paginator
-    (page)="handlePageEvent($event)"
-    [length]="length"
-    [pageSize]="pageSize"
-    [disabled]="false"
-    [showFirstLastButtons]="showFirstLastButtons"
-    [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-    [hidePageSize]="hidePageSize"
-    [pageIndex]="pageIndex"
-    aria-label="Select page">
+    <mat-paginator
+      (page)="handlePageEvent($event)"
+      [pageSize]="pageSize"
+      [length]="totalItems"
+      [disabled]="false"
+      [showFirstLastButtons]="showFirstLastButtons"
+      [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+      [hidePageSize]="true"
+      [pageIndex]="currentPageIndex"
+      aria-label="Select page">
     </mat-paginator>
   </div>
 
