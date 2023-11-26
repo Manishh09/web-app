@@ -428,7 +428,7 @@ export const VENDOR_TYPE = [
   'Primary Vendor',
   'Implementation Partner',
   'Client',
-  'Tier',
+  'Layers',
 ] as const;
 
 export const TIER_TYPE = [
