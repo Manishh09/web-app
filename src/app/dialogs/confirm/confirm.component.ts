@@ -24,8 +24,16 @@ export class ConfirmComponent {
 
   onAction(action: string){
 
-    if(["SAFE_CLOSE", "NO"].includes(action)){
-      this.dialog.closeAll();
+    // if(["SAFE_CLOSE", "NO"].includes(action)){
+    //   this.dialog.closeAll();
+    // }
+
+    if(action === "SAFE_CLOSE"){
+      this.dialogRef.close()
+    }
+
+    if(action === "NO"){
+      this.dialogRef.close()
     }
 
     if(action === "YES"){

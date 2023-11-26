@@ -31,6 +31,7 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { AddRecruiterComponent } from './add-recruiter/add-recruiter.component';
 import { RecruiterService } from 'src/app/usit/services/recruiter.service';
 import { Subject, takeUntil } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-recruiter-list',
@@ -45,6 +46,7 @@ import { Subject, takeUntil } from 'rxjs';
     MatSortModule,
     MatPaginatorModule,
     CommonModule,
+    MatTooltipModule
   ],
   templateUrl: './recruiter-list.component.html',
   styleUrls: ['./recruiter-list.component.scss'],
@@ -69,7 +71,7 @@ export class RecruiterListComponent implements OnInit {
   length = 50;
   pageSize = 25;
   pageIndex = 0;
-  pageSizeOptions = [5, 10, 25];
+  pageSizeOptions = [25, 50, 100];
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;

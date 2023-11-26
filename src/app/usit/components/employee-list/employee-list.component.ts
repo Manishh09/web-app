@@ -37,6 +37,8 @@ import { CustomSnackbarComponent } from 'src/app/components/custom-snackbar/cust
 import { Subject, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRippleModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-employee-list',
@@ -53,6 +55,8 @@ import { Router } from '@angular/router';
     MatSortModule,
     MatPaginatorModule,
     CommonModule,
+    MatTooltipModule,
+    MatRippleModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -83,7 +87,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   length = 50;
   pageSize = 25;
   pageIndex = 0;
-  pageSizeOptions = [5, 10, 25];
+  pageSizeOptions = [25, 50, 100];
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
@@ -141,10 +145,13 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   onSort(event: Sort) {
-    const sortDirection = event.direction;
+    console.log(event);
+    const sortDirection = event.direction ;
     const activeSortHeader = event.active;
 
-    if (sortDirection === '' || !activeSortHeader) {
+    if (sortDirection === '') {
+       this.dataSource.data = this.dataSource.data;
+       console.log(this.dataSource.data);
       return;
     }
 
@@ -265,7 +272,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
 
   private getDialogConfigData(dataToBeSentToDailog: Partial<IConfirmDialogData>, action: {delete: boolean; edit: boolean; add: boolean, updateSatus?: boolean}) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = action.edit ||  action.add  ? '65vw' : '400px';
+    dialogConfig.width = action.edit ||  action.add  ?  '65vw' : action.delete ? 'fit-content' : "400px";
     dialogConfig.height = 'auto';
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = dataToBeSentToDailog.actionName;

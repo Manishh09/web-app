@@ -15,7 +15,7 @@
           <!-- Company -->
           <mat-form-field appearance="fill">
             <mat-label>Company</mat-label>
-           <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" max-length="75">
+           <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" maxlength="75">
             <mat-autocomplete #companyAutoCmp="matAutocomplete">
                 <mat-option *ngFor="let option of (searchObs$ | async)"
                   [value]="option.company.trim()">
@@ -131,7 +131,7 @@
           <!-- staff   -->
           <mat-form-field appearance="fill">
             <mat-label>Company Staff</mat-label>
-            <input matInput formControlName="staff">
+            <input matInput formControlName="staff" maxlength="7">
           </mat-form-field>
           <!-- website -->
           <mat-form-field appearance="fill">

@@ -106,3 +106,34 @@ thead {
 .mat-mdc-row {
   height: 30px !important; 
 }
+
+ul{
+  padding-inline-start: 10px;
+  background-color: rgb(228, 231, 234);
+  height: 2rem;
+  padding-top: 8PX;
+  top: 0;
+}
+
+ul.breadcrumb {
+  list-style: none;
+}
+
+ul.breadcrumb li {
+  display: inline;
+}
+
+ul.breadcrumb li+li:before {
+  color: black;
+  content: "/\00a0";
+}
+
+ul.breadcrumb li a {
+  color: #0275d8;
+  text-decoration: none;
+}
+
+ul.breadcrumb li a:hover {
+  color: #01447e;
+  text-decoration: underline;
+}

@@ -33,6 +33,7 @@ import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { Subject, takeUntil } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 
 @Component({
@@ -50,6 +51,7 @@ import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
     MatSortModule,
     MatPaginatorModule,
     CommonModule,
+    MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
