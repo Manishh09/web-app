@@ -17,7 +17,10 @@ const routes: Routes = [
   { path: 'vendors', component: VendorListComponent },
   { path: 'roles', component: RolesListComponent },
   { path: 'recruiters', component: RecruiterListComponent},
-  { path: 'consultants', component: ConsultantListComponent}
+  { path: 'sales-consultants', component: ConsultantListComponent,
+    data: {isSalesConsultant : true}},
+  { path: 'rec-consultants', component: ConsultantListComponent,
+  data: {isRecConsultant : true}}
 ];
 
 @NgModule({

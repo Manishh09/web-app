@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  height: 86vh; 
+  height: 86vh;
 }
 
 ul{
@@ -114,10 +114,14 @@ tbody{
 .vendor-actions{
   display: flex;
   align-items: center;
-
+  input:focus{
+    border: solid 2px #3f51b5 !important;
+    outline: none;
+  }
   .search{
     height: 32px;
     padding: 0px 8px;
+
   }
 }
 
@@ -205,11 +209,11 @@ tbody{
 }
 
 .recruiting-companies {
-  color: #f44336; 
+  color: #f44336;
 }
 
 .bench-sales-recruiter {
-  color: #3f51b5; 
+  color: #3f51b5;
 }
 
 .both {
@@ -228,11 +232,11 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
 }
 
 .mat-mdc-header-row {
-  height: 30px !important; 
+  height: 30px !important;
 }
 
 .mat-mdc-row {
-  height: 30px !important; 
+  height: 30px !important;
 }
 
 .filter-button {
@@ -247,5 +251,5 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
 
 ul.breadcrumb li:last-child {
   color: black;
-  pointer-events: none; 
+  pointer-events: none;
 }

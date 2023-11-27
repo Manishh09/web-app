@@ -205,8 +205,9 @@ export class VendorListComponent implements OnInit {
    * on filter
    * @param event
    */
-  onFilter(event: any) {
-    this.dataSource.filter = event.target.value;
+  onFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value
+    this.dataSource.filter = filterValue.trim();
   }
 
   /**
@@ -308,7 +309,7 @@ export class VendorListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllData(this.currentPageIndex);
       }
     })
   }
@@ -331,7 +332,7 @@ export class VendorListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllData(this.currentPageIndex);
       }
     })
   }
@@ -375,7 +376,7 @@ export class VendorListComponent implements OnInit {
           this.vendorServ.deleteEntity(vendor.id).pipe(takeUntil(this.destroyed$))
           .subscribe({next:(response: any) => {
             if (response.status == 'success') {
-              this.getAllData();
+              this.getAllData(this.currentPageIndex);
               dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
             } else {
               dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -434,7 +435,7 @@ export class VendorListComponent implements OnInit {
               next: (response: any) => {
                 if (response.status == 'Success') {
                   // this.gty(this.page);
-                  this.getAllData();
+                  this.getAllData(this.currentPageIndex);
                   dataToBeSentToSnackBar.message =
                     'Status updated successfully';
                 } else {
@@ -483,7 +484,7 @@ export class VendorListComponent implements OnInit {
       if(vendor.vms_stat === 'Initiated' && !rejectVendor){
         dataToBeSentToDailogForStatus = {
           title: 'Approve Vendor',
-          message: 'Are you sure you want to Approve the Vendor ?',
+          message: 'Are you sure you want to Approve the Vendor?',
           confirmText: 'Yes',
           cancelText: 'No',
           actionData: vendor,
@@ -546,7 +547,7 @@ export class VendorListComponent implements OnInit {
                   }
 
                 // this.gty(this.page);
-                this.getAllData();
+                this.getAllData(this.currentPageIndex);
               },
               error: (err) => {
                 dataToBeSentToSnackBar.message = err.message;
