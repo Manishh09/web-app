@@ -309,7 +309,7 @@ export class VendorListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData(this.currentPageIndex);
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
@@ -332,7 +332,7 @@ export class VendorListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData(this.currentPageIndex);
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
@@ -376,7 +376,7 @@ export class VendorListComponent implements OnInit {
           this.vendorServ.deleteEntity(vendor.id).pipe(takeUntil(this.destroyed$))
           .subscribe({next:(response: any) => {
             if (response.status == 'success') {
-              this.getAllData(this.currentPageIndex);
+              this.getAllData(this.currentPageIndex + 1);
               dataToBeSentToSnackBar.message = 'Vendor Deleted successfully';
             } else {
               dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -435,7 +435,7 @@ export class VendorListComponent implements OnInit {
               next: (response: any) => {
                 if (response.status == 'Success') {
                   // this.gty(this.page);
-                  this.getAllData(this.currentPageIndex);
+                  this.getAllData(this.currentPageIndex + 1);
                   dataToBeSentToSnackBar.message =
                     'Status updated successfully';
                 } else {
@@ -517,7 +517,7 @@ export class VendorListComponent implements OnInit {
       const statReqObj = {
         action: vendor.vms_stat === 'Initiated' && !rejectVendor ? 'Approved' : 'Reject',
         id: vendor.id,
-        loginId: this.loginId,
+        userid: this.loginId,
         remarks: dialogRef.componentInstance.remarks
       };
       dialogRef.afterClosed().subscribe(() => {
@@ -531,7 +531,7 @@ export class VendorListComponent implements OnInit {
 
                   if (response.status == 'Approved') {
                     // dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-                    dataToBeSentToSnackBar.message = `Vendor Updated successfully`;
+                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
 
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
                     this.snackBarServ.openSnackBarFromComponent(
@@ -539,7 +539,7 @@ export class VendorListComponent implements OnInit {
                     );
                   } else {
                     //  alertify.success("Vendor " + response.data + " successfully");
-                    dataToBeSentToSnackBar.message = `Vendor Updated successfully`;
+                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
                     this.snackBarServ.openSnackBarFromComponent(
                       dataToBeSentToSnackBar
@@ -547,7 +547,7 @@ export class VendorListComponent implements OnInit {
                   }
 
                 // this.gty(this.page);
-                this.getAllData(this.currentPageIndex);
+                this.getAllData(this.currentPageIndex + 1);
               },
               error: (err) => {
                 dataToBeSentToSnackBar.message = err.message;

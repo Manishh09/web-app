@@ -209,7 +209,11 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
       actionName: 'add-employee',
     };
     const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog,{delete: false, edit: false, add: true});
-    this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
+    const dialogRef =  this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllEmployees()
+    }})
   }
 
   editEmployee(emp: Employee) {
@@ -219,7 +223,11 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
       actionName: 'edit-employee',
     };
     const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog,{delete: false, edit: true, add: false});
-    this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
+    const dialogRef =  this.dialogServ.openDialogWithComponent(AddEmployeeComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllEmployees()
+    }})
   }
 
   deleteEmployee(emp: Employee) {
@@ -309,7 +317,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   private callChangeEmpStatusAPI(emp: Employee) {
     this.empManagementServ.changeEmployeeStatus(emp).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (response: any) => {
-        if (response.status == 'Success') {
+        if (response.status == 'success') {
           this.getAllEmployees();
           this.dataTobeSentToSnackBarService.message = 'Status updated successfully';
         } else {

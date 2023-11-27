@@ -74,7 +74,7 @@ import { Company } from 'src/app/usit/models/company';
   styleUrls: ['./add-vendor.component.scss'],
 })
 export class AddVendorComponent implements OnInit, OnDestroy {
-  entity = new Vms();
+  vendorObj = new Vms();
   vendorForm: any = FormGroup;
   submitted = false;
   rolearr: any = [];
@@ -110,7 +110,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
     if(this.data.actionName === "edit-vendor"){
       this.bindFormControlValueOnEdit();
     }
-    this.iniVendorForm();
+    this.iniVendorForm(new Vms());
 
   }
 
@@ -124,26 +124,14 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       direction: 'above',
       panelClass: ['custom-snack-success'],
     };
+    this.iniVendorForm(new Vms());
     // api call
     this.vendorServ.getEntity(this.data.vendorData.id).subscribe({
       next: (response: any) => {
         if (response && response.data) {
-          this.entity = response.data;
-          const resp = response.data;
-          this.data.vendorData = {
-            ...this.data.vendorData,
-            client: resp.client,
-            details: resp.details,
-            staff: resp.staff,
-            revenue: resp.revenue,
-            website: resp.website,
-            facebook: resp.facebook,
-            industrytype: resp.industrytype,
-            linkedinid: resp.linkedinid,
-            twitterid: resp.twitterid,
-          };
+          this.vendorObj = response.data;
           //init form and  update control values on edit
-          this.iniVendorForm();
+          this.iniVendorForm(this.vendorObj);
         }
       }, error: err =>{
         dataToBeSentToSnackBar.message = err.message;
@@ -156,39 +144,40 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   /**
    * initializes vendor Form
    */
-  private iniVendorForm() {
+  private iniVendorForm(vendorData: Vms) {
+
     this.vendorForm = this.formBuilder.group({
       company: [
-        this.data.vendorData ? this.data.vendorData.company : '',
+        vendorData ? vendorData.company : '',
         [Validators.required],
       ],
       //  fedid: [this.data.vendorData ? this.data.vendorData.fedid : ''],
       vendortype: [
-        this.data.vendorData ? this.data.vendorData.vendortype : '',
+       vendorData ?vendorData.vendortype : '',
         Validators.required,
       ],
       companytype: [
-        this.data.vendorData ? this.data.vendorData.companytype : '',
+       vendorData ?vendorData.companytype : '',
       ],
-      tyretype: [this.data.vendorData ? this.data.vendorData.tyretype : ''],
-      client: [this.data.vendorData ? this.data.vendorData.client : ''],
-      addedby: [this.entity.addedby],
-      updatedby: [this.entity.updatedby],
-      details: [this.data.vendorData ? this.data.vendorData.details : ''],
-      staff: [this.data.vendorData ? this.data.vendorData.staff : ''],
-      revenue: [this.data.vendorData ? this.data.vendorData.revenue : ''],
-      website: [this.data.vendorData ? this.data.vendorData.website : ''],
-      facebook: [this.data.vendorData ? this.data.vendorData.facebook : ''],
+      tyretype: [vendorData ?vendorData.tyretype : ''],
+      client: [vendorData ?vendorData.client : ''],
+      addedby: [this.vendorObj.addedby],
+      updatedby: [this.vendorObj.updatedby],
+      details: [vendorData ?vendorData.details : ''],
+      staff: [vendorData ?vendorData.staff : ''],
+      revenue: [vendorData ?vendorData.revenue : ''],
+      website: [vendorData ?vendorData.website : ''],
+      facebook: [vendorData ?vendorData.facebook : ''],
       industrytype: [
-        this.data.vendorData ? this.data.vendorData.industrytype : '',
+       vendorData ?vendorData.industrytype : '',
       ],
-      linkedinid: [this.data.vendorData ? this.data.vendorData.linkedinid : ''],
-      twitterid: [this.data.vendorData ? this.data.vendorData.twitterid : ''],
+      linkedinid: [vendorData ?vendorData.linkedinid : ''],
+      twitterid: [vendorData ?vendorData.twitterid : ''],
       user: this.formBuilder.group({
         userid: localStorage.getItem('userid'),
       }),
       headquerter: [
-        this.data.vendorData ? this.data.vendorData.headquerter : '',
+       vendorData ?vendorData.headquerter : '',
         Validators.required,
       ],
     });
@@ -196,19 +185,19 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       this.vendorForm.addControl(
         'status',
         this.formBuilder.control(
-          this.data.vendorData ? this.data.vendorData.status : ''
+          vendorData ? vendorData.status : ''
         )
       );
       this.vendorForm.addControl(
         'vmsid',
         this.formBuilder.control(
-          this.data.vendorData ? this.data.vendorData.id : ''
+          vendorData ? vendorData.vmsid : ''
         )
       );
       this.vendorForm.addControl(
         'vms_stat',
         this.formBuilder.control(
-          this.data.vendorData ? this.data.vendorData.vms_stat : ''
+          vendorData ? vendorData.vms_stat : ''
         )
       );
     }
@@ -321,10 +310,11 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       this.displayFormErrors();
       return;
     }
-    this.vendorForm.controls.updatedby.setValue(localStorage.getItem('userid'));
-    console.log('form.value  ===', this.vendorForm.value);
+    const saveReqObj = this.getSaveData();
+    //this.vendorForm.controls.updatedby.setValue(localStorage.getItem('userid'));
+    console.log('form.value  ===', saveReqObj);
     this.vendorServ
-      .addORUpdateVendor(this.vendorForm.value, this.data.actionName)
+      .addORUpdateVendor(saveReqObj, this.data.actionName)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: (data: any) => {
@@ -349,6 +339,39 @@ export class AddVendorComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  // return to be saved/ updated data
+  getSaveData() {
+     // updates employee object form values
+     if(this.data.actionName === "edit-vendor"){
+      [this.vendorForm.value].forEach( (formVal, idx) => {
+        this.vendorObj.company = formVal.company;
+        this.vendorObj.vendortype = formVal.vendortype;
+        this.vendorObj.companytype = formVal.companytype;
+        this.vendorObj.tyretype =  formVal.tyretype;
+        this.vendorObj.client =  formVal.client;
+        this.vendorObj.addedby = localStorage.getItem('userid');;
+        this.vendorObj.email =  formVal.email;
+        this.vendorObj.updatedby =  localStorage.getItem('userid');
+        this.vendorObj.headquerter =  formVal.headquerter;
+        this.vendorObj.status =  formVal.status;
+        this.vendorObj.vmsid =  formVal.id;
+        this.vendorObj.vms_stat =  formVal.vms_stat;
+        this.vendorObj.twitterid = formVal.twitterid;
+        this.vendorObj.linkedinid =  formVal.linkedinid;
+        this.vendorObj.industrytype = formVal.industrytype;
+        this.vendorObj.facebook = formVal.facebook;
+        this.vendorObj.website = formVal.website;
+        this.vendorObj.revenue =  formVal.revenue;
+        this.vendorObj.staff = formVal.staff;
+        this.vendorObj.details = formVal.details;
+        this.vendorObj.client = formVal.client;
+      })
+      return this.vendorObj
+    }
+    return this.vendorForm.value;
+  }
+
 
   /** to display form validation messages */
   displayFormErrors() {
