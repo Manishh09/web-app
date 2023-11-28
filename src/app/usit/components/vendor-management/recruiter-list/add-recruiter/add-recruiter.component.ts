@@ -23,6 +23,7 @@ import { AsyncPipe } from '@angular/common';
 import { AddVendorComponent } from '../../vendor-list/add-vendor/add-vendor.component';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatDialogConfig } from '@angular/material/dialog';
+import { Recruiter } from 'src/app/usit/models/recruiter';
 
 @Component({
   selector: 'app-add-recruiter',
@@ -47,7 +48,7 @@ import { MatDialogConfig } from '@angular/material/dialog';
   styleUrls: ['./add-recruiter.component.scss']
 })
 export class AddRecruiterComponent implements OnInit {
-  entity = new Vms();
+  recruiterObj = new Recruiter();
   recruiterForm: any = FormGroup;
   submitted = false;
   rolearr: { company: string }[] = [
@@ -75,6 +76,12 @@ export class AddRecruiterComponent implements OnInit {
   ngOnInit(): void {
     this.getvendorcompanydetails()
     if (this.data.actionName === 'edit-recruiter') {
+      // this.recruiterServ.getEntity(this.data.recruiterData.id).subscribe(
+      //   (response: any) => {
+      //     this.recruiterObj = response.data;
+      //     this.iniRecruiterForm(this.data.RecruiterData);
+      //   }
+      // );
       this.iniRecruiterForm(this.data.RecruiterData);
       console.log(this.data.RecruiterData);
     } else {
@@ -106,8 +113,8 @@ export class AddRecruiterComponent implements OnInit {
         extension: [recruiterData ? recruiterData.extension : ''],
         recruitertype: [recruiterData ? recruiterData.recruitertype : '', Validators.required],
         details: [recruiterData ? recruiterData.details : ''],
-        addedby: [this.entity.addedby],
-        updatedby: [this.entity.updatedby],
+        addedby: [this.recruiterObj.addedby],
+        updatedby: [this.recruiterObj.updatedby],
         vendor: this.formBuilder.group({
           vmsid: [this.recruiterForm.vmsid],
         }),
@@ -205,7 +212,7 @@ export class AddRecruiterComponent implements OnInit {
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         },
   });
-      
+
   }
 
   flg!: any;
