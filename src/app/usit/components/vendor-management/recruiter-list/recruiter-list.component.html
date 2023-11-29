@@ -109,7 +109,7 @@
           <td mat-cell *matCellDef="let recruiter" class="approve-buttons">
                 <ng-container *ngIf="['Approved'].includes(recruiter.rec_stat);  else ifNotApproved">
 
-                  <button  mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)" class="approve-reject-buttons" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'"
+                  <button  mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)" class="approve-reject-buttons" 
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="recruiter.rec_stat === 'Approved'  ?   'mat-primary' : recruiter.rec_stat === 'Initiated'  ?  'mat-secondary' : 'mat-warn'">
@@ -119,7 +119,7 @@
                 </ng-container >
                   <ng-template #ifNotApproved>
                     <!-- Initiated BUTTON -->
-                    <button  *ngIf="['Initiated'].includes(recruiter.rec_stat)" class="approve-reject-buttons" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)"
+                    <button  *ngIf="['Initiated', 'Approved'].includes(recruiter.rec_stat)" class="approve-reject-buttons" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)"
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="'mat-primary'"> {{recruiter.rec_stat}}
@@ -127,11 +127,17 @@
 
                   <!-- Reject BUTTON -->
 
-                    <button  mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter ,true)" class="approve-reject-buttons" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'"
+                    <button *ngIf="recruiter.rec_stat !== 'Approved' && recruiter.rec_stat !== 'Rejected'" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter ,true)" class="approve-reject-buttons" 
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="'mat-warn'"> {{'Reject'}}
                   </button>
+
+                  <button  *ngIf="recruiter.rec_stat === 'Rejected'" mat-raised-button class="approve-reject-buttons" 
+              [ngStyle]="{ color: 'white' }"
+              style="width: 75px; height: 25px;"
+              [ngClass]="'mat-warn'"> {{recruiter.rec_stat}}
+            </button>
 
                 </ng-template>
           </td>

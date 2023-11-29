@@ -9,13 +9,14 @@ import { ApiService } from '../core/services/api.service';
 })
 export class UserManagementService {
 
-  private baseUrl = "http://69.216.19.140:8080/usit/";
+  // private baseUrl = "http://69.216.19.140:8080/usit/";
+  private baseUrl = "http://localhost:1122/";
   private apiServ = inject(ApiService);
   constructor(private http: HttpClient) { }
 
   // login controller signin method
   login(user: Partial<Employee>): Observable<any> {
-    return this.http.post<any>(this.baseUrl + 'login/signin', user,
+    return this.http.post<any>(this.baseUrl + 'auth/login/signin', user,
       { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }).pipe(map((resp) => {
         return resp;
       }));
@@ -23,17 +24,17 @@ export class UserManagementService {
 
   // loginv2
   loginV2(user: Partial<Employee>): Observable<any> {
-    return this.apiServ.post(  'login/signin', user)
+    return this.apiServ.post(  'auth/login/signin', user)
   }
 
   // send forgot password reset link
   // myprofileresetlink
   sendresetlink(user: any) {
-    return this.apiServ.post("login/sendlink", user);
+    return this.apiServ.post("auth/login/sendlink", user);
   }
   // reset user profile password
   resetpassword(user: any) {
-    return this.apiServ.post("login/reset_password", user);
+    return this.apiServ.post("auth/login/reset_password", user);
   }
 
   // from external mail server
@@ -52,90 +53,90 @@ export class UserManagementService {
   // roles management
   //register role
   addRole(entity: any) {
-    return this.apiServ.post("roles/save", entity);
+    return this.apiServ.post("auth/roles/save", entity);
   }
 
   //used for get one resource
   getRoleById(id: number) {
-    return this.apiServ.get("roles/getrole/" + id);
+    return this.apiServ.get("auth/roles/getrole/" + id);
   }
 
   //update role
   updateRole(entity: any) {
-    return this.apiServ.put("roles/updaterole", entity);
+    return this.apiServ.put("auth/roles/updaterole", entity);
   }
   // get all roles
   getAllRoles() {
-    return this.apiServ.get("roles/all");
+    return this.apiServ.get("auth/roles/all");
   }
   // get roles based on page num
   getRolesBasedOnPageNum(page: any, size: any) {
-    return this.apiServ.get(this.baseUrl + "roles/all2/"+page+"/"+size);
+    return this.apiServ.get(this.baseUrl + "auth/roles/all2/"+page+"/"+size);
   }
 
   // delete role
   deleteRole(id: number) {
-    return this.apiServ.delete("roles/delete/" + id);
+    return this.apiServ.delete("auth/roles/delete/" + id);
   }
   //used for delete the resource
   updateRoleStatus(entity: any) {
-    return this.http.patch(this.baseUrl + "roles/status", entity);
+    return this.http.patch(this.baseUrl + "auth/roles/status", entity);
   }
   /**************ROLES SERVICES -  ENDS************* */
 
   /*** EMPOLOYEE SERVICES _ START */
    //employee management
   getRolesDropdown() {
-    return this.http.get(this.baseUrl + "users/getroles");
+    return this.http.get(this.baseUrl + "auth/users/getroles");
   }
 
   getManagerDropdown() {
-    return this.http.get(this.baseUrl + "users/manageDropDown");
+    return this.http.get(this.baseUrl + "auth/users/manageDropDown");
   }
 
   getTLdropdown(id: number) {
-    return this.http.get(this.baseUrl + "users/TlDropDown/" + id);
+    return this.http.get(this.baseUrl + "auth/users/TlDropDown/" + id);
   }
 
   //register EMployee
   registerEmployee(entity: any) {
-    return this.http.post(this.baseUrl + "users/save", entity)
+    return this.http.post(this.baseUrl + "auth/users/save", entity)
 
   }
   //used for get the resource
   getAllEmployees() {
-    return this.http.get(this.baseUrl + "users/all");
+    return this.http.get(this.baseUrl + "auth/users/all");
   }
 
   deleteEmployeeById(id: number) {
-    return this.http.delete(this.baseUrl + "users/delete/" + id);
+    return this.http.delete(this.baseUrl + "auth/users/delete/" + id);
   }
 
   //used for delete the resource
   changeEmployeeStatus(entity: any) {
-    return this.http.patch(this.baseUrl + "users/status", entity);
+    return this.http.patch(this.baseUrl + "auth/users/status", entity);
   }
   //used for delete the resource
   unlockEmployee(entity: any) {
-    return this.http.patch(this.baseUrl + "users/unlock", entity);
+    return this.http.patch(this.baseUrl + "auth/users/unlock", entity);
   }
   //used for get one resource
   getEmployeeById(id: number) {
-    return this.http.get(this.baseUrl + "users/userbyid/" + id);
+    return this.http.get(this.baseUrl + "auth/users/userbyid/" + id);
   }
 
   //used for get one resource
   getEmployeeInfoById(id: number) {
-    return this.http.get(this.baseUrl + "users/userinfo/" + id);
+    return this.http.get(this.baseUrl + "auth/users/userinfo/" + id);
   }
   //Update Employee
   public updateEmployee(entity: any) {
-    return this.http.put(this.baseUrl + "users/update", entity);
+    return this.http.put(this.baseUrl + "auth/users/update", entity);
   }
 
    //Update Employee
    public getAllTLBench() {
-    return this.http.get(this.baseUrl + "users/teamleads");
+    return this.http.get(this.baseUrl + "auth/users/teamleads");
   }
   /** EMPLOYEE SERVICES - END */
 }

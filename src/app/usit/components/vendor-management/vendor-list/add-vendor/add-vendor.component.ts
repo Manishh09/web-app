@@ -173,9 +173,10 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       ],
       linkedinid: [vendorData ?vendorData.linkedinid : ''],
       twitterid: [vendorData ?vendorData.twitterid : ''],
-      user: this.formBuilder.group({
-        userid: localStorage.getItem('userid'),
-      }),
+      // user: this.formBuilder.group({
+      //   userid: localStorage.getItem('userid'),
+      // }),
+      user: localStorage.getItem('userid'),
       headquerter: [
        vendorData ?vendorData.headquerter : '',
         Validators.required,
@@ -355,8 +356,9 @@ export class AddVendorComponent implements OnInit, OnDestroy {
         this.vendorObj.updatedby =  localStorage.getItem('userid');
         this.vendorObj.headquerter =  formVal.headquerter;
         this.vendorObj.status =  formVal.status;
-        this.vendorObj.vmsid =  formVal.id;
-        this.vendorObj.vms_stat =  formVal.vms_stat;
+        this.vendorObj.vmsid =  this.data.vendorData.id;
+        this.vendorObj.vms_stat = formVal.status === "Active" ? "Initiated" : formVal.status === "Approved" ? "Approved" : formVal.vms_stat;
+        // this.vendorObj.vms_stat =  formVal.status === "Active"  ? "Initiated" : formVal.vms_stat;
         this.vendorObj.twitterid = formVal.twitterid;
         this.vendorObj.linkedinid =  formVal.linkedinid;
         this.vendorObj.industrytype = formVal.industrytype;
