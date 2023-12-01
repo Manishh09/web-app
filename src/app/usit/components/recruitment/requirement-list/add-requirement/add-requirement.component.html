@@ -1,0 +1,133 @@
+
+
+<div class="header-container mat-elevation-z1">
+    <span class="header-text" mat-dialog-title>
+      {{data.title}}
+    </span>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-card class="center-card">
+
+    <form [formGroup]="requirementForm" (ngSubmit)="onSubmit()" class="vendor-form" >
+      <div class="form">
+        <div class="form-column-left">
+          <!-- Req Number -->
+          <mat-form-field appearance="fill">
+            <mat-label>Req Number</mat-label>
+            <input matInput formControlName="reqnumber" maxlength="12" readonly>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Date</mat-label>
+            <input matInput formControlName="postedon" maxlength="12" readonly>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Select Vendor/Impl</mat-label>
+            <input matInput formControlName="vendor" [matAutocomplete]="vendorAutoCmp" maxlength="7">
+            <mat-autocomplete #vendorAutoCmp="matAutocomplete">
+              <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company.trim()" (onSelectionChange)="onVendorSelect(option)">{{ option.company.trim() }}</mat-option>
+            </mat-autocomplete>
+            <button matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
+            <mat-hint *ngIf="vendordata?.length === 0">No results found, click '+' to add vendor</mat-hint>
+            <!-- <mat-error *ngIf="requirementForm.get('autoInput')!.hasError('required')">Company Name is Required</mat-error> -->
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Client</mat-label>
+            <input matInput formControlName="client" maxlength="7">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Job Title</mat-label>
+            <input matInput formControlName="jobtitle"  maxlength="7">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Select Technology</mat-label>
+            <input matInput  maxlength="7">
+          </mat-form-field>
+
+          <mat-form-field class="description-field">
+            <mat-label>Skills</mat-label>
+            <textarea title="" maxlength="250" matInput
+              ></textarea>
+          </mat-form-field>
+
+          <mat-form-field class="description-field">
+            <mat-label>Job Description</mat-label>
+            <textarea  maxlength="250" matInput
+              ></textarea>
+          </mat-form-field>
+
+            <!-- Location - HeadQuarters -->
+            <mat-form-field appearance="fill">
+              <mat-label>Location</mat-label>
+              <input matInput formControlName="location" ngx-gp-autocomplete [options]='options' (onAddressChange)="handleAddressChange($event)">
+              <!-- <mat-error *ngIf="requirementForm.get('headquerter')!.hasError('required')">Location
+                Name is required</mat-error> -->
+
+            </mat-form-field>
+        </div>
+
+        <div class="form-column-right">
+         <!-- OTHER DETAILS SECTION -->
+          <!-- staff   -->
+          <mat-form-field appearance="fill">
+            <mat-label>Job Experience</mat-label>
+            <input matInput  maxlength="7">
+          </mat-form-field>
+          <!-- website -->
+          <mat-form-field appearance="fill">
+            <mat-label>Employee Type</mat-label>
+            <input matInput formControlName="employmenttype" maxlength="50">
+          </mat-form-field>
+          <!-- facebook -->
+          <mat-form-field appearance="fill">
+            <mat-label>Assign Recruiter</mat-label>
+            <input matInput maxlength="100">
+          </mat-form-field>
+           <!-- industrytype -->
+           <mat-form-field appearance="fill">
+            <mat-label>Select POC</mat-label>
+            <input matInput maxlength="25">
+          </mat-form-field>
+           <!-- twitterid -->
+           <mat-form-field appearance="fill">
+            <mat-label>POC Position</mat-label>
+            <input matInput  maxlength="100">
+          </mat-form-field>
+          <!-- revinue -->
+          <mat-form-field appearance="fill">
+            <mat-label>POC Email</mat-label >
+            <input matInput maxlength="20">
+          </mat-form-field>
+          <!-- linkedinid -->
+          <mat-form-field appearance="fill">
+            <mat-label>Poc Contact Number</mat-label>
+            <input matInput  maxlength="100">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Salary / Hourly Rate</mat-label>
+            <input matInput  maxlength="100">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Project Duration</mat-label>
+            <input matInput  maxlength="100">
+          </mat-form-field>
+        </div>
+      </div>
+
+
+    </form>
+    <div class="form-button-right">
+      <!-- <div class="form-button-inner"> -->
+      <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
+      <!-- </div> -->
+    </div>
+  </mat-card>
