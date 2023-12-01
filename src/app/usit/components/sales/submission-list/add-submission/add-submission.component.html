@@ -1,0 +1,139 @@
+<!-- <div class="header-container mat-elevation-z1">
+    <span class="header-text" mat-dialog-title>
+        {{data.title}}
+    </span>
+    <button mat-icon-button (click)="onCancel()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div> -->
+<!-- <mat-card>
+    <form [formGroup]="submissionForm" (ngSubmit)="onSubmit()" class="vendor-form">
+        <div class="form">
+            <div class="form-column-left">
+                <mat-form-field appearance="fill">
+                    <mat-label>Select Vendor</mat-label>
+                    <mat-select formControlName="vendortype">
+                        <mat-option *ngFor="let option of selectOptionObj.vendorType"
+                                  [value]="option">
+                                  {{ option }}
+                                </mat-option>
+                    </mat-select>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="submissionForm.get('vendortype')!.hasError('required')">Consultant
+                        is Required
+                    </mat-error>
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Position Title</mat-label>
+                    <input matInput formControlName="staff" maxlength="7">
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Project Location</mat-label>
+                    <input matInput formControlName="staff" maxlength="7">
+                </mat-form-field>
+    
+                <section class="example-section">
+                    <mat-radio-group>
+                        <mat-radio-button class="example-margin" value="after">C2C</mat-radio-button>
+                        <mat-radio-button class="example-margin" value="before">1099</mat-radio-button>
+                        <mat-radio-button class="example-margin" value="after">W2</mat-radio-button>
+                        <mat-radio-button class="example-margin" value="after">Full Time</mat-radio-button>
+                        <mat-radio-button class="example-margin" value="after">C2H</mat-radio-button>
+                    </mat-radio-group>
+                </section>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Submission Rate</mat-label>
+                    <input matInput formControlName="staff" maxlength="7">
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>End Client</mat-label>
+                    <input matInput formControlName="staff" maxlength="7">
+                </mat-form-field>
+    
+    
+    
+    
+    
+            </div>
+    
+            <div class="form-column-right">
+                <mat-form-field appearance="fill">
+                    <mat-label>End Client</mat-label>
+                    <input matInput formControlName="staff" maxlength="7">
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Company</mat-label>
+                    <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" maxlength="75">
+                    <mat-autocomplete #companyAutoCmp="matAutocomplete">
+                        <mat-option *ngFor="let option of (searchObs$ | async)"
+                      [value]="option.company.trim()">
+                      {{ option.company.trim() }}
+                    </mat-option>
+                    </mat-autocomplete>
+                    <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found</mat-hint>
+                  <mat-error *ngIf="vendorForm.get('company')!.hasError('required')">Company Name
+                    is Required
+                  </mat-error>
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Company</mat-label>
+                    <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" maxlength="75">
+                    <mat-autocomplete #companyAutoCmp="matAutocomplete">
+                        <mat-option *ngFor="let option of (searchObs$ | async)"
+                      [value]="option.company.trim()">
+                      {{ option.company.trim() }}
+                    </mat-option>
+                    </mat-autocomplete>
+                    <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found</mat-hint>
+                  <mat-error *ngIf="vendorForm.get('company')!.hasError('required')">Company Name
+                    is Required
+                  </mat-error>
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Company Contact Number </mat-label>
+                    <ngx-mat-intl-tel-input matInput class="intl-input" formControlName="contactnumber"
+                        [enablePlaceholder]="true" [enableSearch]="true" name="contactnumber" id="intlInput"
+                        #personalcontactnumber #pNumb>
+                    </ngx-mat-intl-tel-input>
+                    <mat-error
+                    *ngIf="vendorForm.get('personalcontactnumber')!.hasError('required')">Personal
+                    Contact
+                    Number is required</mat-error>
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" max-length="50" />
+                    <mat-error *ngIf="submissionForm.get('email')!.hasError('required')">Email is required</mat-error>
+                    <mat-error *ngIf="submissionForm.get('email')!.hasError('pattern')">Invalid Email Address</mat-error>
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Select Tier Type</mat-label>
+                    <input matInput formControlName="tyretype" [matAutocomplete]="vendorAutoCmp" >
+                    <mat-autocomplete #vendorAutoCmp="matAutocomplete">
+                    <mat-select formControlName="tyretype">
+                        <mat-option *ngFor="let option of selectOptionObj.tierType" [value]="option">
+                            {{ option }}
+                        </mat-option>
+                    </mat-select>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="submissionForm.get('tyretype')!.hasError('required')">Tier Type
+                        is Required
+                    </mat-error>
+                </mat-form-field>
+    
+    
+    
+    
+            </div>
+        </div>
+    </form>
+</mat-card> -->

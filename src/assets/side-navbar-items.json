@@ -36,6 +36,11 @@
       "routerLink": "/usit/tech-spport"
     },
     {
+      "text": "Technology Tags",
+      "icon": "build",
+      "routerLink": "/usit/technology-tag"
+    },
+    {
       "text": "Immigration",
       "icon": "label",
       "routerLink": "/usit/immigration"
@@ -103,7 +108,7 @@
         {
           "text": "Requirements",
           "icon": "assignment_turned_in",
-          "routerLink": "/usit/req"
+          "routerLink": "/usit/recruiting-requirements"
         },
         {
           "text": "Consultants",
