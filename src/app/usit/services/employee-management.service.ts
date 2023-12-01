@@ -12,7 +12,7 @@ export class EmployeeManagementService {
    /*** EMPOLOYEE SERVICES _ START */
    //employee management
    getRolesDropdown() {
-    return this.apiServ.get("auth/users/getroles");
+    return this.apiServ.get("auth/roles/getroles");
   }
 
   getManagerDropdown() {

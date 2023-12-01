@@ -130,10 +130,10 @@ export class AddRecruiterComponent implements OnInit {
       }
     );
     if (this.data.actionName === 'edit-recruiter') {
-      this.recruiterForm.addControl('recid', new FormControl(recruiterData ? recruiterData.recid : ''));
-      this.recruiterForm.addControl('status', new FormControl(recruiterData ? recruiterData.status : ''));
-      this.recruiterForm.addControl('remarks', new FormControl(recruiterData ? recruiterData.remarks : ''));
-      this.recruiterForm.addControl('rec_stat', new FormControl(recruiterData ? recruiterData.rec_stat : ''));
+      this.recruiterForm.addControl('recid',this.formBuilder.control(recruiterData ? recruiterData.recid : ''));
+      this.recruiterForm.addControl('status',this.formBuilder.control(recruiterData ? recruiterData.status : ''));
+      this.recruiterForm.addControl('remarks',this.formBuilder.control(recruiterData ? recruiterData.remarks : ''));
+      this.recruiterForm.addControl('rec_stat',this.formBuilder.control(recruiterData ? recruiterData.rec_stat : ''));
       console.log(this.recruiterForm.value)
     }
     this.validateControls()
@@ -143,15 +143,15 @@ export class AddRecruiterComponent implements OnInit {
   validateControls(action = 'add-recruiter') {
     if (action === 'edit-recruiter') {
       this.recruiterForm.get('status').valueChanges.subscribe((res: any) => {
-        const remarks = this.recruiterForm.get('remarks');
-        if (res === 'Rejected') {
-          //this.rejectionflg = true;
-          remarks.setValidators(Validators.required);
-        } else {
-          //this.rejectionflg = false;
-          remarks.clearValidators();
-        }
-        remarks.updateValueAndValidity();
+        // const remarks = this.recruiterForm.get('remarks');
+        // if (res?.trim() === 'Rejected') {
+        //   //this.rejectionflg = true;
+        //   remarks.setValidators(Validators.required);
+        // } else {
+        //   //this.rejectionflg = false;
+        //   remarks.clearValidators();
+        // }
+        // remarks.updateValueAndValidity();
         if (res == 'Active') {
           this.recruiterForm.get('rec_stat').setValue('Initiated');
         }
@@ -219,7 +219,6 @@ export class AddRecruiterComponent implements OnInit {
                 ? 'Recruiter added successfully'
                 : 'Recruiter updated successfully';
             this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-            this.recruiterForm.reset();
           }
           else {
             // this.blur = "enable"

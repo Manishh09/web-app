@@ -447,7 +447,6 @@ export class RecruiterListComponent implements OnInit {
   // approve initiate reject
   
   onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
-    this.isRejected = rejectRecruiter;
     if (recruiter.rec_stat !== 'Approved') {
       const dataToBeSentToSnackBar: ISnackBarData = {
         message: 'Status updated successfully!',
@@ -491,11 +490,11 @@ export class RecruiterListComponent implements OnInit {
       dialogConfig.disableClose = false;
       dialogConfig.panelClass = `${
         recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? 'approve' : 'reject'
-      }-vendor`;
+      }-recruiter`;
       const isApprove =   recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? dataToBeSentToDailogForStatus : dataToBeSentToDailogForReject;
       dialogConfig.data =  isApprove;
       const dialogRef = this.dialogServ.openDialogWithComponent(
-        recruiter.rec_stat = isApprove && !rejectRecruiter ? ConfirmComponent : StatusComponent,
+        recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? ConfirmComponent : StatusComponent,
         dialogConfig
       );
 
@@ -513,23 +512,25 @@ export class RecruiterListComponent implements OnInit {
             .subscribe({
               next: (response: any) => {
                 // console.log(JSON.stringify(response));
+                console.log("rec-stat", response.status)
 
-                  if (response.status == 'Approved') {
+                  if (response.status == 'success') {
                     // dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-                    dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
+                    const message = response.message.includes("Change") ? 'Recruiter Approved sucssessfully' : response.message;
+                    dataToBeSentToSnackBar.message = message;
 
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                    this.snackBarServ.openSnackBarFromComponent(
-                      dataToBeSentToSnackBar
-                    );
+                   
                   } else {
                     //  alertify.success("Recruiter " + response.data + " successfully");
-                    dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-                    dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                    this.snackBarServ.openSnackBarFromComponent(
-                      dataToBeSentToSnackBar
-                    );
+                    dataToBeSentToSnackBar.message = 'Status update failed';
+                    dataToBeSentToSnackBar.panelClass = ['custom-snack-failed'];
+                   
                   }
+                  
+                  this.snackBarServ.openSnackBarFromComponent(
+                    dataToBeSentToSnackBar
+                  );
 
                 // this.gty(this.page);
                 this.getAllRecruiters(this.currentPageIndex + 1);

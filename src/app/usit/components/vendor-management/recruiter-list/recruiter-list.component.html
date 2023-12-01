@@ -127,7 +127,7 @@
 
                   <!-- Reject BUTTON -->
 
-                    <button *ngIf="recruiter.rec_stat !== 'Approved' && recruiter.rec_stat !== 'Rejected'" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter ,true)" class="approve-reject-buttons" 
+                    <button *ngIf="recruiter.rec_stat !== 'Approved' && recruiter.rec_stat !== 'Rejected'" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter, true)" class="approve-reject-buttons" 
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="'mat-warn'"> {{'Reject'}}
