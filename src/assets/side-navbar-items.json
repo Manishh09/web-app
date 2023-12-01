@@ -87,7 +87,7 @@
         {
           "text": "Consultants",
           "icon": "person",
-          "routerLink": "/usit/consultants"
+          "routerLink": "/usit/sales-consultants"
         },
         {
           "text": "Submissions",
@@ -113,7 +113,7 @@
         {
           "text": "Consultants",
           "icon": "person_search",
-          "routerLink": "/usit/consultants"
+          "routerLink": "/usit/rec-consultants"
         },
         {
           "text": "Submissions",

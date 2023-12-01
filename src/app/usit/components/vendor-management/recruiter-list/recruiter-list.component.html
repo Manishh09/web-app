@@ -10,10 +10,10 @@
       <button mat-raised-button class="filter-button" color="primary" (click)="filterRecruiters('Bench Sales Recruiter')">Bench Sales Recruiter</button>
       <button mat-raised-button class="filter-button" style="background-color: black; color: white;"  (click)="filterRecruiters('Both')">Both Technical & Bench Sales Recruiters</button>
     </div>
-    
+
     <div class="recruiter-actions">
       <!-- <button mat-icon-button (click)="uploadRecruiterExcel()">
-        <mat-icon>upload</mat-icon> 
+        <mat-icon>upload</mat-icon>
       </button> -->
       <button mat-icon-button class="add-user" (click)="addRecruiter()" matTooltip="Add Recruiter" matTooltipPosition="above">
         <mat-icon class="item-icon">person_add</mat-icon>
@@ -108,31 +108,31 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Approve/Reject</th>
           <td mat-cell *matCellDef="let recruiter" class="approve-buttons">
                 <ng-container *ngIf="['Approved'].includes(recruiter.rec_stat);  else ifNotApproved">
-      
+
                   <button  mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)" class="approve-reject-buttons" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'"
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="recruiter.rec_stat === 'Approved'  ?   'mat-primary' : recruiter.rec_stat === 'Initiated'  ?  'mat-secondary' : 'mat-warn'">
                     {{recruiter.rec_stat}}
                   </button>
-      
+
                 </ng-container >
                   <ng-template #ifNotApproved>
                     <!-- Initiated BUTTON -->
-                    <button  *ngIf="['Initiated'].includes(recruiter.rec_stat)" class="approve-reject-buttons" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)" 
+                    <button  *ngIf="['Initiated'].includes(recruiter.rec_stat)" class="approve-reject-buttons" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)"
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="'mat-primary'"> {{recruiter.rec_stat}}
                   </button>
-      
+
                   <!-- Reject BUTTON -->
-      
+
                     <button  mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter ,true)" class="approve-reject-buttons" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'"
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="'mat-warn'"> {{'Reject'}}
                   </button>
-      
+
                 </ng-template>
           </td>
         </ng-container>
@@ -142,7 +142,7 @@
           *matHeaderRowDef="dataTableColumns; sticky: true"
         ></tr>
         <tr mat-row *matRowDef="let row; columns: dataTableColumns" [ngClass]="getRecruiterRowClass(row)"></tr>
-        
+
       </table>
       <p class="no-data-found" *ngIf="!dataSource.filteredData.length">
         {{ "No matching data found" }}
@@ -150,13 +150,12 @@
     </section>
 
     <hr />
-    
+
   </div>
   <div class="paginator">
     <!-- paginator -->
     <mat-paginator
-      #paginator
-      [length]="dataSource.data.length"
+      [length]="totalItems"
       (page)="handlePageEvent($event)"
       [length]="length"
       [pageSize]="pageSize"
@@ -164,7 +163,7 @@
       [showFirstLastButtons]="showFirstLastButtons"
       [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
       [hidePageSize]="hidePageSize"
-      [pageIndex]="pageIndex"
+      [pageIndex]="currentPageIndex"
       aria-label="Select page"
     >
     </mat-paginator>

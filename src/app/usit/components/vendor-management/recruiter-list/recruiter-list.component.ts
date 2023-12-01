@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {
   MatPaginator,
+  MatPaginatorIntl,
   MatPaginatorModule,
   PageEvent,
 } from '@angular/material/paginator';
@@ -32,6 +33,7 @@ import { AddRecruiterComponent } from './add-recruiter/add-recruiter.component';
 import { RecruiterService } from 'src/app/usit/services/recruiter.service';
 import { Subject, takeUntil } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 
 @Component({
   selector: 'app-recruiter-list',
@@ -50,6 +52,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ],
   templateUrl: './recruiter-list.component.html',
   styleUrls: ['./recruiter-list.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 })
 export class RecruiterListComponent implements OnInit {
   dataTableColumns: string[] = [
@@ -69,10 +73,10 @@ export class RecruiterListComponent implements OnInit {
   dataSource = new MatTableDataSource<any>([]);
 
   length = 50;
-  pageSize = 25;
-  pageIndex = 0;
+  pageSize = 50; // items per page
+  currentPageIndex = 0;
   pageSizeOptions = [25, 50, 100];
-  hidePageSize = false;
+  hidePageSize = true;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
   pageEvent!: PageEvent;
@@ -107,43 +111,46 @@ export class RecruiterListComponent implements OnInit {
     this.department = localStorage.getItem('department');
     this.AssignedPageNum = localStorage.getItem('rnum');
     //this.getall();
-    if (this.AssignedPageNum == null) {
-      this.getAllData();
-    }
-    else {
-      this.gty(this.AssignedPageNum);
-      this.page = this.AssignedPageNum;
-    }
+   // if (this.AssignedPageNum == null) {
+      this.getAllRecruiters();
+   // }
+  //  else {
+   //   this.gty(this.AssignedPageNum);
+  //    this.page = this.AssignedPageNum;
+   // }
     //this.getAllData();
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+   // this.dataSource.paginator = this.paginator;
   }
 
   /**
    * get all recruiter data
    * @returns recruiter data
    */
-  getAllRecruiters() {
-    return this.recruiterServ
-      .getAllRecruiters(this.hasAcces, this.loginId)
-      .subscribe((response: any) => {
-        console.log('recruiter.data', response.data);
-        if (response.data) {
-          this.dataSource.data = response.data;
-        }
-      });
-  }
+  // getAllRecruiters() {
+  //   return this.recruiterServ
+  //     .getAllRecruiters(this.hasAcces, this.loginId)
+  //     .subscribe((response: any) => {
+  //       console.log('recruiter.data', response.data);
+  //       if (response.data) {
+  //         this.dataSource.data.map((x: any, i) => {
+  //           x.serialNum = this.generateSerialNumber(i);
+  //         });
+  //         this.totalItems = response.data.totalElements;
+  //       }
+  //     });
+  // }
 
-  getAllData() {
+  getAllRecruiters(pageNumber = 1) {
     return this.recruiterServ
       .getAllRecruitersPagination(
         this.hasAcces,
         this.loginId,
-        1,
-        this.itemsPerPage,
+        pageNumber,
+        this.pageSize,
         this.field
       )
       .subscribe((response: any) => {
@@ -152,7 +159,7 @@ export class RecruiterListComponent implements OnInit {
         console.log(this.dataSource.data);
         // for serial-num {}
         this.dataSource.data.map((x: any, i) => {
-          x.serialNum = i + 1;
+          x.serialNum = this.generateSerialNumber(i);
         });
         this.totalItems = response.data.totalElements;
         //this.getRecruiterRowClass();
@@ -294,7 +301,7 @@ export class RecruiterListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllRecruiters(this.currentPageIndex + 1);
       }
     })
   }
@@ -321,7 +328,7 @@ export class RecruiterListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllRecruiters(this.currentPageIndex + 1);
       }
     })
   }
@@ -366,7 +373,7 @@ export class RecruiterListComponent implements OnInit {
             .deleteEntity(recruiter.id)
             .subscribe((response: any) => {
               if (response.status == 'Success') {
-                this.getAllRecruiters();
+                this.getAllRecruiters(this.currentPageIndex + 1);
                 dataToBeSentToSnackBar.message =
                   'Recruiter Deleted successfully';
               } else {
@@ -536,7 +543,7 @@ export class RecruiterListComponent implements OnInit {
         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         return;
       }
-      let dataToBeSentToDailogForReject, dataToBeSentToDailogForStatus = {}; 
+      let dataToBeSentToDailogForReject, dataToBeSentToDailogForStatus = {};
       if(recruiter.rec_stat === 'Initiated' && !rejectRecruiter){
         dataToBeSentToDailogForStatus = {
           title: 'Approve Recruiter',
@@ -545,7 +552,7 @@ export class RecruiterListComponent implements OnInit {
           cancelText: 'No',
           actionData: recruiter,
         };
-      
+
       }else {
         dataToBeSentToDailogForReject = {
         title: 'Reject Recruiter',
@@ -555,7 +562,7 @@ export class RecruiterListComponent implements OnInit {
         actionData: recruiter,
       };
     }
-       
+
       const dialogConfig = new MatDialogConfig();
       dialogConfig.width = 'fit-content';
       dialogConfig.height = 'auto';
@@ -565,7 +572,7 @@ export class RecruiterListComponent implements OnInit {
       }-vendor`;
       const isApprove =   recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? dataToBeSentToDailogForStatus : dataToBeSentToDailogForReject;
       dialogConfig.data =  isApprove;
-      const dialogRef = this.dialogServ.openDialogWithComponent( 
+      const dialogRef = this.dialogServ.openDialogWithComponent(
         recruiter.rec_stat = isApprove && !rejectRecruiter ? ConfirmComponent : StatusComponent,
         dialogConfig
       );
@@ -573,7 +580,7 @@ export class RecruiterListComponent implements OnInit {
       const statReqObj = {
         action: recruiter.rec_stat === 'Initiated' && !rejectRecruiter ? 'Approved' : 'Reject',
         id: recruiter.id,
-        loginId: this.loginId,
+        userid: this.loginId,
         remarks: dialogRef.componentInstance.remarks
       };
       dialogRef.afterClosed().subscribe(() => {
@@ -587,7 +594,7 @@ export class RecruiterListComponent implements OnInit {
 
                   if (response.status == 'Approved') {
                     // dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-                    dataToBeSentToSnackBar.message = `Recruiter Updated successfully`;
+                    dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
 
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
                     this.snackBarServ.openSnackBarFromComponent(
@@ -595,7 +602,7 @@ export class RecruiterListComponent implements OnInit {
                     );
                   } else {
                     //  alertify.success("Recruiter " + response.data + " successfully");
-                    dataToBeSentToSnackBar.message = `Recruiter Updated successfully`;
+                    dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
                     this.snackBarServ.openSnackBarFromComponent(
                       dataToBeSentToSnackBar
@@ -603,7 +610,7 @@ export class RecruiterListComponent implements OnInit {
                   }
 
                 // this.gty(this.page);
-                this.getAllData();
+                this.getAllRecruiters(this.currentPageIndex + 1);
               },
               error: (err) => {
                 dataToBeSentToSnackBar.message = err.message;
@@ -655,37 +662,28 @@ export class RecruiterListComponent implements OnInit {
       this.dataSource.data = this.datarr;
     }
   }
-
+  /**
+   *
+   * @param index
+   * @returns serial number
+   */
+  generateSerialNumber(index: number): number {
+    const pagIdx = this.currentPageIndex === 0 ? 1 : this.currentPageIndex + 1;
+    const serialNumber = (pagIdx - 1) * 50 + index + 1;
+    return serialNumber;
+  }
    /**
    * handle page event - pagination
-   * @param endor
+   * @param event
    */
    handlePageEvent(event: PageEvent) {
-    console.log('page.event', event.pageSize);
-    if (event && event.pageIndex && event.pageSize) {
+    console.log('page.event', event);
+    if (event) {
       this.pageEvent = event;
-      this.pageSize = event.pageSize;
-      this.assignToPage = event.pageIndex;
-      const pageIndex = event.pageIndex === 0 ? 1 : event.pageIndex;
-      this.pageIndex = pageIndex;
-      return this.recruiterServ
-        .getAllRecruitersPagination(
-          this.hasAcces,
-          this.loginId,
-          pageIndex,
-          event.length,
-          this.field
-        )
-        .subscribe((response: any) => {
-          this.datarr = response.data.content;
-          this.dataSource.data = response.data.content;
-          this.dataSource.data.map((x: any, i) => {
-            x.serialNum = i + 1;
-          });
-          this.totalItems = response.data.totalElements;
-        });
+      const currentPageIndex = event.pageIndex;
+      this.currentPageIndex = currentPageIndex;
+        this.getAllRecruiters(event.pageIndex + 1);
     }
     return;
   }
-  
 }

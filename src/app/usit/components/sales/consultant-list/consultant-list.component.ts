@@ -33,7 +33,8 @@ import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 @Component({
   selector: 'app-consultant-list',
   standalone: true,
@@ -47,9 +48,11 @@ import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
     MatSortModule,
     MatPaginatorModule,
     CommonModule,
+    MatTooltipModule
   ],
   templateUrl: './consultant-list.component.html',
   styleUrls: ['./consultant-list.component.scss'],
+
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 
@@ -63,7 +66,7 @@ export class ConsultantListComponent
   message: any;
   showAlert = false;
   submitted = false;
-  flag!: any;
+  flag = "";
   searchstring!: any;
   ttitle!: string;
   ttitle1!: string;
@@ -88,6 +91,7 @@ export class ConsultantListComponent
     'Relocation',
     'Rate',
     'Priority',
+
     'Status',
     'Action',
   ];
@@ -107,7 +111,8 @@ export class ConsultantListComponent
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private consultantServ = inject(ConsultantService);
-
+  private activatedRoute =  inject(ActivatedRoute);
+  private router = inject(Router)
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
 
@@ -118,12 +123,44 @@ export class ConsultantListComponent
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
     this.dept = localStorage.getItem('department');
+    this.getFlag();
+
     this.getAllData();
   }
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     //this.dataSource.paginator = this.paginator;
     //this.paginator.firstPage()
+  }
+  /**
+   * get flag details
+   */
+  getFlag(){
+    const routeData = this.activatedRoute.snapshot.data;
+    if (routeData['isSalesConsultant']) { // sales consultant
+      this.flag = "Sales";
+      this.ttitle = "back to pre sales";
+      this.ttitle1 = "move to sales";
+      this.tclass = "move_item";
+    }
+    else if (routeData['isRecConsultant']) { // recruiting consutlant
+      this.flag = "Recruiting";
+      this.ttitle = "move to sales";
+      this.ttitle1 = "back to pre sales";
+      this.tclass = "move_item";
+    }
+    else { // presales
+      this.flag = "presales";
+      this.ttitle = "move to sales";
+      this.ttitle1 = "back to pre sales";
+      this.tclass = "bi bi-arrow-right-square-fill";
+    }
+
+    if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
+
+
+      this.dataTableColumns.splice(15,0,"AddedBy")
+    }
   }
 
   /**
@@ -309,12 +346,18 @@ export class ConsultantListComponent
       }
     });
   }
+
+  navTo(to: string, id: any){
+    this.router.navigate([`usit/user/${to.toLocaleLowerCase()}-consultant/${id}`])
+  }
   /**
    *
    * @param element
    * @param type
    */
-  goToConsultantInfo(element: any, type: 'id' | 'name') {}
+  goToConsultantInfo(element: any, flag: string) {
+    // open popup with that data
+  }
   /**
    * on track
    */
@@ -343,7 +386,15 @@ export class ConsultantListComponent
   }
 
   /**
+   *
+   * @param consultant
+   */
+  moveProfileToSales(consultant: any){
+
+  }
+  /**
    * Add
+   * Send this.flag value - to distinguish sales , recruiting, presales
    */
   addConsultant() {}
   /**

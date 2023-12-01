@@ -18,6 +18,10 @@ ul.breadcrumb {
 
 ul.breadcrumb li {
   display: inline;
+  cursor: pointer;
+}
+ul.breadcrub li:not(.breadcrumb-item-inactive){
+  cursor: default !important;
 }
 
 ul.breadcrumb li+li:before {
@@ -25,14 +29,22 @@ ul.breadcrumb li+li:before {
   content: "/\00a0";
 }
 
-ul.breadcrumb li a {
+ul.breadcrumb li  {
   color: #0275d8;
   text-decoration: none;
 }
 
-ul.breadcrumb li a:hover {
+ul.breadcrumb li:hover {
   color: #01447e;
-  text-decoration: underline;
+  text-decoration: none;
+}
+ul.breadcrumb li:last-child {
+  color: black;
+  pointer-events: none;
+}
+ul.breadcrumb li:nth-child(2) {
+  color: black;
+  pointer-events: none;
 }
 
 .consltant-name, .consltant-id{
@@ -89,12 +101,19 @@ tbody{
   .mat-column-Action,
   .mat-column-Status,.mat-column-Email, .mat-column-ContactNumber,
   .mat-column-CurrentLocation,
-  .mat-column-Priority
+  .mat-column-Priority,
+  .mat-column-AddedBy
+
   {
 
   border-right: 1px solid lightgray;
 
 
+}
+td:nth-child(3) , td:nth-child(4){
+    cursor: pointer;
+    margin-bottom: 2px;
+    color: #0275d8;
 }
 .header-container{
   display: flex;
@@ -122,11 +141,19 @@ tbody{
 .consultant-actions{
   display: flex;
   align-items: center;
-
+  input:focus{
+    border: solid 2px #3f51b5 !important;
+    outline: none;
+  }
   .search{
     height: 32px;
     padding: 0px 8px;
   }
+}
+.navlink {
+  cursor: pointer;
+  margin-bottom: 2px;
+  color: #0275d8;
 }
 
 .consultant-table-style {
