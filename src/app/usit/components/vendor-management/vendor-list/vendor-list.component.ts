@@ -69,7 +69,7 @@ export class VendorListComponent implements OnInit {
     'LastUpdated',
     // 'Status',
     'Action',
-    'Approve/Reject',
+    'ApproveOrReject',
   ];
   dataSource = new MatTableDataSource<any>([]);
   // paginator
@@ -141,7 +141,7 @@ export class VendorListComponent implements OnInit {
         next: (response: any) => {
           this.datarr = response.data.content;
           this.dataSource.data = response.data.content;
-          console.log(this.dataSource.data);
+          //console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
@@ -183,7 +183,7 @@ export class VendorListComponent implements OnInit {
   getAllVendors() {
     return this.vendorServ.getAll().pipe(takeUntil(this.destroyed$))
     .subscribe({next:(response: any) => {
-      console.log('vendor.data', response.data);
+     // console.log('vendor.data', response.data);
       if (response.data) {
         this.dataSource.data = response.data;
       }
@@ -273,7 +273,7 @@ export class VendorListComponent implements OnInit {
         //   return (
         //     (isAsc ? 1 : -1) * (a.status || '').localeCompare(b.status || '')
         //   );
-        case 'Approve/Reject':
+        case 'ApproveOrReject':
           return (
             (isAsc ? 1 : -1) *
             (a.vms_stat || '').localeCompare(b.vms_stat || '')
@@ -567,7 +567,7 @@ export class VendorListComponent implements OnInit {
    * @param endor
    */
   handlePageEvent(event: PageEvent) {
-    console.log('page.event', event);
+    //console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;

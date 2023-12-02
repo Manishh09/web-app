@@ -76,9 +76,11 @@ export class AddEmployeeComponent {
   departmentOptions: string[] = [
     'Administration',
     'Recruiting',
+    'SoftWare',
     'Bench Sales',
     'Sourcing',
     'Accounts',
+    'Guest',
   ];
 
   roleOptions: any[] = [
@@ -106,7 +108,6 @@ export class AddEmployeeComponent {
   submitted = false;
   rolearr: any = [];
   message!: string;
-  blur!: string;
   managerflg = false;
   teamleadflg = false;
   managerarr: any = [];
@@ -142,7 +143,7 @@ export class AddEmployeeComponent {
   private destroyed$ = new Subject<void>();
 
   ngOnInit(): void {
-    console.log('empdata, ', this.data);
+    //console.log('empdata, ', this.data);
     this.getRoles(); // common for add employee
     this.getManager();// common for add employee
     if (this.data.actionName === 'edit-employee') {
@@ -191,9 +192,9 @@ export class AddEmployeeComponent {
           Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
         ],
       ],
-      personalcontactnumber: [employeeData ? employeeData.personalcontactnumber.internationalNumber : '', [Validators.required]],
+      personalcontactnumber: [employeeData ? employeeData.personalcontactnumber : '', [Validators.required]],
       //['', [Validators.required]],
-      companycontactnumber: [employeeData && employeeData.companycontactnumber ? employeeData.companycontactnumber.internationalNumber : ''],
+      companycontactnumber: [employeeData && employeeData.companycontactnumber ? employeeData.companycontactnumber : ''],
       designation: [employeeData ? employeeData.designation : ''],
       department: [employeeData ? employeeData.department : '', Validators.required],
       joiningdate: [employeeData ? employeeData.joiningdate : '', Validators.required],
@@ -249,11 +250,11 @@ export class AddEmployeeComponent {
     this.employeeForm.get('role.roleid').valueChanges.subscribe((res: any) => {
       const manager = this.employeeForm.get('manager');
       const tl = this.employeeForm.get('teamlead');
-      if (res == 4) {
+      if (res == 5 || res == 6) {
         this.managerflg = true;
         this.teamleadflg = false;
         manager.setValidators(Validators.required);
-      } else if (res == 5) {
+      }else if (res == 7 || res == 8) {
         this.managerflg = true;
         this.teamleadflg = true;
         manager.setValidators(Validators.required);
@@ -267,23 +268,6 @@ export class AddEmployeeComponent {
       manager.updateValueAndValidity();
       // tl.updateValueAndValidity();
     });
-
-    // for team lead validation
-
-    // this.employeeForm.get('role.roleid').valueChanges.subscribe((res: any) => {
-    //   const manager = this.employeeForm.get('manager');
-    //   if (res == 4) {
-    //     this.teamleadflg = false;
-    //     this.managerflg = true;
-    //     manager.setValidators(Validators.required);
-    //   }
-    //   else {
-    //     this.teamleadflg = false;
-    //     this.managerflg = false;
-    //     manager.clearValidators();
-    //   }
-    //   manager.updateValueAndValidity();
-    // });
   }
   get addEmpForm() {
     return this.employeeForm.controls;
@@ -296,7 +280,7 @@ export class AddEmployeeComponent {
       this.employeeForm.controls.role.valueChanges.pipe(
         startWith(''),
         map((value: any) => {
-          console.log("value in map", value)
+        //  console.log("value in map", value)
           const name = typeof value === 'string' ? value : value?.name;
           return name ? this._filter(value) : this.roleOptions.slice();
         }
@@ -309,7 +293,7 @@ export class AddEmployeeComponent {
       this.employeeForm.controls.manager.valueChanges.pipe(
         startWith(''),
         map((value: any) =>{
-          console.log("value in map", value)
+        //  console.log("value in map", value)
           const name = typeof value === 'string' ? value : value?.name;
           return name ? this._filter(value) : this.managerOptions.slice();
         }
@@ -328,7 +312,7 @@ export class AddEmployeeComponent {
       this.employeeForm.controls.teamlead.valueChanges.pipe(
         startWith(''),
         map((value: any) =>{
-          console.log("value in map", value)
+          ///console.log("value in map", value)
           const name = typeof value === 'string' ? value : value?.name;
           return name ? this._filter(value) : this.teamLeadOptions.slice();
         }
@@ -346,7 +330,7 @@ export class AddEmployeeComponent {
 
   private _filterOptions(value: string, options: string[]): string[] {
     const filterValue = value.toLowerCase();
-    console.log("filtervalu", value)
+    //console.log("filtervalu", value)
     return options.filter((option) =>
       option.toLowerCase().includes(filterValue)
     );
@@ -474,13 +458,14 @@ export class AddEmployeeComponent {
       })
     }
     const saveObj = this.data.actionName === "edit-employee" ? this.empObj : this.employeeForm.value;
-    console.log(this.data.actionName+"saveObject",saveObj);
+    //console.log(this.data.actionName+"saveObject",saveObj);
     //this.uploadFileOnSubmit(1);
     this.empManagementServ.addOrUpdateEmployee(saveObj, this.data.actionName).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (data: any) => {
-        this.blur = 'Active';
+       // console.log(data)
         if (data.status == 'success') {
           // this.uploadFileOnSubmit(data.data.userid);
+          this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-success'];
           this.dataTobeSentToSnackBarService.message =
             this.data.actionName === 'add-employee'
               ? 'Employee added successfully'
@@ -491,8 +476,8 @@ export class AddEmployeeComponent {
         } else {
           this.dataTobeSentToSnackBarService.message =
             this.data.actionName === 'add-employee'
-              ? 'Employee addition is failed'
-              : 'Employee updation is failed';
+              ? data.message
+              : data.message;
             this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
           this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
         }
@@ -684,7 +669,7 @@ export class AddEmployeeComponent {
     // console.log("formData:", formData);
 
     for (let pair of (formData as any).entries()) {
-      console.log(pair);
+     // console.log(pair);
       // console.log(`File: ${pair[1].name}, Size: ${pair[1].size} bytes, Type: ${pair[1].type}`);
     }
     // this.fileServ.uploadFile(formData, id)
@@ -865,7 +850,7 @@ export class AddEmployeeComponent {
     this.empManagementServ.getEmployeeById(id).subscribe(
       (response: any) => {
         this.tech = response.data;
-        console.log(this.tech);
+      //  console.log(this.tech);
         if(this.data.actionName === 'edit-employee'){
           this.initilizeAddEmployeeForm(this.tech);
         }

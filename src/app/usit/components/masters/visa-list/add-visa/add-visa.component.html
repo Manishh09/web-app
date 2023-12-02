@@ -9,6 +9,13 @@
 
   <div class="content" mat-dialog-content>
     <form class="add-visa-form" [formGroup]="visaForm" name="visa-form" (ngSubmit)="onSubmit()">
+
+      <!-- <mat-form-field class="visaname-field" style="display: none;">
+        <mat-label>Visa Status</mat-label>
+        <input formControlName="vid" type="hidden" maxlength="15">
+      </mat-form-field>push chesko i ha -->
+
+
       <mat-form-field class="visaname-field">
         <mat-label>Visa Status</mat-label>
         <input matInput formControlName="visastatus" maxlength="15">

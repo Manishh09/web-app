@@ -62,6 +62,7 @@ export class AddCompanyComponent {
 
   private initializeCompanyForm(data : any) {
     this.companyForm = this.formBuilder.group({
+      companyid : [data ? data.companyid : ''],
       companyname: [data ? data.companyname : '', Validators.required],
       description: [data ? data.description : ''],
     });

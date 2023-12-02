@@ -52,8 +52,13 @@
         <ng-container matColumnDef="PhoneNumber">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone Number</th>
           <td mat-cell *matCellDef="let recruiter">
-            <span>{{ recruiter.usnumber }}</span><br>
-            <span *ngIf="recruiter.extension!=null && recruiter.extension!='0'"> Ext : {{recruiter.extension}}</span>
+            <span>
+
+              {{ recruiter.usnumber == null ?  recruiter.contactnumber : recruiter.usnumber}}
+            
+            </span>
+            <br>
+            <span *ngIf="recruiter.extension!=null && recruiter.extension!='0' && recruiter.extension!=''"> Ext : {{recruiter.extension}}</span>
           </td>
         </ng-container>
 

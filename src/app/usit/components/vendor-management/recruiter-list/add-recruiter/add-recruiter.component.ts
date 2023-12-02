@@ -134,7 +134,7 @@ export class AddRecruiterComponent implements OnInit {
       this.recruiterForm.addControl('status',this.formBuilder.control(recruiterData ? recruiterData.status : ''));
       this.recruiterForm.addControl('remarks',this.formBuilder.control(recruiterData ? recruiterData.remarks : ''));
       this.recruiterForm.addControl('rec_stat',this.formBuilder.control(recruiterData ? recruiterData.rec_stat : ''));
-      console.log(this.recruiterForm.value)
+     // console.log("Kiran => "+JSON.stringify(this.recruiterForm.value))
     }
     this.validateControls()
     this.companyAutoCompleteSearch()
@@ -171,7 +171,7 @@ export class AddRecruiterComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((term: any) => {
         if (term) {
-          console.log(term)
+         // console.log(term)
           return this.getFilteredValue(term);
         }
         else {
@@ -208,7 +208,8 @@ export class AddRecruiterComponent implements OnInit {
     }
     this.submitted=true;
     const saveReqObj = this.getSaveData();
-    console.log(this.data.actionName + " recruiterForm.value",saveReqObj);
+    //console.log(saveReqObj)
+    //console.log(this.data.actionName + " recruiterForm.value",saveReqObj);
     this.recruiterServ.addOrUpdateRecruiter(saveReqObj, this.data.actionName)
       .subscribe({
          next: (data: any) => {
@@ -297,9 +298,9 @@ export class AddRecruiterComponent implements OnInit {
     }
     this.recruiterServ.getCompanies(this.dept).subscribe(
       (response: any) => {
-        console.log(response.data);
+       // console.log(response.data);
         this.rolearr = response.data;
-        console.log(this.rolearr)
+       // console.log(this.rolearr)
         // for( let i =0 ; i< this.rolearr.length; i++){
         //   console.log(this.rolearr[i]);
         //   this.rolearr = this.rolearr[i];
@@ -378,7 +379,7 @@ export class AddRecruiterComponent implements OnInit {
   }
 
   onVendorSelect(vendor: any){
-    console.log(vendor);
+    //console.log(vendor);
     this.recruiterForm.get('vendor.vmsid').setValue(vendor.id);
   }
 

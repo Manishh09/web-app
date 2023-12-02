@@ -12,27 +12,27 @@ export class CompanyService {
 
   //register company
   addCompany(entity: any) {
-    return this.apiServ.post("company/save", entity);
+    return this.apiServ.post("auth/company/save", entity);
   }
 
   // get all companies
   getAllCompanies() {
-    return this.apiServ.get("company/all");
+    return this.apiServ.get("auth/company/all");
   }
 
   //used for get one resource
   getCompanyById(id: number) {
-    return this.apiServ.get("company/getbyid/" + id);
+    return this.apiServ.get("auth/company/getbyid/" + id);
   }
 
    //update company
    updateCompany(entity: any) {
-    return this.apiServ.post("company/save", entity);
+    return this.apiServ.post("auth/company/save", entity);
   }
 
   //delete company
   deleteCompany(id: number) {
-    return this.apiServ.delete("company/delete/" + id);
+    return this.apiServ.delete("auth/company/delete/" + id);
   }
 
   //register or update company

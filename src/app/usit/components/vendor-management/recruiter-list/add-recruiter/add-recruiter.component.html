@@ -43,7 +43,7 @@
         <!-- Company Contact Number -->
         <mat-form-field appearance="fill">
           <mat-label>Company Contact Number </mat-label>
-          <ngx-mat-intl-tel-input  matInput class="intl-input" formControlName="contactnumber" [enablePlaceholder]="true"
+          <ngx-mat-intl-tel-input  [preferredCountries]="['in','us']" matInput class="intl-input" formControlName="contactnumber" [enablePlaceholder]="true"
             [enableSearch]="true" name="contactnumber" id="intlInput" #personalcontactnumber #pNumb>
           </ngx-mat-intl-tel-input>
           <!-- <mat-error

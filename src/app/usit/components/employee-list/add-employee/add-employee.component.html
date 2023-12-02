@@ -61,7 +61,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Personal Contact Number </mat-label>
           <!-- <input matInput formControlName="personalcontactnumber"> -->
-          <ngx-mat-intl-tel-input class="intl-input"  formControlName="personalcontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
+          <ngx-mat-intl-tel-input class="intl-input"  [preferredCountries]="['in','us']" formControlName="personalcontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
           name="personalcontactnumber" id="intlInput" #personalcontactnumber #pNumb>
         </ngx-mat-intl-tel-input>
           <mat-error
@@ -73,7 +73,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Company Contact Number</mat-label>
           <!-- <input matInput formControlName="companycontactnumber"> -->
-          <ngx-mat-intl-tel-input class="intl-input" formControlName="companycontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
+          <ngx-mat-intl-tel-input [preferredCountries]="['in','us']" class="intl-input" formControlName="companycontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
           name="companycontactnumber" id="intlInputCompany" #companycontactnumber>
         </ngx-mat-intl-tel-input>
         </mat-form-field>

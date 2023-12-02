@@ -85,9 +85,9 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
 
   // paginator
   length = 50;
-  pageSize = 25;
+  pageSize = 50;
   pageIndex = 0;
-  pageSizeOptions = [25, 50, 100];
+  pageSizeOptions = [50, 75, 100];
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
@@ -128,7 +128,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   getAllEmployees() {
     return this.empManagementServ.getAllEmployees().pipe(takeUntil(this.destroyed$)).subscribe({
       next: (response: any) => {
-        console.log('employee.data', response.data);
+       // console.log('employee.data', response.data);
         if (response.data) {
           this.dataSource.data = response.data;
           this.dataSource.data.map((x: any, i) => {
@@ -145,13 +145,13 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   onSort(event: Sort) {
-    console.log(event);
+   // console.log(event);
     const sortDirection = event.direction ;
     const activeSortHeader = event.active;
 
     if (sortDirection === '') {
        this.dataSource.data = this.dataSource.data;
-       console.log(this.dataSource.data);
+      // console.log(this.dataSource.data);
       return;
     }
 
@@ -253,7 +253,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
           // call delete api
           this.empManagementServ.deleteEmployeeById(emp.userid).pipe(takeUntil(this.destroyed$)).subscribe({
             next: (response: any) => {
-              if (response.status == 'Success') {
+              if (response.status == 'success') {
                 this.getAllEmployees();
                 this.dataTobeSentToSnackBarService.message =
                   'Employee Deleted successfully';

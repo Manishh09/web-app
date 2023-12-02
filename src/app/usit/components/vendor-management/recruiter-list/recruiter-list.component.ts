@@ -75,7 +75,7 @@ export class RecruiterListComponent implements OnInit {
   length = 50;
   pageSize = 50; // items per page
   currentPageIndex = 0;
-  pageSizeOptions = [25, 50, 100];
+  pageSizeOptions = [ 50, 75, 100];
   hidePageSize = true;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
@@ -156,7 +156,7 @@ export class RecruiterListComponent implements OnInit {
       .subscribe((response: any) => {
         this.datarr = response.data.content;
         this.dataSource.data = response.data.content;
-        console.log(this.dataSource.data);
+       // console.log(this.dataSource.data);
         // for serial-num {}
         this.dataSource.data.map((x: any, i) => {
           x.serialNum = this.generateSerialNumber(i);
@@ -512,7 +512,7 @@ export class RecruiterListComponent implements OnInit {
             .subscribe({
               next: (response: any) => {
                 // console.log(JSON.stringify(response));
-                console.log("rec-stat", response.status)
+             //   console.log("rec-stat", response.status)
 
                   if (response.status == 'success') {
                     // dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
@@ -600,7 +600,7 @@ export class RecruiterListComponent implements OnInit {
    * @param event
    */
    handlePageEvent(event: PageEvent) {
-    console.log('page.event', event);
+    //console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;

@@ -3,7 +3,10 @@
       [color]="color" *ngIf="isLoading$ | async"
       mode="indeterminate">
 </mat-progress-bar> -->
+<app-sidebar *ngIf="!( _router.url === '' ||   _router.url === '/' ||  _router.url === '/login')" ></app-sidebar>
 
-<app-sidebar *ngIf="!['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></app-sidebar>
-<router-outlet *ngIf="['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></router-outlet>
-<app-footer *ngIf="!['/login', '/change-password','/sign-up'].includes(permServ.getCurrentURL())"></app-footer>
+<!-- <app-sidebar *ngIf="!['/login'].includes(currentURL)"></app-sidebar> -->
+<router-outlet></router-outlet>
+<router-outlet *ngIf="(  _router.url === '' ||  _router.url === '/' ||  _router.url === '/login')" ></router-outlet>
+<!-- <app-footer *ngIf="!['/login'].includes(currentURL)"></app-footer> -->
+<app-footer *ngIf="!(  _router.url === '' ||  _router.url === '/' ||  _router.url === '/login')" ></app-footer>
