@@ -144,11 +144,17 @@
 
               <!-- Reject BUTTON -->
 
-                <button  *ngIf="vendor.vms_stat !== 'Approved'" mat-raised-button class="approve-reject-buttons" (click)="onApproveOrRejectVMS(vendor ,true)"
+                <button  *ngIf="vendor.vms_stat !== 'Approved'&&vendor.vms_stat !== 'Rejected'" mat-raised-button class="approve-reject-buttons" (click)="onApproveOrRejectVMS(vendor ,true)"
                 [ngStyle]="{ color: 'white' }"
                 style="width: 75px; height: 25px;"
                 [ngClass]="'mat-warn'"> {{'Reject'}}
               </button>
+
+              <button  *ngIf="vendor.vms_stat === 'Rejected'" mat-raised-button class="approve-reject-buttons" 
+              [ngStyle]="{ color: 'white' }"
+              style="width: 75px; height: 25px;"
+              [ngClass]="'mat-warn'"> {{vendor.vms_stat}}
+            </button>
 
             </ng-template>
         </td>

@@ -20,7 +20,7 @@ import { RecruiterService } from 'src/app/usit/services/recruiter.service';
 import { Observable, debounceTime, distinctUntilChanged, tap, switchMap, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
-import { AddVendorComponent } from '../../vendor-list/add-vendor/add-vendor.component';
+import { AddVendorComponent, COMPANY_TYPE, STATUS_TYPE } from '../../vendor-list/add-vendor/add-vendor.component';
 import { DialogService } from 'src/app/services/dialog.service';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { Recruiter } from 'src/app/usit/models/recruiter';
@@ -68,7 +68,10 @@ export class AddRecruiterComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   searchObs$!: Observable<any>;
   companySearchData: any[] = [];
-
+  selectOptionObj = {
+    
+    statusType: STATUS_TYPE,
+  };
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
     public dialogRef: MatDialogRef<AddRecruiterComponent>
@@ -76,14 +79,15 @@ export class AddRecruiterComponent implements OnInit {
   ngOnInit(): void {
     this.getvendorcompanydetails()
     if (this.data.actionName === 'edit-recruiter') {
-      // this.recruiterServ.getEntity(this.data.recruiterData.id).subscribe(
-      //   (response: any) => {
-      //     this.recruiterObj = response.data;
-      //     this.iniRecruiterForm(this.data.RecruiterData);
-      //   }
-      // );
-      this.iniRecruiterForm(this.data.RecruiterData);
-      console.log(this.data.RecruiterData);
+      this.iniRecruiterForm(new Recruiter());
+      this.recruiterServ.getEntity(this.data.recruiterData.id).subscribe(
+        (response: any) => {
+          this.recruiterObj = response.data;
+          this.iniRecruiterForm(response.data);
+        }
+      );
+      
+  
     } else {
       this.iniRecruiterForm(null);
     }
@@ -105,41 +109,64 @@ export class AddRecruiterComponent implements OnInit {
   private iniRecruiterForm(recruiterData: any) {
     this.recruiterForm = this.formBuilder.group(
       {
-        autoInput: [recruiterData ? recruiterData.company : '', Validators.required],
+        //autoInput: [recruiterData ? recruiterData.company : '', Validators.required],
         recruiter: [recruiterData ? recruiterData.recruiter : ''],
         email: [recruiterData ? recruiterData.email : '', [Validators.required, Validators.email, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]],
         usnumber: [recruiterData ? recruiterData.usnumber : ''],
-        contactnumber: [recruiterData ? recruiterData.usnumber : ''],
+        contactnumber: [recruiterData ? recruiterData.contactnumber : ''],
         extension: [recruiterData ? recruiterData.extension : ''],
         recruitertype: [recruiterData ? recruiterData.recruitertype : '', Validators.required],
         details: [recruiterData ? recruiterData.details : ''],
-        addedby: [this.recruiterObj.addedby],
-        updatedby: [this.recruiterObj.updatedby],
+        addedby: [recruiterData ? recruiterData.addedby:  ''],
+        updatedby: [recruiterData ? recruiterData.updatedby : ''],
         vendor: this.formBuilder.group({
-          vmsid: [this.recruiterForm.vmsid],
+          vmsid: [recruiterData ? recruiterData.vendor.vmsid   : ''],
+          company: [recruiterData ? recruiterData.vendor.company   : ''],
         }),
-        user: this.formBuilder.group({
-          userid: localStorage.getItem('userid'),
-        })
+        user: localStorage.getItem('userid'),
+        // user: this.formBuilder.group({
+        //   userid: localStorage.getItem('userid'),
+        // })
       }
     );
     if (this.data.actionName === 'edit-recruiter') {
-      this.recruiterForm.addControl('recid', new FormControl(recruiterData ? recruiterData.recid : ''));
-      this.recruiterForm.addControl('status', new FormControl(recruiterData ? recruiterData.status : ''));
-      this.recruiterForm.addControl('remarks', new FormControl(recruiterData ? recruiterData.remarks : ''));
-      this.recruiterForm.addControl('rec_stat', new FormControl(recruiterData ? recruiterData.rec_stat : ''));
+      this.recruiterForm.addControl('recid',this.formBuilder.control(recruiterData ? recruiterData.recid : ''));
+      this.recruiterForm.addControl('status',this.formBuilder.control(recruiterData ? recruiterData.status : ''));
+      this.recruiterForm.addControl('remarks',this.formBuilder.control(recruiterData ? recruiterData.remarks : ''));
+      this.recruiterForm.addControl('rec_stat',this.formBuilder.control(recruiterData ? recruiterData.rec_stat : ''));
       console.log(this.recruiterForm.value)
     }
     this.validateControls()
-  }
-
-  validateControls() {
-
     this.companyAutoCompleteSearch()
   }
 
+  validateControls(action = 'add-recruiter') {
+    if (action === 'edit-recruiter') {
+      this.recruiterForm.get('status').valueChanges.subscribe((res: any) => {
+        // const remarks = this.recruiterForm.get('remarks');
+        // if (res?.trim() === 'Rejected') {
+        //   //this.rejectionflg = true;
+        //   remarks.setValidators(Validators.required);
+        // } else {
+        //   //this.rejectionflg = false;
+        //   remarks.clearValidators();
+        // }
+        // remarks.updateValueAndValidity();
+        if (res == 'Active') {
+          this.recruiterForm.get('rec_stat').setValue('Initiated');
+        }
+      });
+      return;
+    }
+  }
+
+  // validateControls() {
+
+  //   this.companyAutoCompleteSearch()
+  // }
+
   companyAutoCompleteSearch() {
-    this.searchObs$ = this.recruiterForm.get('autoInput').valueChanges.pipe(
+    this.searchObs$ = this.recruiterForm.get('vendor.company').valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       switchMap((term: any) => {
@@ -165,6 +192,7 @@ export class AddRecruiterComponent implements OnInit {
 
   }
   onSubmit() {
+
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 2500,
@@ -178,8 +206,10 @@ export class AddRecruiterComponent implements OnInit {
       this.displayFormErrors();
       return;
     }
-    console.log(this.data.actionName + " recruiterForm.value", this.recruiterForm.value);
-    this.recruiterServ.addOrUpdateRecruiter(this.recruiterForm.value, this.data.actionName)
+    this.submitted=true;
+    const saveReqObj = this.getSaveData();
+    console.log(this.data.actionName + " recruiterForm.value",saveReqObj);
+    this.recruiterServ.addOrUpdateRecruiter(saveReqObj, this.data.actionName)
       .subscribe({
          next: (data: any) => {
           // this.blur = "Active";
@@ -189,7 +219,6 @@ export class AddRecruiterComponent implements OnInit {
                 ? 'Recruiter added successfully'
                 : 'Recruiter updated successfully';
             this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-            this.recruiterForm.reset();
           }
           else {
             // this.blur = "enable"
@@ -206,14 +235,49 @@ export class AddRecruiterComponent implements OnInit {
           //this.blur = 'enable';
           dataToBeSentToSnackBar.message =
             this.data.actionName === 'add-recruiter'
-              ? 'Employee addition is failed'
-              : 'Employee updation is failed';
+              ? 'Recruiter addition is failed'
+              : 'Recruiter updation is failed';
           dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         },
   });
 
   }
+  getSaveData() {
+    // updates employee object form values
+    if(this.data.actionName === "edit-recruiter"){
+    //  [this.recruiterForm.value].forEach( (formVal, idx) => {
+    //    this.recruiterObj.company = formVal.company;
+    //    this.recruiterObj.vendortype = formVal.vendortype;
+    //    this.recruiterObj.companytype = formVal.companytype;
+    //    this.recruiterObj.tyretype =  formVal.tyretype;
+    //    this.recruiterObj.client =  formVal.client;
+    //    this.recruiterObj.addedby = localStorage.getItem('userid');;
+    //    this.recruiterObj.email =  formVal.email;
+    //    this.recruiterObj.updatedby =  localStorage.getItem('userid');
+    //    this.recruiterObj.headquerter =  formVal.headquerter;
+    //    this.recruiterObj.status =  formVal.status;
+    //    this.recruiterObj.vmsid =  this.data.vendorData.id;
+
+    //    this.recruiterObj.vms_stat =  formVal.status === "Active"  ? "Initiated" : formVal.vms_stat;
+    //    this.recruiterObj.twitterid = formVal.twitterid;
+    //    this.recruiterObj.linkedinid =  formVal.linkedinid;
+    //    this.recruiterObj.industrytype = formVal.industrytype;
+    //    this.recruiterObj.facebook = formVal.facebook;
+    //    this.recruiterObj.website = formVal.website;
+    //    this.recruiterObj.revenue =  formVal.revenue;
+    //    this.recruiterObj.staff = formVal.staff;
+    //    this.recruiterObj.details = formVal.details;
+    //    this.recruiterObj.client = formVal.client;
+    //  })
+    ///this.recruiterObj.recid = this.data.recruiterData.id;
+    
+    const obj = {...this.recruiterObj, ...this.recruiterForm.value};
+    obj.rec_stat = this.recruiterForm.value.status === "Active" ? "Initiated" : this.recruiterForm.value.status === "Approved" ? "Approved" : this.recruiterForm.value.rec_stat;
+    return obj
+   }
+   return this.recruiterForm.value;
+ }
 
   flg!: any;
   dept = 'all';

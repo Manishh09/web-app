@@ -12,56 +12,56 @@ export class EmployeeManagementService {
    /*** EMPOLOYEE SERVICES _ START */
    //employee management
    getRolesDropdown() {
-    return this.apiServ.get("users/getroles");
+    return this.apiServ.get("auth/roles/getroles");
   }
 
   getManagerDropdown() {
-    return this.apiServ.get("users/manageDropDown");
+    return this.apiServ.get("auth/users/manageDropDown");
   }
 
   getTLdropdown(id: number) {
-    return this.apiServ.get("users/TlDropDown/" + id);
+    return this.apiServ.get("auth/users/TlDropDown/" + id);
   }
 
   //register EMployee
   registerEmployee(entity: any) {
-    return this.apiServ.post("users/save", entity)
+    return this.apiServ.post("auth/users/save", entity)
 
   }
   //used for get the resource
   getAllEmployees() {
-    return this.apiServ.get("users/all");
+    return this.apiServ.get("auth/users/all");
   }
 
   deleteEmployeeById(id: number) {
-    return this.apiServ.delete("users/delete/" + id);
+    return this.apiServ.delete("auth/users/delete/" + id);
   }
 
   //used for delete the resource
   changeEmployeeStatus(entity: any) {
-    return this.apiServ.patch("users/status", entity);
+    return this.apiServ.patch("auth/users/status", entity);
   }
   //used for delete the resource
   unlockEmployee(entity: any) {
-    return this.apiServ.patch("users/unlock", entity);
+    return this.apiServ.patch("auth/users/unlock", entity);
   }
   //used for get one resource
   getEmployeeById(id: number) {
-    return this.apiServ.get("users/userbyid/" + id);
+    return this.apiServ.get("auth/users/userbyid/" + id);
   }
 
   //used for get one resource
   getEmployeeInfoById(id: number) {
-    return this.apiServ.get("users/userinfo/" + id);
+    return this.apiServ.get("auth/users/userinfo/" + id);
   }
   //Update Employee
   public updateEmployee(entity: any) {
-    return this.apiServ.put("users/update", entity);
+    return this.apiServ.put("auth/users/update", entity);
   }
 
    //Update Employee
    public getAllTLBench() {
-    return this.apiServ.get("users/teamleads");
+    return this.apiServ.get("auth/users/teamleads");
   }
 
   addOrUpdateEmployee(entity: any, action: string){

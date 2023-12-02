@@ -528,23 +528,20 @@ export class VendorListComponent implements OnInit {
             .subscribe({
               next: (response: any) => {
                 // console.log(JSON.stringify(response));
-
-                  if (response.status == 'Approved') {
-                    // dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-
+                  if (response.status == 'success') {
+                    // dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
+                    const message = response.message.includes("Change") ? 'Vendor Approved sucssessfully' : response.message;
+                    dataToBeSentToSnackBar.message = message;
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                    this.snackBarServ.openSnackBarFromComponent(
-                      dataToBeSentToSnackBar
-                    );
                   } else {
-                    //  alertify.success("Vendor " + response.data + " successfully");
-                    dataToBeSentToSnackBar.message = `Vendor ${response.data} successfully`;
-                    dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                    this.snackBarServ.openSnackBarFromComponent(
-                      dataToBeSentToSnackBar
-                    );
+                    //  alertify.success("Recruiter " + response.data + " successfully");
+                    dataToBeSentToSnackBar.message = 'Status update failed';
+                    dataToBeSentToSnackBar.panelClass = ['custom-snack-failed'];
                   }
+                  this.snackBarServ.openSnackBarFromComponent(
+                    dataToBeSentToSnackBar
+                  );
+
 
                 // this.gty(this.page);
                 this.getAllData(this.currentPageIndex + 1);

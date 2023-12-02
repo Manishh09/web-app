@@ -15,7 +15,8 @@ export class PermissionsService {
   user = new Employee();
   selectedRoles: string[] = [];
   id!: any;
-  private baseUrl = "http://69.216.19.140:8080/usit/";
+  // private baseUrl = "http://69.216.19.140:8080/usit/";
+  private baseUrl = "http://localhost:1122/auth/";
 
   private userPrivileges: PrivilegesService[] = [];
  // private baseUrl: any = environment.API_BASE_URL;
