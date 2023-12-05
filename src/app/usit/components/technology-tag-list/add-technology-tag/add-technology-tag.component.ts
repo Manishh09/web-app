@@ -64,6 +64,7 @@ export class AddTechnologyTagComponent {
       technologyarea: [data ? data.technologyarea : '', Validators.required],
       listofkeyword: [data ? data.listofkeyword : '', Validators.required],
       comments: [data ? data.comments : ''],
+      id: [data ? data.id : '']
     });
   }
 
@@ -90,13 +91,15 @@ export class AddTechnologyTagComponent {
     const addObj = {
       technologyarea: this.technologyForm.get('technologyarea')!.value,
       listofkeyword: this.technologyForm.get('listofkeyword')!.value,
-      comments: this.technologyForm.get('comments')!.value
+      comments: this.technologyForm.get('comments')!.value,
+      id: this.technologyForm.get('id')!.value,
     };
     const updateObj = {
       ...this.data.technologyData,
       technologyarea: this.technologyForm.get('technologyarea')!.value,
       listofkeyword: this.technologyForm.get('listofkeyword')!.value,
-      comments: this.technologyForm.get('comments')!.value
+      comments: this.technologyForm.get('comments')!.value,
+      id: this.technologyForm.get('id')!.value,
     };
     const saveObj = this.data.actionName === "update-technology" ? updateObj : addObj;
 

@@ -9,11 +9,12 @@
   
     <div class="content" mat-dialog-content>
       <form class="add-technology-form" [formGroup]="technologyForm" name="technology-form" (ngSubmit)="onSubmit()">
+        <input type="hidden" formControlName="id">
         <mat-form-field class="technologyname-field">
           <mat-label>Technology</mat-label>
           <input title="" matInput formControlName="technologyarea" maxlength="15">
           <!-- errors -->
-          <mat-error class="error-message" *ngIf="controls['technologyarea'].errors && controls['technologyarea'].errors['required']">Company Name is required</mat-error>
+          <mat-error class="error-message" *ngIf="controls['technologyarea'].errors && controls['technologyarea'].errors['required']">Technology is required</mat-error>
         </mat-form-field>
         
         <mat-form-field class="description-field">

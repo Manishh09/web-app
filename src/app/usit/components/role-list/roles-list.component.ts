@@ -64,7 +64,7 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       {
         next:(response: any) => {
           this.roleList = response.data;
-          console.log("roles",this.roleList);
+        //  console.log("roles",this.roleList);
           this.dataSource.data = response.data;
         },
         error: (err)=> console.log(err)

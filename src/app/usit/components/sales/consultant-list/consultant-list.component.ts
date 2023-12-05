@@ -80,7 +80,7 @@ export class ConsultantListComponent
     'Date',
     'Id',
     'Name',
-    'TrackSI',
+   
     'Email',
     'ContactNumber',
     'Visa',

@@ -38,7 +38,8 @@ export class LoginComponent implements OnInit {
   private initializeLoginForm() {
     this.form = this.formBuilder.group({
       email: [
-        'saikiran@narveetech.com', // remove later
+        '',
+       // 'saikiran@narveetech.com', // remove later
         [
           Validators.required,
           Validators.email,
@@ -47,7 +48,8 @@ export class LoginComponent implements OnInit {
         ],
       ],
       password: [
-        'Kiran@123$',
+        '',
+      //  'Kiran@123$',
         [
           Validators.required,
           Validators.maxLength(12),

@@ -61,7 +61,7 @@
             {{element?.consultantname}} </td>
         </ng-container>
         <!-- Track(S/I)-->
-        <ng-container matColumnDef="TrackSI" *ngIf="flag.toLocaleLowerCase() !== 'presales'">
+        <!-- <ng-container matColumnDef="TrackSI" *ngIf="flag.toLocaleLowerCase() !== 'presales'">
           <th mat-header-cell *matHeaderCellDef
             sortActionDescription="Sort by Track(S/I)"> Track(S/I) </th>
           <td mat-cell *matCellDef="let element">
@@ -71,8 +71,7 @@
               </mat-icon></span>
             <span (click)="goToConsultantDrillDownReport(element,'interview')"><mat-icon class="interview-icon"  >chat_bubble_outline</mat-icon></span>
 
-            <!-- <span class="consultant-name" (click)="goToConsultantInfo(element, 'name')"></span> {{element?.consultantname}} </td> -->
-          </ng-container>
+          </ng-container> -->
           <!-- Email-->
           <ng-container matColumnDef="Email">
             <th mat-header-cell *matHeaderCellDef mat-sort-header

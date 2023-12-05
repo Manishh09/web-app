@@ -62,7 +62,7 @@ export class CompaniesListComponent implements OnInit, AfterViewInit {
       {
         next:(response: any) => {
           this.companyList = response.data;
-          console.log("companies",this.companyList);
+          //console.log("companies",this.companyList);
           this.dataSource.data = response.data;
         },
         error: (err)=> console.log(err)
