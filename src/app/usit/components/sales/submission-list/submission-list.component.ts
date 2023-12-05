@@ -200,5 +200,53 @@ export class SubmissionListComponent {
     const serialNumber = (pagIdx - 1) * 50 + index + 1;
     return serialNumber;
   }
+  handlePageEvent(event: PageEvent) {
+   // console.log('page.event', event);
+    if (event) {
+      this.pageEvent = event;
+      this.currentPageIndex = event.pageIndex;
+      this.getAllData2(event.pageIndex + 1)
+    }
+    return;
+  }
+  
+  getAllData2(pageIndex = 1) {
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
 
+    return this.submissionServ.getsubmissiondataPagination(
+        this.flag,
+        this.hasAcces,
+        this.userid,
+        pageIndex,
+        this.pageSize,
+        this.field
+      )
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+        //  this.consultant = response.data.content;
+          this.entity = response.data.content;
+          this.dataSource.data = response.data.content;
+        //  console.log(this.dataSource.data);
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = this.generateSerialNumber(i);
+          });
+          this.totalItems = response.data.totalElements;
+          //  this.length = response.data.totalElements;
+        },
+        error: (err: any) => {
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          dataToBeSentToSnackBar.message = err.message;
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+      });
+  }
 }

@@ -194,7 +194,7 @@ export class ConsultantListComponent
         next: (response: any) => {
           this.consultant = response.data.content;
           this.dataSource.data = response.data.content;
-          console.log(this.dataSource.data);
+        //  console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
