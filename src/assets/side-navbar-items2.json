@@ -4,7 +4,16 @@
       "icon": "dashboard",
       "routerLink": "/usit/dashboard"
     },
-   
+    {
+      "text": "RSS Feed",
+      "icon": "rss_feed",
+      "routerLink": "/usit/rss-feed"
+    },
+    {
+      "text": "Open Reqs",
+      "icon": "open_in_new",
+      "routerLink": "/usit/open-reqs"
+    },
     {
       "text": "VMS",
       "icon": "work",
@@ -21,7 +30,11 @@
         }
       ]
     },
-   
+    {
+      "text": "Tech & Support",
+      "icon": "build",
+      "routerLink": "/usit/tech-spport"
+    },
     {
       "text": "Technology Tags",
       "icon": "build",
@@ -32,23 +45,45 @@
       "icon": "label",
       "routerLink": "/usit/immigration"
     },
-   
+    {
+      "text": "Inbox",
+      "icon": "inbox",
+      "routerLink": "/usit/inbox"
+    },
+    {
+      "text": "Email Extraction",
+      "icon": "email",
+      "routerLink": "/usit/email-extraction"
+    },
     {
       "text": "Employees",
       "icon": "people",
       "routerLink": "/usit/employees"
     },
-    
+    {
+      "text": "LinkedIn Profiles",
+      "icon": "person",
+      "routerLink": "/usit/linkedin-profiles"
+    },
     {
       "text": "Pre-sales",
       "icon": "local_offer",
       "routerLink": "/usit/pre-sales"
     },
-   
+    {
+      "text": "H1-Transfer",
+      "icon": "swap_horiz",
+      "routerLink": "/usit/h1-transfer"
+    },
     {
       "text": "Sales",
       "icon": "attach_money",
       "children": [
+        {
+          "text": "Team Profiles",
+          "icon": "people",
+          "routerLink": "/usit/team-profiles"
+        },
         {
           "text": "Consultants",
           "icon": "person",
@@ -57,12 +92,12 @@
         {
           "text": "Submissions",
           "icon": "assignment",
-          "routerLink": "/usit/sales-submission"
+          "routerLink": "/usit/submissions"
         },
         {
           "text": "Interviews",
           "icon": "chat_bubble_outline",
-          "routerLink": "/usit/sales-interview"
+          "routerLink": "/usit/interviews"
         }
       ]
     },
@@ -83,12 +118,12 @@
         {
           "text": "Submissions",
           "icon": "assignment",
-          "routerLink": "/usit/rec-submission"
+          "routerLink": "/usit/subm"
         },
         {
           "text": "Interviews",
           "icon": "chat_bubble_outline",
-          "routerLink": "/usit/rec-interview"
+          "routerLink": "/usit/iv"
         }
       ]
     },
@@ -114,7 +149,7 @@
         {
           "text": "Interviews",
           "icon": "chat_bubble_outline",
-          "routerLink": "/usit/dom-interview"
+          "routerLink": "/usit/dom-iv"
         }
       ]
     },
@@ -129,6 +164,22 @@
       "text": "Register Privilage",
       "icon": "vpn_key",
       "routerLink": "/usit/reg-previlage"
+    },
+    {
+      "text": "Reports",
+      "icon": "description",
+      "children": [
+        {
+          "text": "Employee Performance",
+          "icon": "bar_chart",
+          "routerLink": "/usit/emp-perf"
+        },
+        {
+          "text": "Sourcing Interviews",
+          "icon": "assessment",
+          "routerLink": "/usit/source-interviews"
+        }
+      ]
     },
     {
       "text": "Masters",
@@ -148,7 +199,17 @@
           "text": "Companies",
           "icon": "business",
           "routerLink": "/usit/companies"
+        },
+        {
+          "text": "Administration Files",
+          "icon": "description",
+          "routerLink": "/usit/admin-files"
         }
       ]
+    },
+    {
+      "text": "Create PO",
+      "icon": "note_add",
+      "routerLink": "/usit/create-po"
     }
   ]

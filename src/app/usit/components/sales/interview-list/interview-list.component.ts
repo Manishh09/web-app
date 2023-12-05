@@ -93,21 +93,24 @@ export class InterviewListComponent {
   private interviewServ = inject(InterviewService);
 
   ngOnInit(): void {
-    this.flag = this.activatedRoute.snapshot.params['flg'];
-    if (this.flag == 'sales') {
+    const routeData = this.activatedRoute.snapshot.data;
+    if (routeData['isSalesInt']) { // sales consultant
       this.flag = "sales";
     }
-    else {
+    else if (routeData['isRecInt']) { // recruiting consutlant
       this.flag = "Recruiting";
+    }
+   
+    else{
+      this.flag = "DomRecruiting";
     }
     this.hasAcces = localStorage.getItem('role');
     this.getAll();
   }
 
-
   getAll() {
     this.userid = localStorage.getItem('userid');
-    this.interviewServ.getPaginationlist('sales', this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
+    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data = response.data.content;

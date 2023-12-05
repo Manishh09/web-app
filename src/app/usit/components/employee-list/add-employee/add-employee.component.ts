@@ -24,7 +24,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { Observable, startWith, map, takeUntil, Subject } from 'rxjs';
 import { EmployeeManagementService } from 'src/app/usit/services/employee-management.service';
@@ -46,6 +46,7 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { FileManagementService } from 'src/app/usit/services/file-management.service';
 import { Employee } from 'src/app/usit/models/employee';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-employee',
@@ -136,6 +137,7 @@ export class AddEmployeeComponent {
   private formBuilder = inject(FormBuilder);
   private dialogServ = inject(DialogService);
   private datePipe = inject(DatePipe);
+  private http = inject(HttpClient);
   data = inject(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<AddEmployeeComponent>);
   private fileServ = inject(FileManagementService);
@@ -147,24 +149,24 @@ export class AddEmployeeComponent {
     this.getRoles(); // common for add employee
     this.getManager();// common for add employee
     if (this.data.actionName === 'edit-employee') {
-     // this.getDataOnEdit(this.data.employeeData.userid);
-     this.initilizeAddEmployeeForm('');
-     this.empManagementServ.getEmployeeById(this.data.employeeData.userid).subscribe(
-      (response: any) => {
-        if(response && response.data) {
-          this.empObj = response.data;
-          const managerId = response.data.manager;
-          this.getTeamLead(managerId);
-          this.initilizeAddEmployeeForm(this.empObj);
-          this.validateControls();
-        }
-      })
+      // this.getDataOnEdit(this.data.employeeData.userid);
+      this.initilizeAddEmployeeForm('');
+      this.empManagementServ.getEmployeeById(this.data.employeeData.userid).subscribe(
+        (response: any) => {
+          if (response && response.data) {
+            this.empObj = response.data;
+            const managerId = response.data.manager;
+            this.getTeamLead(managerId);
+            this.initilizeAddEmployeeForm(this.empObj);
+            this.validateControls();
+          }
+        })
     } else {
-    //  for add employee
+      //  for add employee
       this.initilizeAddEmployeeForm(null);
       this.validateControls();
     }
-   // common for add employee
+    // common for add employee
     // this.validateControls();
     // this.optionsMethod();
 
@@ -185,7 +187,7 @@ export class AddEmployeeComponent {
       ],
       pseudoname: [employeeData ? employeeData.pseudoname : ''],
       email: [
-        employeeData ? employeeData.email : '',
+        employeeData ? employeeData.email : 'SALES@MAIL.COM',
         [
           Validators.required,
           Validators.email,
@@ -195,12 +197,12 @@ export class AddEmployeeComponent {
       personalcontactnumber: [employeeData ? employeeData.personalcontactnumber : '', [Validators.required]],
       //['', [Validators.required]],
       companycontactnumber: [employeeData && employeeData.companycontactnumber ? employeeData.companycontactnumber : ''],
-      designation: [employeeData ? employeeData.designation : ''],
+      designation: [employeeData ? employeeData.designation : 'SALES'],
       department: [employeeData ? employeeData.department : '', Validators.required],
       joiningdate: [employeeData ? employeeData.joiningdate : '', Validators.required],
       relievingdate: [employeeData ? employeeData.relievingdate : '', [this.relievingDateValidator]],
       personalemail: [
-        employeeData ? employeeData.personalemail : '',
+        employeeData ? employeeData.personalemail : 'SALES@MAIL.COM',
         [
           Validators.required,
           Validators.email,
@@ -209,23 +211,23 @@ export class AddEmployeeComponent {
       ],
       manager: [employeeData ? employeeData.manager : ''],
       aadharno: [
-        employeeData ? employeeData.aadharno : '',
+        employeeData ? employeeData.aadharno : '123456789124',
         [Validators.required, Validators.pattern(/^\d{12}$/)],
       ],
 
       panno: [
-        employeeData ? employeeData.panno : '',
+        employeeData ? employeeData.panno : 'CRRPB1315H',
         [Validators.required, Validators.pattern(/^[A-Z]{5}\d{4}[A-Z]{1}$/)],
       ],
-      bankname: [employeeData ? employeeData.bankname : '', [Validators.required, Validators.maxLength(100)]],
-      accno: [employeeData ? employeeData.accno : '', [Validators.required,  Validators.pattern(/^\d{1,15}$/)]],
+      bankname: [employeeData ? employeeData.bankname : 'AXIS', [Validators.required, Validators.maxLength(100)]],
+      accno: [employeeData ? employeeData.accno : '234235235235235', [Validators.required, Validators.pattern(/^\d{1,15}$/)]],
       ifsc: [
-        employeeData ? employeeData.ifsc : '',
+        employeeData ? employeeData.ifsc : 'UTIB0004055',
         [Validators.required, Validators.pattern(/^([A-Za-z]{4}\d{7})$/)],
       ],
-      branch: [employeeData ? employeeData.branch : '', [Validators.required]],
+      branch: [employeeData ? employeeData.branch : 'AMEERPET', [Validators.required]],
       teamlead: [employeeData ? employeeData.teamlead : ''],
-     // role: [employeeData ? employeeData.role.rolename : '', Validators.required],
+      // role: [employeeData ? employeeData.role.rolename : '', Validators.required],
       role: this.formBuilder.group({
         roleid: new FormControl(employeeData ? employeeData.role.roleid : '', [
           Validators.required
@@ -254,7 +256,7 @@ export class AddEmployeeComponent {
         this.managerflg = true;
         this.teamleadflg = false;
         manager.setValidators(Validators.required);
-      }else if (res == 7 || res == 8) {
+      } else if (res == 7 || res == 8) {
         this.managerflg = true;
         this.teamleadflg = true;
         manager.setValidators(Validators.required);
@@ -275,49 +277,49 @@ export class AddEmployeeComponent {
 
   private optionsMethod(type = "roles") {
 
-    if(type === "roles"){
-    this.filteredRoleOptions =
-      this.employeeForm.controls.role.valueChanges.pipe(
-        startWith(''),
-        map((value: any) => {
-        //  console.log("value in map", value)
-          const name = typeof value === 'string' ? value : value?.name;
-          return name ? this._filter(value) : this.roleOptions.slice();
-        }
+    if (type === "roles") {
+      this.filteredRoleOptions =
+        this.employeeForm.controls.role.valueChanges.pipe(
+          startWith(''),
+          map((value: any) => {
+            //  console.log("value in map", value)
+            const name = typeof value === 'string' ? value : value?.name;
+            return name ? this._filter(value) : this.roleOptions.slice();
+          }
 
-        )
-      );
+          )
+        );
       return
-    }else if(type === "manager"){
+    } else if (type === "manager") {
       this.filteredManagerOptions =
-      this.employeeForm.controls.manager.valueChanges.pipe(
-        startWith(''),
-        map((value: any) =>{
-        //  console.log("value in map", value)
-          const name = typeof value === 'string' ? value : value?.name;
-          return name ? this._filter(value) : this.managerOptions.slice();
-        }
-        )
-      );
-    }else if(type === "department"){
+        this.employeeForm.controls.manager.valueChanges.pipe(
+          startWith(''),
+          map((value: any) => {
+            //  console.log("value in map", value)
+            const name = typeof value === 'string' ? value : value?.name;
+            return name ? this._filter(value) : this.managerOptions.slice();
+          }
+          )
+        );
+    } else if (type === "department") {
       this.filteredDepartmentOptions =
-      this.employeeForm.controls.department.valueChanges.pipe(
-        startWith(''),
-        map((value: any) =>
-          this._filterOptions(value || '', this.departmentOptions)
-        )
-      );
-    }else{
+        this.employeeForm.controls.department.valueChanges.pipe(
+          startWith(''),
+          map((value: any) =>
+            this._filterOptions(value || '', this.departmentOptions)
+          )
+        );
+    } else {
       this.filteredTeamLeadOptions =
-      this.employeeForm.controls.teamlead.valueChanges.pipe(
-        startWith(''),
-        map((value: any) =>{
-          ///console.log("value in map", value)
-          const name = typeof value === 'string' ? value : value?.name;
-          return name ? this._filter(value) : this.teamLeadOptions.slice();
-        }
-        )
-      );
+        this.employeeForm.controls.teamlead.valueChanges.pipe(
+          startWith(''),
+          map((value: any) => {
+            ///console.log("value in map", value)
+            const name = typeof value === 'string' ? value : value?.name;
+            return name ? this._filter(value) : this.teamLeadOptions.slice();
+          }
+          )
+        );
     }
 
   }
@@ -388,7 +390,7 @@ export class AddEmployeeComponent {
 
   managerid(event: MatSelectChange) {
     const selectedManagerId = event.value;
-    if(selectedManagerId){
+    if (selectedManagerId) {
       this.getTeamLead(selectedManagerId);
     }
   }
@@ -422,8 +424,8 @@ export class AddEmployeeComponent {
     const joiningDateFormControl = this.employeeForm.get('joiningdate');
     const relievingDateFormControl = this.employeeForm.get('relievingdate')
     if (joiningDateFormControl.value) {
-      const formattedJoiningDate  = this.datePipe.transform(joiningDateFormControl.value, 'yyyy-MM-dd');
-      const formattedRelievingDate   = this.datePipe.transform(relievingDateFormControl.value, 'yyyy-MM-dd');
+      const formattedJoiningDate = this.datePipe.transform(joiningDateFormControl.value, 'yyyy-MM-dd');
+      const formattedRelievingDate = this.datePipe.transform(relievingDateFormControl.value, 'yyyy-MM-dd');
       joiningDateFormControl.setValue(formattedJoiningDate);
       relievingDateFormControl.setValue(formattedRelievingDate);
     }
@@ -432,26 +434,26 @@ export class AddEmployeeComponent {
       return;
     }
     // updates employee object form values
-    if(this.data.actionName === "edit-employee"){
-      [this.employeeForm.value].forEach( (formVal, idx) => {
+    if (this.data.actionName === "edit-employee") {
+      [this.employeeForm.value].forEach((formVal, idx) => {
         this.empObj.aadharno = formVal.aadharno;
         this.empObj.accno = formVal.accno;
         this.empObj.bankname = formVal.bankname;
-        this.empObj.department =  formVal.department;
-        this.empObj.fullname =  formVal.fullname;
+        this.empObj.department = formVal.department;
+        this.empObj.fullname = formVal.fullname;
         this.empObj.pseudoname = formVal.pseudoname;
-        this.empObj.email =  formVal.email;
-        this.empObj.personalcontactnumber =  formVal.personalcontactnumber;
+        this.empObj.email = formVal.email;
+        this.empObj.personalcontactnumber = formVal.personalcontactnumber;
         this.empObj.companycontactnumber = formVal.companycontactnumber;
-        this.empObj.designation =  formVal.designation;
-        this.empObj.joiningdate =  formVal.joiningdate;
-        this.empObj.relievingdate =  formVal.relievingdate;
+        this.empObj.designation = formVal.designation;
+        this.empObj.joiningdate = formVal.joiningdate;
+        this.empObj.relievingdate = formVal.relievingdate;
         this.empObj.personalemail = formVal.personalemail;
-        this.empObj.manager =  formVal.manager;
+        this.empObj.manager = formVal.manager;
         this.empObj.panno = formVal.panno;
         this.empObj.bankname = formVal.bankname;
         this.empObj.accno = formVal.accno;
-        this.empObj.ifsc =  formVal.ifsc;
+        this.empObj.ifsc = formVal.ifsc;
         this.empObj.branch = formVal.branch;
         this.empObj.teamlead = formVal.teamlead;
         this.empObj.role = formVal.role;
@@ -462,9 +464,9 @@ export class AddEmployeeComponent {
     //this.uploadFileOnSubmit(1);
     this.empManagementServ.addOrUpdateEmployee(saveObj, this.data.actionName).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (data: any) => {
-       // console.log(data)
+        // console.log(data)
         if (data.status == 'success') {
-          // this.uploadFileOnSubmit(data.data.userid);
+           this.submit(data.data.userid);
           this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-success'];
           this.dataTobeSentToSnackBarService.message =
             this.data.actionName === 'add-employee'
@@ -478,7 +480,7 @@ export class AddEmployeeComponent {
             this.data.actionName === 'add-employee'
               ? data.message
               : data.message;
-            this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+          this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
           this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
         }
 
@@ -488,7 +490,7 @@ export class AddEmployeeComponent {
           this.data.actionName === 'add-employee'
             ? 'Employee addition is failed'
             : 'Employee updation is failed';
-          this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+        this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
         this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
       },
     });
@@ -511,6 +513,44 @@ export class AddEmployeeComponent {
 
   }
 
+  relievingDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const joiningDate = control.root.get('joiningdate')?.value;
+    const relievingDate = control.value;
+
+    if (joiningDate && relievingDate && new Date(relievingDate) < new Date(joiningDate)) {
+      return { 'relievingBeforeJoining': true };
+    }
+
+    return null;
+  }
+
+  onlyNumberKey(evt: any) {
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+    if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+      return false;
+    return true;
+  }
+
+  onlyAlphanumericKey(evt: any) {
+    var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
+    if (!((ASCIICode >= 48 && ASCIICode <= 57) || (ASCIICode >= 65 && ASCIICode <= 90))) {
+      return false;
+    }
+    return true;
+  }
+
+  private getDialogConfigData(dataToBeSentToDailog: Partial<IConfirmDialogData>, action: { delete: boolean; edit: boolean; add: boolean, updateSatus?: boolean }) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = action.edit || action.add ? '65vw' : action.delete ? 'fit-content' : '400px';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = dataToBeSentToDailog.actionName;
+    dialogConfig.data = dataToBeSentToDailog;
+    return dialogConfig;
+  }
+
+  // DOCS UPLOAD
+  flg = true;
   resumeError: boolean = false;
   aadharError: boolean = false;
   panError: boolean = false;
@@ -522,35 +562,7 @@ export class AddEmployeeComponent {
   bankFileNameLength: boolean = false;
   multifilesFileNameLength: boolean = false;
 
-  @ViewChild('multifiles')
-  multifiles: any = ElementRef;
-  sum = 0;
-  onFileChange(event: any) {
-    this.uploadedFileNames = [];
-    for (var i = 0; i < event.target.files.length; i++) {
-      const file = event.target.files[i];
-      var items = file.name.split(".");
-      const str = items[0];
-      const fileSizeInKB = Math.round(file.size / 1024);
-      this.sum = this.sum + fileSizeInKB;
-      if (str.length > 20) {
-        this.multifilesFileNameLength = true;
-      }
-      if (fileSizeInKB < 4048) {
-        this.uploadedfiles.push(event.target.files[i]);
-        this.uploadedFileNames.push(file.name);
-        this.multifilesError = false;
-      }
-      else {
-        this.multifiles.nativeElement.value = "";
-        this.uploadedfiles = [];
-        this.multifilesError = true;
-        this.multifilesFileNameLength = false;
-      }
-    }
-  }
 
-  flg = true;
   @ViewChild('resume')
   resume: any = ElementRef;
   resumeupload!: any;
@@ -573,8 +585,6 @@ export class AddEmployeeComponent {
     }
   }
 
-
-
   @ViewChild('aadhar') aadhar: any = ElementRef;
   aadharUpload!: any;
   uploadAadhar(event: any) {
@@ -596,6 +606,7 @@ export class AddEmployeeComponent {
       this.flg = true;
     }
   }
+
   @ViewChild('pan')
   pan: any = ElementRef;
   panUpload!: any;
@@ -643,262 +654,158 @@ export class AddEmployeeComponent {
     }
   }
 
+  @ViewChild('multifiles')
+  multifiles: any = ElementRef;
+  sum = 0;
+  onFileChange(event: any) {
+    this.uploadedFileNames = [];
+    for (var i = 0; i < event.target.files.length; i++) {
+      const file = event.target.files[i];
+      var items = file.name.split(".");
+      const str = items[0];
+      const fileSizeInKB = Math.round(file.size / 1024);
+      this.sum = this.sum + fileSizeInKB;
+      if (str.length > 20) {
+        this.multifilesFileNameLength = true;
+      }
+      if (fileSizeInKB < 4048) {
+        this.uploadedfiles.push(event.target.files[i]);
+        this.uploadedFileNames.push(file.name);
+        this.multifilesError = false;
+      }
+      else {
+        this.multifiles.nativeElement.value = "";
+        this.uploadedfiles = [];
+        this.multifilesError = true;
+        this.multifilesFileNameLength = false;
+      }
+    }
+  }
+private fileService = inject(FileManagementService);
 
-  uploadFileOnSubmit(id: number) {
+  submit(id: number) {
     const formData = new FormData();
+
     for (var i = 0; i < this.uploadedfiles.length; i++) {
       formData.append("files", this.uploadedfiles[i]);
     }
-
     if (this.resumeupload != null) {
       formData.append('resume', this.resumeupload, this.resumeupload.name);
+      // formData.append("files",this.resumeupload,this.resumeupload.name);
     }
-
     if (this.aadharUpload != null) {
       formData.append('aadhar', this.aadharUpload, this.aadharUpload.name);
+      // formData.append("files",this.resumeupload,this.resumeupload.name);
     }
-
-    if (this.panUpload != null) {
+  if (this.panUpload != null) {
       formData.append('pan', this.panUpload, this.panUpload.name);
+      // formData.append("files",this.resumeupload,this.resumeupload.name);
     }
 
     if (this.bankUpload != null) {
-      formData.append('bank', this.bankUpload, this.bankUpload.name);
+      formData.append('passbook', this.bankUpload, this.bankUpload.name);
+      // formData.append("files",this.resumeupload,this.resumeupload.name);
     }
+    this.fileService.uploadFile(formData,id)
+      .subscribe((response: any) => {
+        if (response.status === 200) {
 
-    // console.log("formData:", formData);
-
-    for (let pair of (formData as any).entries()) {
-     // console.log(pair);
-      // console.log(`File: ${pair[1].name}, Size: ${pair[1].size} bytes, Type: ${pair[1].type}`);
-    }
-    // this.fileServ.uploadFile(formData, id)
-    //   .subscribe((response: any) => {
-    //     if (response.status === 200) {
-    // console.log('Files uploaded successfully:', response);
-    //     } else {
-    // console.error('Failed to upload files:', response);
-    //     }
-    //   }
-    //   );
-  }
-
-  relievingDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
-    const joiningDate = control.root.get('joiningdate')?.value;
-    const relievingDate = control.value;
-
-    if (joiningDate && relievingDate && new Date(relievingDate) < new Date(joiningDate)) {
-      return { 'relievingBeforeJoining': true };
-    }
-
-    return null;
-  }
-
-  onlyNumberKey(evt: any) {
-    var ASCIICode = (evt.which) ? evt.which : evt.keyCode
-    if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
-      return false;
-    return true;
-  }
-
-  onlyAlphanumericKey(evt: any) {
-    var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
-    if (!((ASCIICode >= 48 && ASCIICode <= 57) || (ASCIICode >= 65 && ASCIICode <= 90))) {
-      return false;
-    }
-    return true;
-  }
-
-
-  downloadfile(id: number, filename: string) {
-    // var items = filename.split(".");
-    // this.fileServ
-    //   .downloadresume(id, true)
-    //   .subscribe( (blob: Blob )=> {
-    //     if (items[1] == 'pdf' || items[1] == 'PDF') {
-    //       var fileURL: any = URL.createObjectURL(blob);
-    //       var a = document.createElement("a");
-    //       a.href = fileURL;
-    //       a.target = '_blank';
-    //       // Don't set download attribute
-    //       //a.download = filename;
-    //       a.click();
-    //     }
-    //     else {
-    //       saveAs(blob, filename)
-    //     }
-    //   }
-    //   );
-  }
-
-  deletefile(id: number) {
-    const did = this.data?.id;
-    // const fl = doctype.toUpperCase();
-
-    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
-      title: 'Confirmation',
-      message: `Are you sure you want to remove the File?`,
-      confirmText: 'Yes',
-      cancelText: 'No',
-      actionData: { id },
-      actionName: 'delete-file'
-    };
-
-    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog, { delete: true, edit: false, add: false });
-    const dialogRef = this.dialogServ.openDialogWithComponent(
-      ConfirmComponent,
-      dialogConfig
-    );
-
-    dialogRef.afterClosed().subscribe({
-      next: (resp) => {
-      if (dialogRef.componentInstance.allowAction) {
-        // this.fileServ.removefile(id, doctype).subscribe(
-        //   (response: any) => {
-        //     if (response.status === 'success') {
-        //       this.dataTobeSentToSnackBarService.message = `Removed File successfully`;
-        //       this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-success'];
-        //       this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-        //       this.getDataOnEdit(did);
-        //     } else {
-        //       this.dataTobeSentToSnackBarService.message = `Failed to remove File`;
-        //       this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
-        //       this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-        //     }
-        //   }
-        // );
+        } else {
+        }
       }
-    }
-    });
+      );
   }
 
-  private getDialogConfigData(dataToBeSentToDailog: Partial<IConfirmDialogData>, action: {delete: boolean; edit: boolean; add: boolean, updateSatus?: boolean}) {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = action.edit ||  action.add  ? '65vw' : action.delete ? 'fit-content' : '400px';
-    dialogConfig.height = 'auto';
-    dialogConfig.disableClose = false;
-    dialogConfig.panelClass = dataToBeSentToDailog.actionName;
-    dialogConfig.data = dataToBeSentToDailog;
-    return dialogConfig;
+  downloadfile(id: number, filename: string, flg: string) {
+    var items = filename.split(".");
+   /* this._service
+      .downloadresume(id, flg)
+      .subscribe(blob => {
+        if (items[1] == 'pdf' || items[1] == 'PDF') {
+          var fileURL: any = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = fileURL;
+          a.target = '_blank';
+          // Don't set download attribute
+          //a.download = filename;
+          a.click();
+        }
+        else {
+          saveAs(blob, filename)
+        }
+      }
+      );
+      */
+  }
+
+  deletefile(id: number, doctype: string) {
+    const did = this.id;
+    const fl = doctype.toUpperCase();
+  /*  alertify.confirm("Remove File", "Are you sure you want to remove the " + fl + " ? ", () => {
+      this._service.removefile(id, doctype).subscribe(
+        (response: any) => {
+          if (response.status === 'success') {
+            alertify.success(fl + " removed successfully");
+            this.loadData(did);
+          }
+          else {
+            alertify.error("file not removed");
+          }
+        }
+      )
+    }, function () { });
+
+    */
   }
 
   deletemultiple(id: number) {
-    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
-      title: 'Confirmation',
-      message: 'Are you sure you want to remove the file?',
-      confirmText: 'Yes',
-      cancelText: 'No',
-      actionData: { id },
-      actionName: 'delete-multiple-files'
-    };
-
-    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog, { delete: true, edit: false, add: false });
-    const dialogRef = this.dialogServ.openDialogWithComponent(
-      ConfirmComponent,
-      dialogConfig
-    );
-
-    dialogRef.afterClosed().subscribe({
-      next: (resp) => {
-      if (dialogRef.componentInstance.allowAction) {
-        // this.fileServ.removingfiles(id).subscribe(
-        //   (response: any) => {
-        //     if (response.status === 'success') {
-        //       this.dataTobeSentToSnackBarService.message = `File removed successfully`;
-        //       this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-success'];
-        //       this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-        //       this.ngOnInit();
-        //     } else {
-        //       this.dataTobeSentToSnackBarService.message = `Failed to remove File`;
-        //       this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
-        //       this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-        //     }
-        //   }
-        // );
-      }
-    }
-    });
-  }
-
-  fileList?: [];
-  type!: any;
-  filedetails(fileData: any) {
-    this.type = fileData.filename;
-    var items = this.type.split(".");
-    // this.fileServ
-    //   .downloadfile(fileData.docid)
-    //   .subscribe((blob: Blob) => {
-    //     if (items[1] == 'pdf' || items[1] == 'PDF') {
-    //       var fileURL: any = URL.createObjectURL(blob);
-    //       var a = document.createElement("a");
-    //       a.href = fileURL;
-    //       a.target = '_blank';
-    //       // a.download = filename;
-    //       a.click();
-    //     }
-    //     else {
-    //       saveAs(blob, fileData.filename)
-    //     }
-    //   }
-    //     // saveAs(blob, fileData.filename)
-    //   );
-  }
-
-
-
-  getDataOnEdit(id: number) {
-    this.empManagementServ.getEmployeeById(id).subscribe(
-      (response: any) => {
-        this.tech = response.data;
-      //  console.log(this.tech);
-        if(this.data.actionName === 'edit-employee'){
-          this.initilizeAddEmployeeForm(this.tech);
+   /* alertify.confirm("Remove File", "Are you sure you want to remove the file ? ", () => {
+      this._service.removingfiles(id).subscribe(
+        (response: any) => {
+          if (response.status === 'success') {
+            alertify.success("file removed successfully");
+            this.ngOnInit();
+          }
+          else {
+            alertify.error("file not removed");
+          }
         }
-        this.filesArr = response.data.edoc;
-        this.filesArr = [
-        {
-          createddate: "16-10-2023",
-          filename: " doc5.pdf",
-          docid: '5'
-        },
-        {
-          createddate: "17-10-2023",
-          filename: " doc6.pdf",
-          docid: '6'
-        },
-        {
-          createddate: "18-10-2023",
-          filename: " doc7.pdf",
-          docid: '7'
-        },
-        ];
-        this.allDocumentsData = [
-          // { createddate: this.tech.createddate, filename: this.tech.resume },
-          // { createddate: this.tech.createddate, filename: this.tech.pan },
-          // { createddate: this.tech.createddate, filename: this.tech.aadhar },
-          // { createddate: this.tech.createddate, filename: this.tech.bpassbook },
-          {
-            createddate: "12-10-2023",
-            filename: " doc1.pdf",
-            docid: '1'
-          },
-          {
-            createddate: "13-10-2023",
-            filename: " doc2.pdf",
-            docid: '2'
-          },
-          {
-            createddate: "14-10-2023",
-            filename: " doc3.pdf",
-            docid: '3'
-          },
-          {
-            createddate: "15-10-2023",
-            filename: " doc4.pdf",
-            docid: '4'
-          },
-          ...this.filesArr
-        ];
-      })
+      )
+    }, function () { });
+    */
   }
+
+  // fileList?: FileData[];
+  type!: any;
+  filedetails(fileData: FileData) {
+   /* this.type = fileData.filename;
+    var items = this.type.split(".");
+    this._service
+      .downloadfile(fileData.docid)
+      .subscribe(blob => {
+        if (items[1] == 'pdf' || items[1] == 'PDF') {
+          var fileURL: any = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = fileURL;
+          a.target = '_blank';
+          // a.download = filename;
+          a.click();
+        }
+        else {
+          saveAs(blob, fileData.filename)
+        }
+      }
+        // saveAs(blob, fileData.filename)
+      );
+      */
+  }
+}
+
+export class FileData {
+  docid!:number;
+  consultantid!:number;
+  filename?: string;
+  contentType?: string;
+  size?: number;
+  eid!:number;
 }

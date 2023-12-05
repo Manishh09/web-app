@@ -63,7 +63,6 @@ export class SubmissionListComponent {
     'Dos',
     'Id',
     'Consultant',
-    'TrackSI',
     'Requirement',
     'ImplementationPartner',
     'EndClient',
@@ -113,17 +112,23 @@ export class SubmissionListComponent {
 
   ngOnInit(): void {
 
-    this.flag = this.activatedRoute.snapshot.params['flg'];
     this.userid = localStorage.getItem('userid');
-    if (this.flag == 'sales') {
+    const routeData = this.activatedRoute.snapshot.data;
+    if (routeData['isSaleSub']) { // sales consultant
       this.flag = "sales";
     }
-    else {
+    else if (routeData['isRecSub']) { // recruiting consutlant
       this.flag = "Recruiting";
+    }
+   
+    else{
+      this.flag = "DomRecruiting";
     }
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
     this.getAllData();
+
+
   }
 
   ngAfterViewInit() {
@@ -131,7 +136,7 @@ export class SubmissionListComponent {
   }
 
   getAllData() {
-    this.submissionServ.getsubmissiondataPagination("sales", this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
+    this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data =  response.data.content;  

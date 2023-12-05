@@ -58,7 +58,7 @@
                         {{element?.consultantname}} </td>
                 </ng-container>
                 <!-- Track(S/I)-->
-                <ng-container matColumnDef="TrackSI">
+                <!-- <ng-container matColumnDef="TrackSI">
                     <th mat-header-cell *matHeaderCellDef sortActionDescription="Sort by Track(S/I)"> Track(S/I) </th>
                     <td mat-cell *matCellDef="let element">
 
@@ -69,8 +69,7 @@
                         <span (click)="goToSubmissionDrillDownReport(element,'interview')"><mat-icon
                                 class="interview-icon">chat_bubble_outline</mat-icon></span>
 
-                        <!-- <span class="consultant-name" (click)="goToConsultantInfo(element, 'name')"></span> {{element?.consultantname}} </td> -->
-                </ng-container>
+                </ng-container> -->
                 <!-- Requirement-->
                 <ng-container matColumnDef="Requirement">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Requirement">
@@ -119,7 +118,7 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by SubmittedBy">
                         Submitted By
                     </th>
-                    <td mat-cell *matCellDef="let element"> {{element.experience}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.pseudoname}} </td>
                 </ng-container>
 
                 <!-- Sub Status Column -->
@@ -129,10 +128,6 @@
                     </th>
                     <td mat-cell *matCellDef="let element"> {{element.substatus}} </td>
                 </ng-container>
-
-                
-
-
                 <!-- Action Column -->
                 <ng-container matColumnDef="Action">
                     <th mat-header-cell *matHeaderCellDef> Action </th>
@@ -156,9 +151,7 @@
 
                     </td>
                 </ng-container>
-
                 <!-- table columns ends  -->
-
                 <!-- table ROW -->
                 <tr mat-header-row *matHeaderRowDef="dataTableColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: dataTableColumns;"></tr>

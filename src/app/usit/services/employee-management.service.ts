@@ -70,4 +70,7 @@ export class EmployeeManagementService {
   }
 
   /** EMPLOYEE SERVICES - END */
+
+  //FILES UPLOAD
+  
 }

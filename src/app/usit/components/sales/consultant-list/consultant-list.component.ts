@@ -138,7 +138,7 @@ export class ConsultantListComponent
   getFlag(){
     const routeData = this.activatedRoute.snapshot.data;
     if (routeData['isSalesConsultant']) { // sales consultant
-      this.flag = "Sales";
+      this.flag = "sales";
       this.ttitle = "back to pre sales";
       this.ttitle1 = "move to sales";
       this.tclass = "move_item";
@@ -146,14 +146,17 @@ export class ConsultantListComponent
     else if (routeData['isRecConsultant']) { // recruiting consutlant
       this.flag = "Recruiting";
       this.ttitle = "move to sales";
-      this.ttitle1 = "back to pre sales";
-      this.tclass = "move_item";
+      //this.ttitle1 = "back to pre sales";
+      //this.tclass = "move_item";
     }
-    else { // presales
+    else if (routeData['isPreConsultant']) { // presales
       this.flag = "presales";
       this.ttitle = "move to sales";
       this.ttitle1 = "back to pre sales";
       this.tclass = "bi bi-arrow-right-square-fill";
+    }
+    else{
+      this.flag = "DomRecruiting";
     }
 
     if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
@@ -179,7 +182,7 @@ export class ConsultantListComponent
 
     return this.consultantServ
       .getAllConsultantData(
-        'sales',
+        this.flag,
         this.hasAcces,
         this.userid,
         pageIndex,
@@ -222,7 +225,7 @@ export class ConsultantListComponent
 
     return this.consultantServ
       .getAllConsultantData(
-        'sales',
+        this.flag,
         this.hasAcces,
         this.userid,
         pageIndex,
