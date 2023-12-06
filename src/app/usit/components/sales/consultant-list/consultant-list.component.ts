@@ -35,6 +35,7 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { AddconsultantComponent } from './add-consultant/add-consultant.component';
 @Component({
   selector: 'app-consultant-list',
   standalone: true,
@@ -399,11 +400,55 @@ export class ConsultantListComponent
    * Add
    * Send this.flag value - to distinguish sales , recruiting, presales
    */
-  addConsultant() {}
+  addConsultant() {
+    const actionData = {
+      title: 'Add Consultant',
+      consultantData: null,
+      flag: this.flag,
+      actionName: 'add-consultant',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    // dialogConfig.height = "100vh";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'add-consultant';
+    dialogConfig.data = actionData;
+
+    //this.dialogServ.openDialogWithComponent(AddconsultantComponent, dialogConfig);
+
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddconsultantComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllData(this.currentPageIndex + 1);
+      }
+    })
+
+  }
   /**
    * Edit / Update
    */
-  editConsultant(consultant: any) {}
+  editConsultant(consultant: any) {
+    const actionData = {
+      title: 'Update Consultant',
+      consultantData: consultant,
+      actionName: 'edit-consultant',
+      flag: this.flag
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    // dialogConfig.height = "100vh";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'edit-consultant';
+    dialogConfig.data = actionData;
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddconsultantComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        this.getAllData(this.currentPageIndex + 1);
+      }
+    })
+  }
   /**
    * Delete
    */
