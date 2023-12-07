@@ -371,8 +371,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     console.log(JSON.stringify(this.consultantForm.value, null, 2) + " =============== ");
     if (this.flg == true) {
       const saveReqObj = this.getSaveObjData()
-      this.consultantServ.registerconsultant(saveReqObj).subscribe(
-        (data: any) => {
+      this.consultantServ.registerconsultant(saveReqObj)
+      .subscribe({
+        next: (data: any) => {
           if (data.status == 'success') {
             //alertify.success("Consultant added successfully");
             this.dataToBeSentToSnackBar.message = 'Consultant added successfully';
@@ -390,9 +391,10 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
             //alertify.error("Record Insertion failed");
           }
         },
-        (error: any) => {
+        error: err => {
           this.enableButton = '';
         }
+      }
       );
     }
   }

@@ -36,6 +36,7 @@ import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AddconsultantComponent } from './add-consultant/add-consultant.component';
+import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 @Component({
   selector: 'app-consultant-list',
   standalone: true,
@@ -450,7 +451,58 @@ export class ConsultantListComponent
   /**
    * Delete
    */
-  deleteConsultant(consultant: any) {}
+  deleteConsultant(consultant: any) {
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: consultant,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = 'fit-content';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'delete-consultant';
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
+
+    // call delete api after  clicked 'Yes' on dialog click
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: '',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+
+          this.consultantServ.deleteEntity(consultant.consultantid).pipe(takeUntil(this.destroyed$))
+          .subscribe({next:(response: any) => {
+            if (response.status == 'success') {
+              this.getAllData(this.currentPageIndex + 1);
+              dataToBeSentToSnackBar.message = 'Consultant Deleted successfully';
+            } else {
+              dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              dataToBeSentToSnackBar.message = 'Record Deletion failed';
+            }
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }, error: err => {
+            dataToBeSentToSnackBar.message = err.message;
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }});
+        }
+      },
+    });
+  }
   // status update
   onStatusUpdate(consultant: any) {
     const dataToBeSentToDailog = {
