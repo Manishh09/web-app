@@ -54,6 +54,7 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
   showFirstLastButtons = true;
   pageEvent!: PageEvent;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
   cdr = inject(PaginatorIntlService);
   // pagination code
   page: number = 1;
@@ -79,10 +80,11 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
     this.department = localStorage.getItem('department');
     
     this.getAllTechnologies()
+    // this.getAllData()
   }
 
   ngAfterViewInit(): void {
-    
+    this.dataSource.sort = this.sort;
   }
 
   // getAllData(currentPageIndex = 1) {
@@ -95,20 +97,14 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
   //     panelClass: ['custom-snack-success'],
   //   };
   //   return this.techTagServ
-  //     .getAllTechnologiesByPagination(this.hasAcces, this.loginId, currentPageIndex, this.pageSize, this.field)
+  //     .getTechnologiesByPagination(currentPageIndex)
   //     .pipe(takeUntil(this.destroyed$))
   //     .subscribe({
   //       next: (response: any) => {
   //         this.datarr = response.data.content;
   //         this.dataSource.data = response.data.content;
-  //         console.log(this.dataSource.data);
-  //         // for serial-num {}
-  //         // this.dataSource.data.map((x: any, i) => {
-  //         //   x.serialNum = this.generateSerialNumber(i);
-  //         // });
   //         this.totalItems = response.data.totalElements;
-
-  //         //  this.length = response.data.totalElements;
+  //         console.log(this.totalItems)
   //       },
   //       error: (err: any) => {
   //         dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -245,7 +241,7 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;
       this.currentPageIndex = currentPageIndex;
-      // this.getAllTechnologies(event.pageIndex + 1);
+      console.log(currentPageIndex);
     }
     return;
   }

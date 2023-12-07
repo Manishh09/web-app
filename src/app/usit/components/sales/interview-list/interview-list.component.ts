@@ -27,8 +27,6 @@ import {
   SnackBarService,
 } from 'src/app/services/snack-bar.service';
 import { Recruiter } from 'src/app/usit/models/recruiter';
-import { VendorService } from 'src/app/usit/services/vendor.service';
-// import { AddVendorComponent } from './add-vendor/add-vendor.component';
 import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
@@ -37,6 +35,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { ActivatedRoute } from '@angular/router';
 import { InterviewService } from 'src/app/usit/services/interview.service';
+import { AddInterviewComponent } from './add-interview/add-interview.component';
 
 @Component({
   selector: 'app-interview-list',
@@ -91,6 +90,7 @@ export class InterviewListComponent {
   currentPageIndex = 0;
   private activatedRoute = inject(ActivatedRoute);
   private interviewServ = inject(InterviewService);
+  private dialogServ = inject(DialogService);
 
   ngOnInit(): void {
     this.flag = this.activatedRoute.snapshot.params['flg'];
@@ -121,11 +121,44 @@ export class InterviewListComponent {
   }
 
   addInterview() {
+    const actionData = {
+      title: 'Add Interview',
+      interviewData: null,
+      actionName: 'add-interview',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'add-interview';
+    dialogConfig.data = actionData;
 
+
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddInterviewComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        // this.getAllData(this.currentPageIndex + 1);
+      }
+    })
   }
 
   editInterview(interview: any) {
+    const actionData = {
+      title: 'Update Interview',
+      interviewData: interview,
+      actionName: 'edit-interview',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    dialogConfig.panelClass = 'edit-interview';
+    dialogConfig.data = actionData;
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddInterviewComponent, dialogConfig);
 
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        // this.getAllData(this.currentPageIndex + 1);
+      }
+    })
   }
 
   onFilter(event: any) {

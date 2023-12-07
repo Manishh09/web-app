@@ -1,0 +1,105 @@
+<div class="header-container mat-elevation-z1">
+    <span class="header-text" mat-dialog-title>
+        {{data.title}}
+    </span>
+    <button mat-icon-button (click)="onCancel()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-card class="center-card">
+
+    <form [formGroup]="interviewForm" (ngSubmit)="onSubmit()" class="vendor-form" >
+      <div class="form">
+        <div class="form-column-left">
+          <!-- Submission -->
+          <div class="fg-div" formGroupName="submission">
+            <mat-form-field appearance="fill">
+                <mat-label>Select Submission</mat-label>
+                <mat-select formControlName="submissionid">
+                    <mat-option *ngFor="let obj of submissiondata" [value]="obj[0]">
+                        {{obj[1]}} - {{obj[2]}} - {{obj[3]}} ({{obj[4]}})
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="interviewForm.get('submission.submissionid')?.hasError('required')"> Submission is required</mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Interview Date -->
+        <mat-form-field appearance="fill">
+            <mat-label>Interview Date & Time</mat-label>
+            <input matInput [matDatepicker]="datepicker" formControlName="interviewdate" placeholder="MM/DD/YYYY">
+            <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+            <mat-datepicker #datepicker></mat-datepicker>
+            <mat-error *ngIf="interviewForm.get('interviewdate')!.hasError('required')"> Interview Date is required</mat-error>
+        </mat-form-field>
+           
+          <!--  Time Zone -->
+          <mat-form-field appearance="fill">
+            <mat-label>Select Time Zone</mat-label>
+              <mat-select formControlName="timezone">
+                <mat-option *ngFor="let option of selectOptionObj.timeZone"
+                  [value]="option">
+                  {{ option }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="interviewForm.get('timezone')!.hasError('required')">Time Zone
+                is Required
+              </mat-error>
+          </mat-form-field>
+
+        <!-- Round of Interview -->
+        <mat-form-field appearance="fill">
+            <mat-label>Round of Interview</mat-label>
+            <mat-select formControlName="round">
+                <mat-option *ngFor="let option of selectOptionObj.interviewRound" [value]="option"> {{ option }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('round')!.hasError('required')">Round of Interview
+                is Required
+            </mat-error>
+        </mat-form-field>
+
+        
+        </div>
+
+        <div class="form-column-right">
+          <!-- Mode of Interview -->
+        <mat-form-field appearance="fill">
+            <mat-label>Mode of Interview</mat-label>
+            <mat-select formControlName="mode">
+                <mat-option *ngFor="let option of selectOptionObj.interviewMode" [value]="option"> {{ option }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('mode')!.hasError('required')">Mode of Interview
+                is Required
+            </mat-error>
+        </mat-form-field>
+
+         <!-- Feedback   -->
+         <mat-form-field class="description-field">
+            <mat-label>Feedback</mat-label>
+            <textarea formControlName="feedback" rows="4"  matInput></textarea>
+            <mat-error *ngIf="interviewForm.get('feedback')!.hasError('required')">Feedback
+                is Required
+            </mat-error>
+          </mat-form-field>
+
+         <!-- Status -->
+        <mat-form-field appearance="fill">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="interviewstatus">
+                <mat-option *ngFor="let option of selectOptionObj.status" [value]="option"> {{ option }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="interviewForm.get('interviewstatus')!.hasError('required')">Status
+                is Required
+            </mat-error>
+        </mat-form-field>
+        </div>
+      </div>
+    </form>
+    <div class="form-button-right">
+      <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
+    </div>
+  </mat-card>
