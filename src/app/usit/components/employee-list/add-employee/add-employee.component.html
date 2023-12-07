@@ -18,7 +18,7 @@
 </div>
 <mat-card class="center-card">
 
-  <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="employee-form">
+  <form [formGroup]="employeeForm" class="employee-form">
     <div class="form">
       <div class="form-column-left" *ngIf="employeeForm.controls">
         <!-- Full Name -->
@@ -365,9 +365,70 @@
         </mat-form-field>
       </div>
     </div>
+
+    <div class="header-container-upload-documents">
+      <span class="header-text">List Documents</span>
+    </div>
+    <div>
+      <table>
+        <tr>
+          <th>Document Name</th>
+          <th>Delete</th>
+        </tr>
+        <tr>
+          <td *ngIf="empObj.resume !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.resume,'resume')">{{empObj.resume}}</a>
+          </td>
+          <td *ngIf="empObj.resume !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'resume')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td *ngIf="empObj.pan !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.pan,'pan')">{{empObj.pan}}</a>
+          </td>
+          <td *ngIf="empObj.pan !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'pan')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+
+        <tr>
+          <td *ngIf="empObj.aadhar !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.aadhar,'aadhar')">{{empObj.aadhar}}</a>
+          </td>
+          <td *ngIf="empObj.pan !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'aadhar')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td *ngIf="empObj.bpassbook !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.bpassbook,'bpassbook')">{{empObj.bpassbook}}</a>
+          </td>
+          <td *ngIf="empObj.bpassbook !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'bpassbook')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngFor="let data of filesArr">
+          <td><a class="ab" style="cursor:pointer" (click)="filedetails(data)">{{data.filename}}</a></td>
+          <td width="6%">
+            <button mat-icon-button class="action-button-ed" (click)="deletemultiple(data.docid)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
   </form>
 
- 
   <div class="form-button-right">
     <!-- <div class="form-button-inner"> -->
     <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
@@ -375,4 +436,3 @@
     <!-- </div> -->
   </div>
 </mat-card>
-

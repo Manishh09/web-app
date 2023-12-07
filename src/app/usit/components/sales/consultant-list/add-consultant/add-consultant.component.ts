@@ -10,7 +10,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
 import { ConsultantService } from 'src/app/usit/services/consultant.service';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -23,11 +22,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Loader } from '@googlemaps/js-api-loader';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
-import {MatRadioChange, MatRadioModule} from '@angular/material/radio';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { DialogService } from 'src/app/services/dialog.service';
 import { AddCompanyComponent } from '../../../masters/companies-list/add-company/add-company.component';
 import { AddVisaComponent } from '../../../masters/visa-list/add-visa/add-visa.component';
@@ -68,7 +67,7 @@ import { Consultantinfo } from 'src/app/usit/models/consultantinfo';
   templateUrl: './add-consultant.component.html',
   styleUrls: ['./add-consultant.component.scss'],
 })
-export class AddconsultantComponent implements OnInit , OnDestroy{
+export class AddconsultantComponent implements OnInit, OnDestroy {
   flag!: string;
   private baseUrl = 'http://69.216.19.140:8080/usit/';
   //private baseUrl = "http://localhost:8090/usit/";
@@ -102,7 +101,7 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     radioOptions: RADIO_OPTIONS
 
   };
-  dataToBeSentToSnackBar: ISnackBarData ={
+  dataToBeSentToSnackBar: ISnackBarData = {
     message: '',
     duration: 2500,
     verticalPosition: 'top',
@@ -115,7 +114,7 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
   private snackBarServ = inject(SnackBarService);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
-  private activatedRoute =  inject(ActivatedRoute);
+  private activatedRoute = inject(ActivatedRoute);
   private dialogServ = inject(DialogService);
   data = inject(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<AddconsultantComponent>);
@@ -124,7 +123,7 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
   isRadSelected: any;
   constructor(
     private http: HttpClient,
-  ) {}
+  ) { }
   get frm() {
     return this.consultantForm.controls;
   }
@@ -136,38 +135,39 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     this.getQualification();
     this.getCompanies();
     this.getFlag(this.data.flag.toLocaleLowerCase());
-    if(this.data.actionName === "edit-consultant"){
+    if (this.data.actionName === "edit-consultant") {
       this.initConsultantForm(new Consultantinfo());
       this.consultantServ.getConsultantById(this.data.consultantData.consultantid)
-      .subscribe(
-        {next:(response: any) => {
-          this.entity = response.data;
-          console.log(this.entity);
+        .subscribe(
+          {
+            next: (response: any) => {
+              this.entity = response.data;
+              console.log(this.entity);
 
-          this.cno = this.entity.consultantno;
-          this.autoskills = response.data.skills;
-          this.filesArr = response.data.fileupload;
-          this.initConsultantForm(response.data);
-        },error: err => {
-          this.dataToBeSentToSnackBar.message = err.message;
-          this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-          this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
-        }
-      }
+              this.cno = this.entity.consultantno;
+              this.autoskills = response.data.skills;
+              this.filesArr = response.data.fileupload;
+              this.initConsultantForm(response.data);
+            }, error: err => {
+              this.dataToBeSentToSnackBar.message = err.message;
+              this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
+            }
+          }
 
-      );
-    }else{
+        );
+    } else {
       this.initConsultantForm(new Consultantinfo());
     }
 
 
   }
-  getFlag(type: string){
+  getFlag(type: string) {
     if (type === 'sales') {
       this.flag = 'sales';
     } else if (type === 'presales') {
       this.flag = 'presales';
-    } else if(type === 'h1transfer'){ // for edit
+    } else if (type === 'h1transfer') { // for edit
       this.flag = "H1 Transfer";
     } else {
       type = 'Recruiting';
@@ -176,81 +176,61 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
   initConsultantForm(consultantData: Consultantinfo) {
     this.consultantForm = this.formBuilder.group({
       firstname: [consultantData ? consultantData.firstname : '', Validators.required], //['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z]*$")]],
-      lastname: [consultantData ? consultantData.lastname: '', Validators.required], ///^[+]\d{12}$   /^[+]\d{12}$   ^[0-9]*$
+      lastname: [consultantData ? consultantData.lastname : '', Validators.required], ///^[+]\d{12}$   /^[+]\d{12}$   ^[0-9]*$
       consultantemail: [
-        consultantData ? consultantData.consultantemail:'',
+        consultantData ? consultantData.consultantemail : '',
         [
           Validators.required,
           Validators.email,
           Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
         ],
       ],
-      contactnumber: [consultantData ? consultantData.contactnumber:''],
-      number: [consultantData ? consultantData.number:'', Validators.required],
-      visa: this.formBuilder.group({
-        vid: new FormControl(consultantData ? consultantData.visa.vid:'', [Validators.required]),
-      }),
-      position: [consultantData ? consultantData.position:'', Validators.required],
-      priority: [consultantData ? consultantData.priority:''],
-      linkedin: [consultantData ? consultantData.linkedin:''],
-      // status:[this.consultantForm.status],
-      status: [consultantData ? consultantData.status : '', Validators.required],
+      contactnumber: [consultantData ? consultantData.contactnumber : '', Validators.required],
+      linkedin: [consultantData ? consultantData.linkedin : ''],
       projectavailabity: [
-        consultantData ? consultantData.projectavailabity:'',
+        consultantData ? consultantData.projectavailabity : '',
         [Validators.required, Validators.pattern('^[0-9]*$')],
       ],
-      availabilityforinterviews: [consultantData ? consultantData.availabilityforinterviews:'', Validators.required],
-      experience: [consultantData ? consultantData.experience:'', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      ratetype: [consultantData ? consultantData.ratetype:'', Validators.required],
-      hourlyrate: [consultantData ? consultantData.hourlyrate: ''],
-      currentlocation: [consultantData ? consultantData.currentlocation:'', Validators.required],
-      relocation: [consultantData ? consultantData.relocation: ''],
-      relocatOther: [consultantData ? consultantData.relocatOther:''],
-      technology: this.formBuilder.group({
-        id: new FormControl(consultantData ? consultantData.technology.id:'', [Validators.required]),
-      }),
-
-      company: this.formBuilder.group({
-        companyid: new FormControl(consultantData ? consultantData.company.companyid:'', [Validators.required]),
-      }),
-
-      skills: [consultantData ? consultantData.skills:''],
-      summary: [consultantData ? consultantData.summary: ''],
+      visa: [consultantData ? consultantData.visa : '', Validators.required],
+      availabilityforinterviews: [consultantData ? consultantData.availabilityforinterviews : '', Validators.required],
+      priority: [consultantData ? consultantData.priority : ''],
+      company: [consultantData ? consultantData.company : '', Validators.required],
+      position: [consultantData ? consultantData.position : '', Validators.required],
+      status: [consultantData ? consultantData.status : '', Validators.required],
+      experience: [consultantData ? consultantData.experience : '', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      hourlyrate: [consultantData ? consultantData.hourlyrate : ''],
+      skills: [consultantData ? consultantData.skills : ''],
+      ratetype: [consultantData ? consultantData.ratetype : '', Validators.required],
+      technology: [consultantData ? consultantData.technology : '', Validators.required],
+      currentlocation: [consultantData ? consultantData.currentlocation : '', Validators.required],
+      summary: [consultantData ? consultantData.summary : ''],
+      qualification: [consultantData ? consultantData.qualification : '', Validators.required],
+      university: [consultantData ? consultantData.university : '', Validators.required],
+      yop: [consultantData ? consultantData.yop : ''],
+      emprefname: [consultantData ? consultantData.emprefname : ''],
+      //emprefemail: new FormControl(consultantData ? consultantData.emprefemail : ''),
+      emprefemail: [consultantData ? consultantData.emprefemail : ''],
+      //emprefcont: new FormControl(consultantData ? consultantData.emprefcont : ''),
+      emprefcont: [consultantData ? consultantData.emprefcont : ''],
+      companyname: [consultantData ? consultantData.companyname : ''],
+      refname: [consultantData ? consultantData.refname : ''],
+     // refemail: new FormControl(consultantData ? consultantData.refemail : ''),
+     refemail: [consultantData ? consultantData.refemail : ''],
+     //refcont: new FormControl(consultantData ? consultantData.refcont : ''),
+     refcont: [consultantData ? consultantData.refcont : ''],
+      //number: [consultantData ? consultantData.number : '', Validators.required],
+      // status:[this.consultantForm.status],
+      // relocation: [consultantData ? consultantData.relocation : ''],  kiran
+      // relocatOther: [consultantData ? consultantData.relocatOther : ''],kiran
       consultantflg: this.data.flag.toLocaleLowerCase(),
       /* requirements: this.formBuilder.group({
          requirementid: id
        }),
        */
-      qualification: this.formBuilder.group({
-        id: new FormControl(consultantData ? consultantData.qualification:'', [Validators.required]),
-      }),
-      university: [consultantData ? consultantData.university:''],
-      yop: [consultantData ? consultantData.yop: ''],
-      companyname: [consultantData ? consultantData.companyname:''],
-      emprefname: [consultantData ? consultantData.emprefname:''],
-      refname: [consultantData ? consultantData.refname:''],
-      emprefcont: new FormControl(consultantData ? consultantData.emprefcont:'', [
-        Validators.minLength(10),
-        Validators.pattern('^[0-9]*$'),
-      ]),
-      refcont: new FormControl(consultantData ? consultantData.refcont:'', [
-        Validators.minLength(10),
-        Validators.pattern('^[0-9]*$'),
-      ]),
-      emprefemail: new FormControl(consultantData ? consultantData.emprefemail:'', [
-        Validators.email,
-        Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
-      ]),
-      refemail: new FormControl(consultantData ? consultantData.refemail:'', [
-        Validators.email,
-        Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
-      ]),
-      addedby: this.formBuilder.group({
-        userid: localStorage.getItem('userid'),
-      }),
+      addedby: localStorage.getItem('userid'),
     });
 
-    this.validateControls();
+    //this.validateControls();
   }
   private validateControls() {
     if (this.flag == 'Recruiting' || this.flag == 'sales') {
@@ -338,10 +318,16 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     priority.updateValueAndValidity();
   }
 
-  techskills(event: any) {
-    const newVal = event.target.value;
+  // techskills(event: any) {
+  //   const newVal = event.target.value;
+  //   this.consultantServ.getSkilldata(newVal).subscribe((response: any) => {
+  //     this.autoskills = response.data;
+  //   });
+  // }
+  techskills(event: MatSelectChange) {
+    const newVal = event.value;
     this.consultantServ.getSkilldata(newVal).subscribe((response: any) => {
-      this.autoskills = response.data;
+      this.consultantForm.get('skills').setValue(response.data);
     });
   }
   options: any = {
@@ -355,6 +341,7 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
 
   getCompanies() {
     //getCompanies
+    //  alert()
     this.consultantServ.getCompanies().subscribe((response: any) => {
       this.company = response.data;
     });
@@ -376,20 +363,12 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     // stop here if consultantForm is invalid
     if (this.consultantForm.invalid) {
       this.isRadSelected = true;
-      this.displayFormErrors()
+      //this.displayFormErrors();
+      alert()
       return;
     }
-
     const lenkedIn = this.consultantForm.get('linkedin')?.value;
-    if (lenkedIn != '' || lenkedIn != null) {
-      var items = lenkedIn.split('in/');
-      this.consultantForm.get('linkedin').setValue(items[1]);
-    }
-    const number = this.consultantForm.get('number').value;
-    if (number != null) {
-      this.consultantForm.get('contactnumber').setValue(number.internationalNumber);
-    }
-    // console.log(JSON.stringify(this.consultantForm.value, null, 2) + " =============== ");
+    console.log(JSON.stringify(this.consultantForm.value, null, 2) + " =============== ");
     if (this.flg == true) {
       const saveReqObj = this.getSaveObjData()
       this.consultantServ.registerconsultant(saveReqObj).subscribe(
@@ -404,7 +383,7 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
           } else {
             this.enableButton = '';
             this.message = data.message;
-            this.dataToBeSentToSnackBar.message =  "Record Insertion failed";
+            this.dataToBeSentToSnackBar.message = "Record Insertion failed";
             this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
             this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
 
@@ -417,9 +396,9 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
       );
     }
   }
-  getSaveObjData(){
-    if(this.data.actioName === 'edit-consultant'){
-      return {...this.entity, ...this.consultantForm.value}
+  getSaveObjData() {
+    if (this.data.actioName === 'edit-consultant') {
+      return { ...this.entity, ...this.consultantForm.value }
     }
     return this.consultantForm.value;
   }
@@ -599,66 +578,66 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
         }
       });
   }
-    /** to display form validation messages */
-    displayFormErrors() {
-      Object.keys(this.consultantForm.controls).forEach((field) => {
-        const control = this.consultantForm.get(field);
-        if (control && control.invalid) {
-          control.markAsTouched();
-        }
-      });
-    }
-  onAddCompany(){
+  /** to display form validation messages */
+  displayFormErrors() {
+    Object.keys(this.consultantForm.controls).forEach((field) => {
+      const control = this.consultantForm.get(field);
+      if (control && control.invalid) {
+        control.markAsTouched();
+      }
+    });
+  }
+  onAddCompany() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '50vw';
     dialogConfig.data = this.company;
-    const dialogRef =  this.dialogServ.openDialogWithComponent(AddCompanyComponent, dialogConfig);
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddCompanyComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
-      if(dialogRef.componentInstance.allowAction){
+      if (dialogRef.componentInstance.allowAction) {
         this.getCompanies()
       }
     })
   }
-  onAddVisa(){
+  onAddVisa() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '50vw';
     dialogConfig.data = this.visadata;
-    const dialogRef =  this.dialogServ.openDialogWithComponent(AddVisaComponent, dialogConfig);
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddVisaComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
-      if(dialogRef.componentInstance.allowAction){
+      if (dialogRef.componentInstance.allowAction) {
         this.getvisa()
       }
     })
   }
-  onAddTechnology(){
+  onAddTechnology() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '50vw';
     dialogConfig.data = this.techdata;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddTechnologyTagComponent, dialogConfig)
     dialogRef.afterClosed().subscribe(() => {
-      if(dialogRef.componentInstance.allowAction){
+      if (dialogRef.componentInstance.allowAction) {
         this.gettech()
       }
     })
   }
-  onAddQualification(){
+  onAddQualification() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '50vw';
     dialogConfig.data = this.QualArr;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddQualificationComponent, dialogConfig)
     dialogRef.afterClosed().subscribe(() => {
-      if(dialogRef.componentInstance.allowAction){
+      if (dialogRef.componentInstance.allowAction) {
         this.getQualification()
       }
     })
   }
-  onRadioChange(event: MatRadioChange){
-    this.isRadSelected =  event.value
+  onRadioChange(event: MatRadioChange) {
+    this.isRadSelected = event.value
   }
-   /**
-   * Cancel
-   */
-   onCancel() {
+  /**
+  * Cancel
+  */
+  onCancel() {
     this.dialogRef.close();
   }
 
@@ -675,16 +654,16 @@ export const IV_AVAILABILITY = [
   'afternoon session'
 ]
 export const PRIORITY = [
-  { code: 'P1', desc: 'P1 - Our h1 w2 consultant not on the job'},
-  { code: 'P2', desc: 'P2 - our h1 consultant whose project is ending in 4 weeks'},
-  { code: 'P3', desc: 'P3 - new visa transfer consultant looking for a job'},
-  { code: 'P4', desc: 'P4 - our h1 consultant on a project looking for a high rate'},
-  { code: 'P5', desc: 'P5 - OPT /CPT visa looking for a job'},
-  { code: 'P6', desc: 'P6 - independent visa holder looking for a job'},
-  { code: 'P7', desc: 'P7 - independent visa holder project is ending in 4 weeks'},
-  { code: 'P8', desc: 'P8 - independent visa holder project looking for a high rate'},
-  { code: 'P9', desc: 'P9 - 3rd party consultant'},
-  { code: 'P10', desc: 'P10'},
+  { code: 'P1', desc: 'P1 - Our h1 w2 consultant not on the job' },
+  { code: 'P2', desc: 'P2 - our h1 consultant whose project is ending in 4 weeks' },
+  { code: 'P3', desc: 'P3 - new visa transfer consultant looking for a job' },
+  { code: 'P4', desc: 'P4 - our h1 consultant on a project looking for a high rate' },
+  { code: 'P5', desc: 'P5 - OPT /CPT visa looking for a job' },
+  { code: 'P6', desc: 'P6 - independent visa holder looking for a job' },
+  { code: 'P7', desc: 'P7 - independent visa holder project is ending in 4 weeks' },
+  { code: 'P8', desc: 'P8 - independent visa holder project looking for a high rate' },
+  { code: 'P9', desc: 'P9 - 3rd party consultant' },
+  { code: 'P10', desc: 'P10' },
 
 ]
 
@@ -700,15 +679,15 @@ export const STATUS = [
 
 export const RADIO_OPTIONS = {
   rate: [
-    {value: 'C2C', id: 1 , selected: true},
-    {value: '1099', id: 2},
-    {value: 'W2', id: 3},
-    {value: 'Full Time', id: 4},
-    {value: 'C2H', id: 5}
+    { value: 'C2C', id: 1, selected: true },
+    { value: '1099', id: 2 },
+    { value: 'W2', id: 3 },
+    { value: 'Full Time', id: 4 },
+    { value: 'C2H', id: 5 }
   ],
   relocation: [
-    {value: 'Open', id: 1},
-    {value: 'No', id: 2},
-    {value: 'Other', id: 3},
+    { value: 'Open', id: 1 },
+    { value: 'No', id: 2 },
+    { value: 'Other', id: 3 },
   ]
 }

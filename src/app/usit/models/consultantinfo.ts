@@ -17,12 +17,12 @@ export class Consultantinfo {
     consultantemail!:string;
     comment!:string;
     position!:string;
-    company = new Company();
+    company!:string;
     linkedin!:string;
     passportnumber!:string;
     projectavailabity!:string;
     availabilityforinterviews!:string;
-    qualification = new Qualification();
+    qualification!:string;
     experience!:number;
     ratetype!:string;
     hourlyrate!:number;
@@ -46,8 +46,8 @@ export class Consultantinfo {
     isactive!:boolean;
     updatedby = new Employee();
     requirements = new Requirements();
-    technology = new Technology();
-    visa = new Visa();
+    technology!:string;
+    visa !: string;
     addedby = new Employee();
 
     technologyarea!:string;

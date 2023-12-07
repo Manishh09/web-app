@@ -81,7 +81,6 @@ export class ConsultantListComponent
     'Date',
     'Id',
     'Name',
-   
     'Email',
     'ContactNumber',
     'Visa',
@@ -92,7 +91,6 @@ export class ConsultantListComponent
     'Relocation',
     'Rate',
     'Priority',
-
     'Status',
     'Action',
   ];

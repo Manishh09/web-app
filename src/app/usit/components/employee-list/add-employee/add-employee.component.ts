@@ -155,6 +155,7 @@ export class AddEmployeeComponent {
         (response: any) => {
           if (response && response.data) {
             this.empObj = response.data;
+            this.filesArr = response.data.edoc;
             const managerId = response.data.manager;
             this.getTeamLead(managerId);
             this.initilizeAddEmployeeForm(this.empObj);
@@ -466,7 +467,7 @@ export class AddEmployeeComponent {
       next: (data: any) => {
         // console.log(data)
         if (data.status == 'success') {
-           this.submit(data.data.userid);
+          this.submit(data.data.userid);
           this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-success'];
           this.dataTobeSentToSnackBarService.message =
             this.data.actionName === 'add-employee'
@@ -681,7 +682,7 @@ export class AddEmployeeComponent {
       }
     }
   }
-private fileService = inject(FileManagementService);
+  private fileService = inject(FileManagementService);
 
   submit(id: number) {
     const formData = new FormData();
@@ -697,7 +698,7 @@ private fileService = inject(FileManagementService);
       formData.append('aadhar', this.aadharUpload, this.aadharUpload.name);
       // formData.append("files",this.resumeupload,this.resumeupload.name);
     }
-  if (this.panUpload != null) {
+    if (this.panUpload != null) {
       formData.append('pan', this.panUpload, this.panUpload.name);
       // formData.append("files",this.resumeupload,this.resumeupload.name);
     }
@@ -706,7 +707,7 @@ private fileService = inject(FileManagementService);
       formData.append('passbook', this.bankUpload, this.bankUpload.name);
       // formData.append("files",this.resumeupload,this.resumeupload.name);
     }
-    this.fileService.uploadFile(formData,id)
+    this.fileService.uploadFile(formData, id)
       .subscribe((response: any) => {
         if (response.status === 200) {
 
@@ -718,94 +719,179 @@ private fileService = inject(FileManagementService);
 
   downloadfile(id: number, filename: string, flg: string) {
     var items = filename.split(".");
-   /* this._service
-      .downloadresume(id, flg)
-      .subscribe(blob => {
-        if (items[1] == 'pdf' || items[1] == 'PDF') {
-          var fileURL: any = URL.createObjectURL(blob);
-          var a = document.createElement("a");
-          a.href = fileURL;
-          a.target = '_blank';
-          // Don't set download attribute
-          //a.download = filename;
-          a.click();
-        }
-        else {
-          saveAs(blob, filename)
-        }
-      }
-      );
-      */
+     this.fileService
+       .downloadresume(id, flg)
+       .subscribe(blob => {
+         if (items[1] == 'pdf' || items[1] == 'PDF') {
+           var fileURL: any = URL.createObjectURL(blob);
+           var a = document.createElement("a");
+           a.href = fileURL;
+           a.target = '_blank';
+           // Don't set download attribute
+           //a.download = filename;
+           a.click();
+         }
+         else {
+           saveAs(blob, filename)
+         }
+       }
+       );
+       
   }
 
   deletefile(id: number, doctype: string) {
-    const did = this.id;
-    const fl = doctype.toUpperCase();
-  /*  alertify.confirm("Remove File", "Are you sure you want to remove the " + fl + " ? ", () => {
-      this._service.removefile(id, doctype).subscribe(
-        (response: any) => {
-          if (response.status === 'success') {
-            alertify.success(fl + " removed successfully");
-            this.loadData(did);
+    /*  alertify.confirm("Remove File", "Are you sure you want to remove the " + fl + " ? ", () => {
+        this._service.removefile(id, doctype).subscribe(
+          (response: any) => {
+            if (response.status === 'success') {
+              alertify.success(fl + " removed successfully");
+              this.loadData(did);
+            }
+            else {
+              alertify.error("file not removed");
+            }
           }
-          else {
-            alertify.error("file not removed");
+        )
+      }, function () { });
+  
+      */
+      const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+        title: 'Confirmation',
+        message: 'Are you sure you want to delete?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+        actionData: id,
+        actionName: 'delete-employee'
+      };
+      const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog,{delete: true, edit: false, add: false});
+      const dialogRef = this.dialogServ.openDialogWithComponent(
+        ConfirmComponent,
+        dialogConfig
+      );
+      // call delete api after  clicked 'Yes' on dialog click
+      dialogRef.afterClosed().subscribe({
+        next: (resp) => {
+          if (dialogRef.componentInstance.allowAction) {
+            // call delete api
+            this.fileService.removefile(id,doctype).pipe(takeUntil(this.destroyed$)).subscribe({
+              next: (response: any) => {
+                if (response.status == 'success') {
+                //  this.getAllEmployees();
+                  this.dataTobeSentToSnackBarService.message =
+                    'Employee Deleted successfully';
+                } else {
+                  this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+                  this.dataTobeSentToSnackBarService.message = 'Record Deletion failed';
+                }
+                this.snackBarServ.openSnackBarFromComponent(
+                  this.dataTobeSentToSnackBarService
+                );
+              },
+              error: (err) => {
+                this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+                this.dataTobeSentToSnackBarService.message = err.message;
+                this.snackBarServ.openSnackBarFromComponent(
+                  this.dataTobeSentToSnackBarService
+                );
+              },
+            });
           }
-        }
-      )
-    }, function () { });
-
-    */
+        },
+      });
   }
 
   deletemultiple(id: number) {
-   /* alertify.confirm("Remove File", "Are you sure you want to remove the file ? ", () => {
-      this._service.removingfiles(id).subscribe(
-        (response: any) => {
-          if (response.status === 'success') {
-            alertify.success("file removed successfully");
-            this.ngOnInit();
-          }
-          else {
-            alertify.error("file not removed");
-          }
+    /* alertify.confirm("Remove File", "Are you sure you want to remove the file ? ", () => {
+       this._service.removingfiles(id).subscribe(
+         (response: any) => {
+           if (response.status === 'success') {
+             alertify.success("file removed successfully");
+             this.ngOnInit();
+           }
+           else {
+             alertify.error("file not removed");
+           }
+         }
+       )
+     }, function () { });
+     */
+
+     const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: id,
+      actionName: 'delete-employee'
+    };
+    const dialogConfig = this.getDialogConfigData(dataToBeSentToDailog,{delete: true, edit: false, add: false});
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
+    // call delete api after  clicked 'Yes' on dialog click
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          // call delete api
+          this.fileService.removefiles(id).pipe(takeUntil(this.destroyed$)).subscribe({
+            next: (response: any) => {
+              if (response.status == 'success') {
+              //  this.getAllEmployees();
+                this.dataTobeSentToSnackBarService.message =
+                  'Employee Deleted successfully';
+              } else {
+                this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+                this.dataTobeSentToSnackBarService.message = 'Record Deletion failed';
+              }
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataTobeSentToSnackBarService
+              );
+            },
+            error: (err) => {
+              this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
+              this.dataTobeSentToSnackBarService.message = err.message;
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataTobeSentToSnackBarService
+              );
+            },
+          });
         }
-      )
-    }, function () { });
-    */
+      },
+    });
   }
 
   // fileList?: FileData[];
   type!: any;
   filedetails(fileData: FileData) {
-   /* this.type = fileData.filename;
-    var items = this.type.split(".");
-    this._service
-      .downloadfile(fileData.docid)
-      .subscribe(blob => {
-        if (items[1] == 'pdf' || items[1] == 'PDF') {
-          var fileURL: any = URL.createObjectURL(blob);
-          var a = document.createElement("a");
-          a.href = fileURL;
-          a.target = '_blank';
-          // a.download = filename;
-          a.click();
-        }
-        else {
-          saveAs(blob, fileData.filename)
-        }
-      }
-        // saveAs(blob, fileData.filename)
-      );
-      */
+  this.type = fileData.filename;
+     var items = this.type.split(".");
+     this.fileService
+       .downloadfile(fileData.docid)
+       .subscribe(blob => {
+         if (items[1] == 'pdf' || items[1] == 'PDF') {
+           var fileURL: any = URL.createObjectURL(blob);
+           var a = document.createElement("a");
+           a.href = fileURL;
+           a.target = '_blank';
+           // a.download = filename;
+           a.click();
+         }
+         else {
+           saveAs(blob, fileData.filename)
+         }
+       }
+         // saveAs(blob, fileData.filename)
+       );
+      
   }
 }
 
 export class FileData {
-  docid!:number;
-  consultantid!:number;
+  docid!: number;
+  consultantid!: number;
   filename?: string;
   contentType?: string;
   size?: number;
-  eid!:number;
+  eid!: number;
 }
