@@ -19,7 +19,7 @@ export class TechnologyTagService {
   updateTechnology(entity: any) {
     return this.apiServ.put("auth/technology/technologies", entity);
   }
-  
+
   // get all technologies
   getAllTechnologies() {
     return this.apiServ.get("auth/technology/all");

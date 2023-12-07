@@ -42,4 +42,8 @@ export class InterviewService {
   getEntity(id: number) {
     return this.apiServ.get("interview/getinterview/" + id);
   }
+
+  addORUpdateInterview(entity: any, action: 'edit-interview' | 'add-interview'){
+    return action === 'edit-interview' ? this.updateEntity(entity): this.registerEntity(entity);
+  }
 }
