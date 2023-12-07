@@ -8,12 +8,12 @@ export class SubmissionService {
 
   constructor(private apiServ: ApiService) { }
 
-  getconsultantdropdown(flg: string) {
+  getConsultantDropdown(flg: string) {
     return this.apiServ.get("consultant/consultantinfo/" + flg);
   }
 
   
-  getRequirementByIdDrpdown(id:number) {
+  getRequirementByIdDropdown(id:number) {
     return this.apiServ.get("requirement/getreqybyid/"+id);
   }
 
@@ -25,12 +25,12 @@ export class SubmissionService {
   }
 
   //used for create the resource
-  registersubmission(submission: any) {
+  registerSubmission(submission: any) {
     return this.apiServ.post("submission/savesubmission", submission);
   }
 
   // supporting drop down apis
-  public getrequirements() {
+  public getRequirements() {
     return this.apiServ.get("requirement/getrequirements");
   }
 
@@ -49,5 +49,9 @@ export class SubmissionService {
   //used for get one resource
   getsubdetailsbyid(id: number) {
     return this.apiServ.get("submission/getbyid/" + id);
+  }
+
+  addORUpdateSubmission(entity: any, action: 'edit-submission' | 'add-submission'){
+    return action === 'edit-submission' ? this.registerSubmission(entity): this.registerSubmission(entity);
   }
 }

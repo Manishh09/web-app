@@ -27,8 +27,6 @@ import {
   SnackBarService,
 } from 'src/app/services/snack-bar.service';
 import { Recruiter } from 'src/app/usit/models/recruiter';
-import { VendorService } from 'src/app/usit/services/vendor.service';
-// import { AddVendorComponent } from './add-vendor/add-vendor.component';
 import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
@@ -163,14 +161,14 @@ export class SubmissionListComponent {
 
   addSubmission() {
     const actionData = {
-      title: 'Add Vendor',
-      vendorData: null,
-      actionName: 'add-vendor',
+      title: 'Add Submission',
+      submissionData: null,
+      actionName: 'add-submission',
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
     dialogConfig.disableClose = false;
-    dialogConfig.panelClass = 'add-vendor';
+    dialogConfig.panelClass = 'add-submission';
     dialogConfig.data = actionData;
 
     const dialogRef = this.dialogServ.openDialogWithComponent(AddSubmissionComponent, dialogConfig);
@@ -182,11 +180,27 @@ export class SubmissionListComponent {
     })
   }
 
-  editConsultant(consultant: any) {
+  editSubmission(submission: any) {
+    const actionData = {
+      title: 'Update Submission',
+      vendorData: submission,
+      actionName: 'edit-submission',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '65vw';
+    //dialogConfig.height = '100vh';
+    dialogConfig.panelClass = 'edit-vendor';
+    dialogConfig.data = actionData;
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddSubmissionComponent, dialogConfig);
 
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.submitted){
+        // this.getAllData(this.currentPageIndex + 1);
+      }
+    })
   }
 
-  deleteConsultant(consultant: any) {
+  deleteSubmission(submission: any) {
 
   }
 

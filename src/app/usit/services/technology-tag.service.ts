@@ -25,8 +25,9 @@ export class TechnologyTagService {
     return this.apiServ.get("technology/all");
   }
 
-  getAllTechnologiesByPagination(access: string, userid: number, page: any, size: any, field: any) {
-    return this.apiServ.get("technology/all/" + access + "/" + userid + "/" + page + "/" + size + "/" + field);
+  //used for get the resource
+  getTechnologiesByPagination(pageno: number) {
+    return this.apiServ.get("technology/pagination/" + pageno);
   }
 
   // delete technology

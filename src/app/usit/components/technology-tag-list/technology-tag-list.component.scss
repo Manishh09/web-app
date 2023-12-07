@@ -5,8 +5,8 @@
 }
 
 .table-wrapper {
+  flex: 1;
   overflow: auto;
-  height: 69vh;
   padding: 0 4px 4px 4px;
 }
 
@@ -155,4 +155,13 @@ ul.breadcrumb li a:hover {
 
 .odd-row {  
   background-color: rgb(213, 231, 231);
+}
+
+.technology-table-style {
+  padding: 0 2px;
+  width: 100%;
+  // max-height: calc(100% - 2px);
+  height: 61vh;
+  overflow: auto;
+  display: block;
 }
