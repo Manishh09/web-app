@@ -26,7 +26,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Loader } from '@googlemaps/js-api-loader';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
-import { SnackBarService } from 'src/app/services/snack-bar.service';
+import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 import {MatRadioChange, MatRadioModule} from '@angular/material/radio';
 import { DialogService } from 'src/app/services/dialog.service';
 import { AddCompanyComponent } from '../../../masters/companies-list/add-company/add-company.component';
@@ -102,6 +102,14 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     radioOptions: RADIO_OPTIONS
 
   };
+  dataToBeSentToSnackBar: ISnackBarData ={
+    message: '',
+    duration: 2500,
+    verticalPosition: 'top',
+    horizontalPosition: 'center',
+    direction: 'above',
+    panelClass: ['custom-snack-success'],
+  };
   // services
   private consultantServ = inject(ConsultantService);
   private snackBarServ = inject(SnackBarService);
@@ -126,12 +134,13 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     this.getvisa();
     this.gettech();
     this.getQualification();
-    this.companies();
+    this.getCompanies();
     this.getFlag(this.data.flag.toLocaleLowerCase());
     if(this.data.actionName === "edit-consultant"){
       this.initConsultantForm(new Consultantinfo());
-      this.consultantServ.getConsultantById(this.data.consultantData.consultantid).subscribe(
-        (response: any) => {
+      this.consultantServ.getConsultantById(this.data.consultantData.consultantid)
+      .subscribe(
+        {next:(response: any) => {
           this.entity = response.data;
           console.log(this.entity);
 
@@ -139,7 +148,13 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
           this.autoskills = response.data.skills;
           this.filesArr = response.data.fileupload;
           this.initConsultantForm(response.data);
+        },error: err => {
+          this.dataToBeSentToSnackBar.message = err.message;
+          this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
         }
+      }
+
       );
     }else{
       this.initConsultantForm(new Consultantinfo());
@@ -338,7 +353,7 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     this.address = address.formatted_address;
   }
 
-  companies() {
+  getCompanies() {
     //getCompanies
     this.consultantServ.getCompanies().subscribe((response: any) => {
       this.company = response.data;
@@ -381,11 +396,18 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
         (data: any) => {
           if (data.status == 'success') {
             //alertify.success("Consultant added successfully");
+            this.dataToBeSentToSnackBar.message = 'Consultant added successfully';
+            this.dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
+            this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
             this.onFileSubmit(data.data.consultantid);
 
           } else {
             this.enableButton = '';
             this.message = data.message;
+            this.dataToBeSentToSnackBar.message =  "Record Insertion failed";
+            this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
+
             //alertify.error("Record Insertion failed");
           }
         },
@@ -588,27 +610,47 @@ export class AddconsultantComponent implements OnInit , OnDestroy{
     }
   onAddCompany(){
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '65vw';
-
-    this.dialogServ.openDialogWithComponent(AddCompanyComponent, dialogConfig)
+    dialogConfig.width = '50vw';
+    dialogConfig.data = this.company;
+    const dialogRef =  this.dialogServ.openDialogWithComponent(AddCompanyComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.allowAction){
+        this.getCompanies()
+      }
+    })
   }
   onAddVisa(){
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '65vw';
-
-    this.dialogServ.openDialogWithComponent(AddVisaComponent, dialogConfig)
+    dialogConfig.width = '50vw';
+    dialogConfig.data = this.visadata;
+    const dialogRef =  this.dialogServ.openDialogWithComponent(AddVisaComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.allowAction){
+        this.getvisa()
+      }
+    })
   }
   onAddTechnology(){
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '65vw';
-
-    this.dialogServ.openDialogWithComponent(AddTechnologyTagComponent, dialogConfig)
+    dialogConfig.width = '50vw';
+    dialogConfig.data = this.techdata;
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddTechnologyTagComponent, dialogConfig)
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.allowAction){
+        this.gettech()
+      }
+    })
   }
   onAddQualification(){
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '65vw';
-
-    this.dialogServ.openDialogWithComponent(AddQualificationComponent, dialogConfig)
+    dialogConfig.width = '50vw';
+    dialogConfig.data = this.QualArr;
+    const dialogRef = this.dialogServ.openDialogWithComponent(AddQualificationComponent, dialogConfig)
+    dialogRef.afterClosed().subscribe(() => {
+      if(dialogRef.componentInstance.allowAction){
+        this.getQualification()
+      }
+    })
   }
   onRadioChange(event: MatRadioChange){
     this.isRadSelected =  event.value
