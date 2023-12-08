@@ -62,10 +62,8 @@
         <div style="width: 80%;">
           <mat-label>Round of Interview</mat-label><br>
           <mat-radio-group formControlName="round" aria-label="Select an option">
-            <mat-radio-button value="First (L1)">First (L1)</mat-radio-button>
-            <mat-radio-button value="Second (L2)">Second (L2)</mat-radio-button>
-            <mat-radio-button value="Third (Client)">Third (Client)</mat-radio-button>
-            <mat-error *ngIf="interviewForm.get('round')!.hasError('required')"> Round of Interview is required</mat-error>
+            <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.interviewround" [value]="opt.value" (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
+            <mat-error *ngIf="interviewForm.get('round')!.hasError('required')  && isRadSelected"> Round of Interview is required</mat-error>
           </mat-radio-group>
         </div>
 
@@ -89,11 +87,8 @@
         <div style="width: 80%;">
           <mat-label>Mode of Interview</mat-label><br>
           <mat-radio-group formControlName="mode" aria-label="Select an option">
-            <mat-radio-button value="F2F">F2F</mat-radio-button>
-            <mat-radio-button value="Skype">Skype</mat-radio-button>
-            <mat-radio-button value="Telephonic">Telephonic</mat-radio-button>
-            <mat-radio-button value="Webex">Webex</mat-radio-button>
-            <mat-error *ngIf="interviewForm.get('mode')!.hasError('required')"> Mode of Interview is required</mat-error>
+            <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.interviewmode" [value]="opt.value" (change)="onModeRadioChange($event)">{{opt.value}}</mat-radio-button>
+            <mat-error *ngIf="interviewForm.get('mode')!.hasError('required') && isModeRadSelected"> Mode of Interview is required</mat-error>
           </mat-radio-group>
         </div>
 
@@ -121,13 +116,8 @@
         <div style="width: 80%;">
           <mat-label>Status</mat-label><br>
           <mat-radio-group formControlName="interviewstatus" aria-label="Select an option">
-            <mat-radio-button value="Schedule">Schedule</mat-radio-button>
-            <mat-radio-button value="Closed">Closed</mat-radio-button>
-            <mat-radio-button value="Hold">Hold</mat-radio-button>
-            <mat-radio-button value="Rejected">Rejected</mat-radio-button>
-            <mat-radio-button value="Selected">Selected</mat-radio-button>
-            <mat-radio-button value="Back Out">Back Out</mat-radio-button>
-            <mat-error *ngIf="interviewForm.get('interviewstatus')!.hasError('required')"> Status is required</mat-error>
+            <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.interviewstatus" [value]="opt.value" (change)="onStatusRadioChange($event)">{{opt.value}}</mat-radio-button>
+            <mat-error *ngIf="interviewForm.get('interviewstatus')!.hasError('required') && isStatusRadSelected"> Status is required</mat-error>
           </mat-radio-group>
         </div>
 

@@ -34,7 +34,23 @@ const routes: Routes = [
   { path: 'sales-consultants', component: ConsultantListComponent,
     data: {isSalesConsultant : true}},
   { path: 'rec-consultants', component: ConsultantListComponent,
-  data: {isRecConsultant : true}}
+  data: {isRecConsultant : true}},
+  {
+    path: 'sales-submissions', component: SubmissionListComponent,
+    data: { isSalesSubmission: true }
+  },
+  {
+    path: 'rec-submissions', component: SubmissionListComponent,
+    data: { isRecSubmission: true }
+  },
+  {
+    path: 'sales-interviews', component: InterviewListComponent,
+    data: { isSalesInterview: true }
+  },
+  {
+    path: 'rec-interviews', component: InterviewListComponent,
+    data: { isRecInterview: true }
+  }
 ];
 
 @NgModule({
