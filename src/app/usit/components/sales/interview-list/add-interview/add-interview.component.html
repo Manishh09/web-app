@@ -48,7 +48,7 @@
           </mat-form-field>
 
         <!-- Round of Interview -->
-        <mat-form-field appearance="fill">
+        <!-- <mat-form-field appearance="fill">
             <mat-label>Round of Interview</mat-label>
             <mat-select formControlName="round">
                 <mat-option *ngFor="let option of selectOptionObj.interviewRound" [value]="option"> {{ option }}
@@ -57,14 +57,25 @@
             <mat-error *ngIf="interviewForm.get('round')!.hasError('required')">Round of Interview
                 is Required
             </mat-error>
-        </mat-form-field>
+        </mat-form-field> -->
+
+        <div style="width: 80%;">
+          <mat-label>Round of Interview</mat-label><br>
+          <mat-radio-group formControlName="round" aria-label="Select an option">
+            <mat-radio-button value="First (L1)">First (L1)</mat-radio-button>
+            <mat-radio-button value="Second (L2)">Second (L2)</mat-radio-button>
+            <mat-radio-button value="Third (Client)">Third (Client)</mat-radio-button>
+            <mat-error *ngIf="interviewForm.get('round')!.hasError('required')"> Round of Interview is required</mat-error>
+          </mat-radio-group>
+        </div>
+
 
         
         </div>
 
         <div class="form-column-right">
           <!-- Mode of Interview -->
-        <mat-form-field appearance="fill">
+        <!-- <mat-form-field appearance="fill">
             <mat-label>Mode of Interview</mat-label>
             <mat-select formControlName="mode">
                 <mat-option *ngFor="let option of selectOptionObj.interviewMode" [value]="option"> {{ option }}
@@ -73,7 +84,18 @@
             <mat-error *ngIf="interviewForm.get('mode')!.hasError('required')">Mode of Interview
                 is Required
             </mat-error>
-        </mat-form-field>
+        </mat-form-field> -->
+
+        <div style="width: 80%;">
+          <mat-label>Mode of Interview</mat-label><br>
+          <mat-radio-group formControlName="mode" aria-label="Select an option">
+            <mat-radio-button value="F2F">F2F</mat-radio-button>
+            <mat-radio-button value="Skype">Skype</mat-radio-button>
+            <mat-radio-button value="Telephonic">Telephonic</mat-radio-button>
+            <mat-radio-button value="Webex">Webex</mat-radio-button>
+            <mat-error *ngIf="interviewForm.get('mode')!.hasError('required')"> Mode of Interview is required</mat-error>
+          </mat-radio-group>
+        </div>
 
          <!-- Feedback   -->
          <mat-form-field class="description-field">
@@ -85,7 +107,7 @@
           </mat-form-field>
 
          <!-- Status -->
-        <mat-form-field appearance="fill">
+        <!-- <mat-form-field appearance="fill">
             <mat-label>Status</mat-label>
             <mat-select formControlName="interviewstatus">
                 <mat-option *ngFor="let option of selectOptionObj.status" [value]="option"> {{ option }}
@@ -94,7 +116,21 @@
             <mat-error *ngIf="interviewForm.get('interviewstatus')!.hasError('required')">Status
                 is Required
             </mat-error>
-        </mat-form-field>
+        </mat-form-field> -->
+
+        <div style="width: 80%;">
+          <mat-label>Status</mat-label><br>
+          <mat-radio-group formControlName="interviewstatus" aria-label="Select an option">
+            <mat-radio-button value="Schedule">Schedule</mat-radio-button>
+            <mat-radio-button value="Closed">Closed</mat-radio-button>
+            <mat-radio-button value="Hold">Hold</mat-radio-button>
+            <mat-radio-button value="Rejected">Rejected</mat-radio-button>
+            <mat-radio-button value="Selected">Selected</mat-radio-button>
+            <mat-radio-button value="Back Out">Back Out</mat-radio-button>
+            <mat-error *ngIf="interviewForm.get('interviewstatus')!.hasError('required')"> Status is required</mat-error>
+          </mat-radio-group>
+        </div>
+
         </div>
       </div>
     </form>
