@@ -1,6 +1,7 @@
 <div class="submission-container">
     <ul class="breadcrumb">
         <li><a href="#" routerLink="/dashboard">Home</a></li>
+        <li class="last">{{ flag }}</li>
         <li class="last">submissions</li>
     </ul>
     <div class="header-container mat-elevation-z1">
@@ -73,14 +74,22 @@
                 <!-- Requirement-->
                 <ng-container matColumnDef="Requirement">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Requirement">
-                        Requirement </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.position}}
+                        Requirement
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                        <ng-container *ngIf="this.flag == 'Recruiting'; then trueCondition else elseTemplate"></ng-container>
+                        <ng-template #trueCondition>
+                            {{ element?.reqnumber }}
+                        </ng-template>
+                        <ng-template #elseTemplate>
+                            {{ element?.position }}
+                        </ng-template>
                     </td>
                 </ng-container>
+
                 <!-- Implementation Partner-->
                 <ng-container matColumnDef="ImplementationPartner">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        sortActionDescription="Sort by ImplementationPartner">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by ImplementationPartner">
                         Implementation Partner </th>
                     <td mat-cell *matCellDef="let element"> {{element?.implpartner}}
                     </td>
@@ -119,7 +128,17 @@
                         Submitted By
                     </th>
                     <td mat-cell *matCellDef="let element"> {{element.pseudoname}} </td>
+                    <td mat-cell *matCellDef="let element">
+                        <ng-container *ngIf="this.flag === 'Sales'; then trueCondition1 else elseTemplate1"></ng-container>
+                        <ng-template #trueCondition1>
+                            {{ element?.pseudoname }}
+                        </ng-template>
+                        <ng-template #elseTemplate1>
+                            {{ element?.fullname }}
+                        </ng-template>
+                    </td>
                 </ng-container>
+
 
                 <!-- Sub Status Column -->
                 <ng-container matColumnDef="SubStatus">
@@ -133,9 +152,9 @@
                 <ng-container matColumnDef="Action">
                     <th mat-header-cell *matHeaderCellDef> Action </th>
                     <td mat-cell *matCellDef="let submission">
-                    <button mat-icon-button (click)="editSubmission(submission)" class="action-button-ed">
-                        <mat-icon class="edit-icon">edit</mat-icon>
-                    </button>
+                        <button mat-icon-button (click)="editSubmission(submission)" class="action-button-ed">
+                            <mat-icon class="edit-icon">edit</mat-icon>
+                        </button>
                     </td>
                 </ng-container>
                 <!-- table columns ends  -->

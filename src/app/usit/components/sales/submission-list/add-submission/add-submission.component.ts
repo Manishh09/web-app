@@ -37,9 +37,11 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
-import {MatRadioModule} from '@angular/material/radio';
+import {MatRadioChange, MatRadioModule} from '@angular/material/radio';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { SubmissionService } from 'src/app/usit/services/submission.service';
+import { SubmissionInfo } from 'src/app/usit/models/submissioninfo';
+
 
 @Component({
   selector: 'app-add-submission',
@@ -80,7 +82,7 @@ export class AddSubmissionComponent implements OnInit{
   submissionForm: any = FormGroup;
   submitted = false;
   requirementdata: any = [];
-  consultdata: any = [];
+  consultantdata: any = [];
   vendordata: any = [];
   private formBuilder = inject(FormBuilder);
   private submissionServ = inject(SubmissionService);
@@ -90,14 +92,17 @@ export class AddSubmissionComponent implements OnInit{
 
   searchObs$!: Observable<any>;
   selectOptionObj = {
-    sourceType: SOURCE_TYPE
+    sourceType: SOURCE_TYPE,
+    radioOptions: RADIO_OPTIONS
   };
   address = '';
   options = {
     componentRestrictions: { country: ['IN', 'US'] },
   };
   flgOpposite !: string;
-  flag!: any;
+  flag!: string;
+  entity = new SubmissionInfo();
+  isRadSelected: any;
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
 
@@ -106,23 +111,41 @@ export class AddSubmissionComponent implements OnInit{
     public dialogRef: MatDialogRef<AddSubmissionComponent>
   ) {}
 
+  get frm() {
+    return this.submissionForm.controls;
+  }
+
   ngOnInit(): void {
-    this.flag = this.activatedRoute.snapshot.params['flg'];
-    if (this.flag == 'sales') {
-      this.flag = "sales";
-      this.flgOpposite = "Recruiter";
+    
+    this.getCompany();
+    this.getConsultant(this.flag)
+    if (this.data && this.data.flag) {
+      this.getFlag(this.data.flag.toLocaleLowerCase());
     }
-    else {
+    
+    if(this.data.actionName === "edit-submission"){
+      this.submissionServ.getsubdetailsbyid(this.data.submissionData.submissionid).subscribe(
+        (response: any) => {
+          this.entity = response.data;
+          console.log(this.entity);
+          this.initilizeSubmissionForm(response.data);
+        }
+      );
+    } else {
+      this.initilizeSubmissionForm(new SubmissionInfo());
+    }
+  }
+
+  getFlag(type: string){
+    if (type === 'sales') {
+      this.flag = 'sales';
+      this.flgOpposite = "Recruiter";
+    } 
+     else {
+      this.flag = 'Recruiting';
       this.flgOpposite = "Bench Sales";
-      this.flag = "Recruiting";
       this.getRequirements();
     }
-    if(this.data.actionName === "edit-submission"){
-      // this.bindFormControlValueOnEdit();
-    }
-    this.initilizeSubmissionForm(new Vms());
-    this.getCompany();
-    this.getConsultant(this.flag);
   }
 
 
@@ -137,10 +160,10 @@ export class AddSubmissionComponent implements OnInit{
       // flg: [],
 
       requirement: this.formBuilder.group({
-        requirementid:  ['', [Validators.required]],
+        requirementid:  [submissionData ? submissionData.requirementid : '', [Validators.required]],
       }),
       consultant: this.formBuilder.group({
-        consultantid: [submissionData ? submissionData.consultantid : '', [Validators.required]],
+        consultantid: [submissionData ? submissionData.consultant.consultantid : '', [Validators.required]],
       }),
       position: [submissionData ? submissionData.position : '', [Validators.required]],
       ratetype: [submissionData ? submissionData.ratetype : '', [Validators.required]],
@@ -148,12 +171,12 @@ export class AddSubmissionComponent implements OnInit{
       endclient: [submissionData ? submissionData.endclient : '', [Validators.required]],
       implpartner: [submissionData ? submissionData.implpartner : '', [Validators.required]],
       vendor: this.formBuilder.group({
-        vmsid: '',
+        vmsid: [submissionData ? submissionData.vendor.vmsid : '', [Validators.required]],
       }),
       recruiter: this.formBuilder.group({
-        recid: '',
+        recid: [submissionData ? submissionData.recruiter.recid : '', [Validators.required]],
       }),
-      empcontact: ['', [Validators.required]],
+      empcontact: [submissionData ? submissionData.empcontact : '', [Validators.required]],
       empmail: [
         submissionData ? submissionData.empmail : '',
         [
@@ -164,9 +187,40 @@ export class AddSubmissionComponent implements OnInit{
       ],
       source: [submissionData ? submissionData.source : '', [Validators.required]],
       projectlocation: [submissionData ? submissionData.projectlocation : '', [Validators.required]],
+      submissionflg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
     });
-
+    this.validateControls();
   } 
+
+  private validateControls() {
+    const requirement = this.submissionForm.get('requirement');
+    if (this.flag == 'Recruiting') {
+      requirement.setValidators(Validators.required);
+    }
+    else {
+      requirement.clearValidators();
+      this.submissionForm.get("requirement.requirementid").patchValue("null");
+    }
+    requirement.updateValueAndValidity();
+    this.submissionForm.get('ratetype').valueChanges.subscribe((res: any) => {
+      const vendor = this.submissionForm.get('vendor.vmsid');
+      const recruiter = this.submissionForm.get("recruiter.recid");
+      const empmail = this.submissionForm.get('empmail');;
+      if (res == '1099' || res == 'W2' || res == 'Full Time') {
+        vendor.clearValidators();
+        recruiter.clearValidators();
+        empmail.clearValidators();
+      }
+      else {
+        empmail.setValidators([Validators.required, Validators.email, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]);
+        vendor.setValidators(Validators.required);
+        recruiter.setValidators(Validators.required);
+      }
+      empmail.updateValueAndValidity();
+      vendor.updateValueAndValidity();
+      recruiter.updateValueAndValidity();
+    });
+  }
 
   getRequirements() {
     this.submissionServ.getRequirements().subscribe(
@@ -200,7 +254,7 @@ export class AddSubmissionComponent implements OnInit{
     flg = 'recruiting';
     this.submissionServ.getConsultantDropdown(flg).subscribe(
       (response: any) => {
-        this.consultdata = response.data;
+        this.consultantdata = response.data;
       })
   }
 
@@ -231,19 +285,20 @@ export class AddSubmissionComponent implements OnInit{
 
   recruiterName: any[] = [];
   recruiterList(event: any) {
-    const newVal = event.target.value;
+    const newVal = event.value;
     this.submissionServ.getRecruiterOfTheVendor(newVal, this.flgOpposite).subscribe(
       (response: any) => {
         this.recruiterName = response.data;
+        console.log(this.recruiterName);
       }
     );
   }
 
   selectedItems: ContactInfo[] = [];
   recruiterContact(event: any) {
-    const newVal = event.target.value;
+    const newVal = event.value;
     this.recruiterName.forEach(item => {
-      if (newVal.includes(item.id)) {
+      if (newVal == item.id) {
         this.selectedItems.push(item);
       }
     });
@@ -260,6 +315,12 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   onSubmit() {
+
+    if (this.submissionForm.invalid) {
+      this.displayFormErrors();
+      this.isRadSelected = true;
+      return;
+    }
     this.submitted = true;
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
@@ -270,14 +331,11 @@ export class AddSubmissionComponent implements OnInit{
       panelClass: ['custom-snack-success'],
     };
 
-    if (this.submissionForm.invalid) {
-      this.displayFormErrors();
-      return;
-    }
+    
     const saveReqObj = this.getSaveData();
     console.log('form.value  ===', saveReqObj);
     this.submissionServ
-      .addORUpdateSubmission(saveReqObj, this.data.actionName)
+      .registerSubmission(saveReqObj)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: (data: any) => {
@@ -314,11 +372,18 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   getSaveData() {
-
+    if(this.data.actionName === 'edit-submission'){
+      return {...this.entity, ...this.submissionForm.value}
+    }
+    return this.submissionForm.value;
   }
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  onRadioChange(event: MatRadioChange){
+    this.isRadSelected =  event.value
   }
 }
 
@@ -337,6 +402,16 @@ export const SOURCE_TYPE = [
   'Reference',
   'Other',
 ] as const;
+
+export const RADIO_OPTIONS = {
+  rate: [
+    {value: 'C2C', id: 1 , selected: true},
+    {value: '1099', id: 2},
+    {value: 'W2', id: 3},
+    {value: 'Full Time', id: 4},
+    {value: 'C2H', id: 5}
+  ]
+}
 
 class ContactInfo {
   company!: string;
