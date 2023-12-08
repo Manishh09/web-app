@@ -36,6 +36,7 @@ import {
   takeUntil,
 } from 'rxjs';
 import { InterviewService } from 'src/app/usit/services/interview.service';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-add-interview',
@@ -56,6 +57,7 @@ import { InterviewService } from 'src/app/usit/services/interview.service';
     MatCardModule,
     NgxMatIntlTelInputComponent,
     NgxGpAutocompleteModule,
+    MatRadioModule
   ],
   templateUrl: './add-interview.component.html',
   styleUrls: ['./add-interview.component.scss']
