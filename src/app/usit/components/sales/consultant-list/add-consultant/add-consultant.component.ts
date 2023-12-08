@@ -12,7 +12,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { ConsultantService } from 'src/app/usit/services/consultant.service';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,6 +33,11 @@ import { AddVisaComponent } from '../../../masters/visa-list/add-visa/add-visa.c
 import { AddTechnologyTagComponent } from '../../../technology-tag-list/add-technology-tag/add-technology-tag.component';
 import { AddQualificationComponent } from '../../../masters/qualification-list/add-qualification/add-qualification.component';
 import { Consultantinfo } from 'src/app/usit/models/consultantinfo';
+import { saveAs } from 'file-saver';
+import { FileData } from '../../../employee-list/add-employee/add-employee.component';
+import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
+import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
+import { FileManagementService } from 'src/app/usit/services/file-management.service';
 
 @Component({
   selector: 'app-add-consultant',
@@ -116,6 +121,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   private formBuilder = inject(FormBuilder);
   private activatedRoute = inject(ActivatedRoute);
   private dialogServ = inject(DialogService);
+  private fileService = inject(FileManagementService);
   data = inject(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<AddconsultantComponent>);
   // to clear subscriptions
@@ -258,7 +264,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       const ratetype = this.consultantForm.get('ratetype');
       const currentlocation = this.consultantForm.get('currentlocation');
 
-      
+
 
       if (res == 'Tagged') {
         this.consultantForm.get('technology.id').setValue('14');
@@ -668,6 +674,167 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   onRadioChange(event: MatRadioChange) {
     this.isRadSelected = event.value
   }
+   // fileList?: FileData[];
+   type!: any;
+   filedetails(fileData: FileData) {
+   this.type = fileData.filename;
+      var items = this.type.split(".");
+      this.fileService
+        .downloadfile(fileData.docid)
+        .subscribe(blob => {
+          if (items[1] == 'pdf' || items[1] == 'PDF') {
+            var fileURL: any = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = fileURL;
+            a.target = '_blank';
+            // a.download = filename;
+            a.click();
+          }
+          else {
+            saveAs(blob, fileData.filename)
+          }
+        }
+          // saveAs(blob, fileData.filename)
+        );
+
+   }
+   downloadfile(id: number, filename: string, flg: string) {
+    var items = filename.split(".");
+     this.fileService
+       .downloadresume(id, flg)
+       .subscribe(blob => {
+         if (items[1] == 'pdf' || items[1] == 'PDF') {
+           var fileURL: any = URL.createObjectURL(blob);
+           var a = document.createElement("a");
+           a.href = fileURL;
+           a.target = '_blank';
+           // Don't set download attribute
+           //a.download = filename;
+           a.click();
+         }
+         else {
+           saveAs(blob, filename)
+         }
+       }
+       );
+
+  }
+
+  deletefile(id: number, doctype: string) {
+    /*  alertify.confirm("Remove File", "Are you sure you want to remove the " + fl + " ? ", () => {
+        this._service.removefile(id, doctype).subscribe(
+          (response: any) => {
+            if (response.status === 'success') {
+              alertify.success(fl + " removed successfully");
+              this.loadData(did);
+            }
+            else {
+              alertify.error("file not removed");
+            }
+          }
+        )
+      }, function () { });
+
+      */
+      const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+        title: 'Confirmation',
+        message: 'Are you sure you want to delete?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+        actionData: id,
+        actionName: 'delete-employee'
+      };
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.data = dataToBeSentToDailog;
+      dialogConfig.width = "fit-content";
+      const dialogRef = this.dialogServ.openDialogWithComponent(
+        ConfirmComponent,
+        dialogConfig
+      );
+      // call delete api after  clicked 'Yes' on dialog click
+      dialogRef.afterClosed().subscribe({
+        next: (resp) => {
+          if (dialogRef.componentInstance.allowAction) {
+            // call delete api
+            this.fileService.removefile(id,doctype).pipe(takeUntil(this.destroyed$)).subscribe({
+              next: (response: any) => {
+                if (response.status == 'success') {
+                //  this.getAllEmployees();
+                  this.dataToBeSentToSnackBar.message =
+                    'File Deleted successfully';
+                } else {
+                  this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                  this.dataToBeSentToSnackBar.message = 'Record Deletion failed';
+                }
+                this.snackBarServ.openSnackBarFromComponent(
+                  this.dataToBeSentToSnackBar
+                );
+              },
+              error: (err) => {
+                this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                this.dataToBeSentToSnackBar.message = err.message;
+                this.snackBarServ.openSnackBarFromComponent(
+                  this.dataToBeSentToSnackBar
+                );
+              },
+            });
+          }
+        },
+      });
+  }
+  /**
+   *
+   * @param id docid
+   */
+   deletemultiple(id: number){
+  const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+    title: 'Confirmation',
+    message: 'Are you sure you want to delete?',
+    confirmText: 'Yes',
+    cancelText: 'No',
+    actionData: id,
+    actionName: 'delete-employee'
+  };
+  const dialogConfig = new MatDialogConfig();
+  dialogConfig.data = dataToBeSentToDailog;
+  dialogConfig.width = "fit-content";
+  const dialogRef = this.dialogServ.openDialogWithComponent(
+    ConfirmComponent,
+    dialogConfig
+  );
+  // call delete api after  clicked 'Yes' on dialog click
+  dialogRef.afterClosed().subscribe({
+    next: (resp) => {
+      if (dialogRef.componentInstance.allowAction) {
+        // call delete api
+        this.fileService.removefiles(id).pipe(takeUntil(this.destroyed$)).subscribe({
+          next: (response: any) => {
+            if (response.status == 'success') {
+            //  this.getAllEmployees();
+              this.dataToBeSentToSnackBar.message =
+                'File Deleted successfully';
+
+            } else {
+              this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              this.dataToBeSentToSnackBar.message = 'Record Deletion failed';
+            }
+            this.snackBarServ.openSnackBarFromComponent(
+              this.dataToBeSentToSnackBar
+            );
+          },
+          error: (err) => {
+            this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.dataToBeSentToSnackBar.message = err.message;
+            this.snackBarServ.openSnackBarFromComponent(
+              this.dataToBeSentToSnackBar
+            );
+          },
+        });
+      }
+    },
+  });
+ }
+
   /**
   * Cancel
   */
@@ -702,7 +869,7 @@ export const PRIORITY = [
 ]
 
 export const STATUS = [
- 
+
   'Completed',
   'Verified',
   'Tagged',

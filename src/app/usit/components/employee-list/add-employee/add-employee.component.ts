@@ -736,7 +736,7 @@ export class AddEmployeeComponent {
          }
        }
        );
-       
+
   }
 
   deletefile(id: number, doctype: string) {
@@ -753,7 +753,7 @@ export class AddEmployeeComponent {
           }
         )
       }, function () { });
-  
+
       */
       const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
         title: 'Confirmation',
@@ -778,7 +778,7 @@ export class AddEmployeeComponent {
                 if (response.status == 'success') {
                 //  this.getAllEmployees();
                   this.dataTobeSentToSnackBarService.message =
-                    'Employee Deleted successfully';
+                    'File Deleted successfully';
                 } else {
                   this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
                   this.dataTobeSentToSnackBarService.message = 'Record Deletion failed';
@@ -839,7 +839,7 @@ export class AddEmployeeComponent {
               if (response.status == 'success') {
               //  this.getAllEmployees();
                 this.dataTobeSentToSnackBarService.message =
-                  'Employee Deleted successfully';
+                  'File Deleted successfully';
               } else {
                 this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
                 this.dataTobeSentToSnackBarService.message = 'Record Deletion failed';
@@ -883,7 +883,7 @@ export class AddEmployeeComponent {
        }
          // saveAs(blob, fileData.filename)
        );
-      
+
   }
 }
 

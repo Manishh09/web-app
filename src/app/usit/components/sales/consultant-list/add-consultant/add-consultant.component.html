@@ -15,11 +15,11 @@
     <input type="hidden" formControlName="salesmaxno">
     <input type="hidden" formControlName="recmaxno">
 
-  
-    
 
-    
-    
+
+
+
+
     <div class="form">
       <div class="form-column-left">
         <!-- First Name -->
@@ -405,7 +405,7 @@
     <div class="header-container">
       <span class="header-text">Upload Documents</span>
     </div>
-    <!-- <div class="upload-documents">
+   <div class="upload-documents">
       <div class="form-column-left">
         <mat-form-field class="upload">
           <mat-label for="resume">Resume</mat-label>
@@ -464,7 +464,52 @@
 
         </mat-form-field>
       </div>
-    </div> -->
+    </div>
+    <div class="header-container-upload-documents">
+      <span class="header-text">List Documents</span>
+    </div>
+    <div>
+      <table>
+        <tr>
+          <th>Document Name</th>
+          <th>Delete</th>
+        </tr>
+        <tr>
+          <td *ngIf="entity.resume !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(entity.consultantid,entity.resume,'resume')">{{entity.resume}}</a>
+          </td>
+          <td *ngIf="entity.resume !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'resume')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td *ngIf="entity.h1bcopy !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(entity.consultantid,entity.h1bcopy,'h1bcopy')">{{entity.h1bcopy}}</a>
+          </td>
+          <td *ngIf="entity.h1bcopy !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'dlcopy')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+
+        <tr>
+          <td *ngIf="entity.dlcopy !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(entity.consultantid,entity.dlcopy,'dlcopy')">{{entity.dlcopy}}</a>
+          </td>
+        </tr>
+        <tr *ngFor="let data of filesArr">
+          <td><a class="ab" style="cursor:pointer" (click)="filedetails(data)">{{data.filename}}</a></td>
+          <td width="6%">
+            <button mat-icon-button class="action-button-ed" (click)="deletemultiple(data.docid)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
   </form>
   <div class="form-button-right">
     <!-- <div class="form-button-inner"> -->
