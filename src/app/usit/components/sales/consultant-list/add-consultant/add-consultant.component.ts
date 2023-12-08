@@ -435,9 +435,13 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         const cn = this.consultantForm.get('consultantemail');
         cn.setValue('');
         this.message = 'Record already available with given Mail address';
-        //alertify.error("Record already available with given Mail address");
+        this.dataToBeSentToSnackBar.message =  'Record already available with given Mail address';
+              this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
       } else {
-        //alertify.error("Internal Server Error");
+        this.dataToBeSentToSnackBar.message =  'Internal Server Error';
+              this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
       }
     });
   }
@@ -453,9 +457,13 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
           const cn = this.consultantForm.get('number');
           cn.setValue('');
           this.message = 'Record already available with given Contact Number';
-          //alertify.error("Record already available with given Contact Number");
+          this.dataToBeSentToSnackBar.message =  'Record already available with given Contact Number';
+          this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
         } else {
-          //alertify.error("Internal Server Error");
+          this.dataToBeSentToSnackBar.message =  'Internal Server Error';
+          this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
         }
       });
   }
@@ -469,7 +477,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       var items = file.name.split('.');
       const str = items[0];
       if (str.length > 20) {
-        //alertify.error("File name is toot large, please rename the file before upload, it should be 15 to 20 characters")
+        this.dataToBeSentToSnackBar.message =  'File name is toot large, please rename the file before upload, it should be 15 to 20 characters';
+        this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+        this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
         this.multifiles.nativeElement.value = '';
       }
       const fileSizeInKB = Math.round(file.size / 1024);
@@ -479,7 +489,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       } else {
         this.multifiles.nativeElement.value = '';
         this.uploadedfiles = [];
-        //alertify.error("Files size should not exceed 4 mb")
+        this.dataToBeSentToSnackBar.message =  'Files size should not exceed 4 mb';
+        this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+        this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
       }
       //this.uploadedfiles.push(event.target.files[i]);
     }
@@ -497,8 +509,10 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     if (fileSizeInKB > 4300) {
       this.flg = false;
       this.resume.nativeElement.value = '';
-      this.message = 'Resume size should be less than 2 mb';
-      //alertify.error("Resume size should be less than 2 mb");
+      this.dataToBeSentToSnackBar.message =  'Resume size should be less than 2 mb';
+      this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+      this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
+
       return;
     } else {
       this.message = '';
@@ -515,7 +529,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       this.flg = false;
       this.h1b.nativeElement.value = '';
       this.message = 'H1B size should be less than 2 mb';
-      //alertify.error("H1B size should be less than 2 mb");
+      this.dataToBeSentToSnackBar.message =  'H1B size should be less than 2 mb';
+      this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+      this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
       return;
     } else {
       this.message = '';
@@ -542,7 +558,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       this.flg = false;
       this.dl.nativeElement.value = '';
       this.message = 'DL size should be less than 2 mb';
-      //alertify.error("DL size should be less than 2 mb");
+      this.dataToBeSentToSnackBar.message =  'DL size should be less than 2 mb';
+      this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+      this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
       return;
     } else {
       this.message = '';
