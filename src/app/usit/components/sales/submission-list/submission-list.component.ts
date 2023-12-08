@@ -112,13 +112,13 @@ export class SubmissionListComponent {
 
     this.userid = localStorage.getItem('userid');
     const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSaleSub']) { // sales consultant
+    if (routeData['isSaleSub']) { // sales submission
       this.flag = "sales";
     }
-    else if (routeData['isRecSub']) { // recruiting consutlant
+    else if (routeData['isRecSub']) { // recruiting submission
       this.flag = "Recruiting";
     }
-   
+
     else{
       this.flag = "DomRecruiting";
     }
@@ -133,11 +133,12 @@ export class SubmissionListComponent {
     this.dataSource.sort = this.sort;
   }
 
+
   getAllData() {
     this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
-        this.dataSource.data =  response.data.content;  
+        this.dataSource.data =  response.data.content;
         console.log(this.dataSource.data);
         this.totalItems = response.data.totalElements;
         // for serial-num {}
@@ -169,6 +170,7 @@ export class SubmissionListComponent {
       title: 'Add Submission',
       submissionData: null,
       actionName: 'add-submission',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
@@ -188,13 +190,14 @@ export class SubmissionListComponent {
   editSubmission(submission: any) {
     const actionData = {
       title: 'Update Submission',
-      vendorData: submission,
+      submissionData: submission,
       actionName: 'edit-submission',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
     //dialogConfig.height = '100vh';
-    dialogConfig.panelClass = 'edit-vendor';
+    dialogConfig.panelClass = 'edit-submission';
     dialogConfig.data = actionData;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddSubmissionComponent, dialogConfig);
 
@@ -223,7 +226,7 @@ export class SubmissionListComponent {
     }
     return;
   }
-  
+
   getAllData2(pageIndex = 1) {
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',

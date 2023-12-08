@@ -4,7 +4,7 @@
       "icon": "dashboard",
       "routerLink": "/usit/dashboard"
     },
-   
+
     {
       "text": "VMS",
       "icon": "work",
@@ -21,7 +21,7 @@
         }
       ]
     },
-   
+
     {
       "text": "Technology Tags",
       "icon": "build",
@@ -32,19 +32,19 @@
       "icon": "label",
       "routerLink": "/usit/immigration"
     },
-   
+
     {
       "text": "Employees",
       "icon": "people",
       "routerLink": "/usit/employees"
     },
-    
+
     {
       "text": "Pre-sales",
       "icon": "local_offer",
       "routerLink": "/usit/pre-sales"
     },
-   
+
     {
       "text": "Sales",
       "icon": "attach_money",
@@ -57,12 +57,12 @@
         {
           "text": "Submissions",
           "icon": "assignment",
-          "routerLink": "/usit/sales-submission"
+          "routerLink": "/usit/sales-submissions"
         },
         {
           "text": "Interviews",
           "icon": "chat_bubble_outline",
-          "routerLink": "/usit/sales-interview"
+          "routerLink": "/usit/sales-interviews"
         }
       ]
     },
@@ -83,12 +83,12 @@
         {
           "text": "Submissions",
           "icon": "assignment",
-          "routerLink": "/usit/rec-submission"
+          "routerLink": "/usit/rec-submissions"
         },
         {
           "text": "Interviews",
           "icon": "chat_bubble_outline",
-          "routerLink": "/usit/rec-interview"
+          "routerLink": "/usit/rec-interviews"
         }
       ]
     },

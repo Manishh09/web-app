@@ -69,6 +69,22 @@ const routes: Routes = [
   {
     path: 'dom-consultants', component: ConsultantListComponent,
     data: { isDomConsultant: true }
+  },
+  {
+    path: 'sales-submissions', component: SubmissionListComponent,
+    data: { isSalesSubmission: true }
+  },
+  {
+    path: 'rec-submissions', component: SubmissionListComponent,
+    data: { isRecSubmission: true }
+  },
+  {
+    path: 'sales-interviews', component: InterviewListComponent,
+    data: { isSalesInterview: true }
+  },
+  {
+    path: 'rec-interviews', component: InterviewListComponent,
+    data: { isRecInterview: true }
   }
 ];
 

@@ -11,7 +11,7 @@
         <div class="form">
             <div class="form-column-left">
 
-                <div class="fg-div" formGroupName="requirement" *ngIf="flag!=='sales'">
+                <div class="fg-div" formGroupName="requirement" *ngIf="this.flag === 'Recruiting'">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Requirement</mat-label>
                         <mat-select formControlName="requirementid"  (change)="requirements($event)">
@@ -19,7 +19,7 @@
                                       {{obj[3]}} - {{obj[1]}} ({{obj[2]}})
                             </mat-option>
                         </mat-select>
-                        <mat-error *ngIf="submissionForm.get('requirement.requirementid')!.hasError('required')">Requirement
+                        <mat-error *ngIf="submissionForm.get('requirement.requirementid')?.hasError('required')">Requirement
                             is Required
                           </mat-error>
                     </mat-form-field>
@@ -29,7 +29,7 @@
                     <mat-form-field appearance="fill">
                         <mat-label>Select Consultant</mat-label>
                         <mat-select formControlName="consultantid">
-                            <mat-option *ngFor="let obj of consultdata" [value]="obj[0]">
+                            <mat-option *ngFor="let obj of consultantdata" [value]="obj[0]">
                                 {{obj[1]}} ({{obj[2]}} with {{obj[3]}})
                             </mat-option>
                         </mat-select>
@@ -53,12 +53,8 @@
                 <div style="width: 80%;">
                     <mat-label>Rate Type</mat-label><br>
                     <mat-radio-group formControlName="ratetype" aria-label="Select an option">
-                      <mat-radio-button value="C2C">C2C</mat-radio-button>
-                      <mat-radio-button value="1099">1099</mat-radio-button>
-                      <mat-radio-button value="W2">W2</mat-radio-button>
-                      <mat-radio-button value="Full Time">Full Time</mat-radio-button>
-                      <mat-radio-button value="C2H">C2H</mat-radio-button>
-                      <mat-error *ngIf="submissionForm.get('ratetype')!.hasError('required')"> Rate Type is required</mat-error>
+                      <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.rate"  value="opt.value" (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
+                      <mat-error *ngIf="submissionForm.get('ratetype')!.hasError('required') && isRadSelected"> Rate Type is required</mat-error>
                     </mat-radio-group>
                 </div>
     
@@ -83,10 +79,10 @@
                 <div class="fg-div" formGroupName="vendor">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Company</mat-label>
-                        <mat-select formControlName="vmsid"  (change)="recruiterList($event)">
+                        <mat-select formControlName="vmsid"  (selectionChange)="recruiterList($event)">
                             <mat-option *ngFor="let obj of vendordata"
-                                      [value]="obj[0]">
-                                      {{obj[3]}} - {{obj[1]}} ({{obj[2]}})
+                                      [value]="obj.id">
+                                      {{ obj.company }}
                             </mat-option>
                         </mat-select>
                         <button type="button" matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
@@ -99,7 +95,7 @@
                 <div class="fg-div" formGroupName="recruiter">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Recruiter</mat-label>
-                        <mat-select formControlName="recid"  (change)="recruiterContact($event)">
+                        <mat-select formControlName="recid"  (selectionChange)="recruiterContact($event)">
                             <mat-option *ngFor="let obj of recruiterName"
                                       [value]="obj.id">
                                       {{obj.recruiter}}

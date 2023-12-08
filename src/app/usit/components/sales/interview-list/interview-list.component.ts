@@ -100,13 +100,15 @@ export class InterviewListComponent {
     else if (routeData['isRecInt']) { // recruiting consutlant
       this.flag = "Recruiting";
     }
-   
+
     else{
       this.flag = "DomRecruiting";
     }
     this.hasAcces = localStorage.getItem('role');
     this.getAll();
+
   }
+
 
   getAll() {
     this.userid = localStorage.getItem('userid');
@@ -129,6 +131,7 @@ export class InterviewListComponent {
       title: 'Add Interview',
       interviewData: null,
       actionName: 'add-interview',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
@@ -151,6 +154,7 @@ export class InterviewListComponent {
       title: 'Update Interview',
       interviewData: interview,
       actionName: 'edit-interview',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';

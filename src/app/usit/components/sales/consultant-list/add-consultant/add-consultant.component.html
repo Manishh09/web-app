@@ -47,7 +47,7 @@
         <!-- consulatant Email -->
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="consultantemail" maxlength="25">
+          <input matInput formControlName="consultantemail" maxlength="25" (change)="emailDuplicate($event)">
           <mat-error *ngIf="consultantForm.get('consultantemail')!.hasError('required')">Email
             is
             required</mat-error>
@@ -59,7 +59,7 @@
         <!-- Contact Number-->
         <mat-form-field appearance="fill">
           <mat-label> Contact Number </mat-label>
-          <ngx-mat-intl-tel-input class="intl-input" [preferredCountries]="['in','us']" formControlName="contactnumber"
+          <ngx-mat-intl-tel-input class="intl-input" [preferredCountries]="['in','us']" formControlName="contactnumber" (change)="changeFn($event)"
             [enablePlaceholder]="true" [enableSearch]="true" name="contactnumber" id="intlInput" #contactnumber #pNumb>
           </ngx-mat-intl-tel-input>
           <mat-error *ngIf="consultantForm.get('contactnumber').hasError('required')">Personal
@@ -399,7 +399,7 @@
             Contact Number must be at least 10 characters long</mat-error>
           <mat-error *ngIf="consultantForm.get('refcont').hasError('pattern')">Personal
             Please enter numeric digits without space</mat-error>-->
-        </mat-form-field> 
+        </mat-form-field>
       </div>
     </div>
     <div class="header-container">
