@@ -65,6 +65,10 @@ export class Consultantinfo {
     emprefemail!:string;
     emprefcont!:string;
     number!:any;
+
+    dommaxno!:number;
+    salesmaxno!:number;
+    recmaxno!:number;
     
 }
 

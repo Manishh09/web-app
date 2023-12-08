@@ -163,18 +163,25 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
 
   }
   getFlag(type: string) {
+    //alert(type)
     if (type === 'sales') {
       this.flag = 'sales';
     } else if (type === 'presales') {
       this.flag = 'presales';
-    } else if (type === 'h1transfer') { // for edit
-      this.flag = "H1 Transfer";
+    } else if (type === 'recruiting') { // for edit
+      this.flag = "Recruiting";
     } else {
-      type = 'Recruiting';
+      this.flag  = 'DomRecruiting';
     }
   }
   initConsultantForm(consultantData: Consultantinfo) {
     this.consultantForm = this.formBuilder.group({
+      consultantid : [consultantData ? consultantData.consultantid : ''],
+      consultantno : [consultantData ? consultantData.consultantno : ''],
+      salesmaxno : [consultantData ? consultantData.salesmaxno : ''],
+      dommaxno : [consultantData ? consultantData.dommaxno : ''],
+      recmaxno: [consultantData ? consultantData.recmaxno : ''],
+
       firstname: [consultantData ? consultantData.firstname : '', Validators.required], //['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z]*$")]],
       lastname: [consultantData ? consultantData.lastname : '', Validators.required], ///^[+]\d{12}$   /^[+]\d{12}$   ^[0-9]*$
       consultantemail: [
@@ -196,7 +203,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       priority: [consultantData ? consultantData.priority : ''],
       company: [consultantData ? consultantData.company : '', Validators.required],
       position: [consultantData ? consultantData.position : '', Validators.required],
-      status: [consultantData ? consultantData.status : '', Validators.required],
+      status: [consultantData ? consultantData.status : 'Initiated'],
       experience: [consultantData ? consultantData.experience : '', [Validators.required, Validators.pattern('^[0-9]*$')]],
       hourlyrate: [consultantData ? consultantData.hourlyrate : ''],
       skills: [consultantData ? consultantData.skills : ''],
@@ -250,6 +257,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       const lastname = this.consultantForm.get('lastname');
       const ratetype = this.consultantForm.get('ratetype');
       const currentlocation = this.consultantForm.get('currentlocation');
+
+      
+
       if (res == 'Tagged') {
         this.consultantForm.get('technology.id').setValue('14');
         this.consultantForm.get('qualification.id').setValue('6');
@@ -364,9 +374,13 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     if (this.consultantForm.invalid) {
       this.isRadSelected = true;
       //this.displayFormErrors();
-      alert()
+      //alert()
       return;
     }
+    if (this.flag != 'presales') {
+      this.consultantForm.get("status").setValue("Active");
+    }
+
     const lenkedIn = this.consultantForm.get('linkedin')?.value;
     console.log(JSON.stringify(this.consultantForm.value, null, 2) + " =============== ");
     if (this.flg == true) {
@@ -380,7 +394,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
             this.dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
             this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
             this.onFileSubmit(data.data.consultantid);
-
+            this.dialogRef.close();
           } else {
             this.enableButton = '';
             this.message = data.message;
@@ -670,7 +684,7 @@ export const PRIORITY = [
 ]
 
 export const STATUS = [
-  'Initiated',
+ 
   'Completed',
   'Verified',
   'Tagged',
