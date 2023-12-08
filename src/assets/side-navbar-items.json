@@ -92,12 +92,12 @@
         {
           "text": "Submissions",
           "icon": "assignment",
-          "routerLink": "/usit/submissions"
+          "routerLink": "/usit/sales-submissions"
         },
         {
           "text": "Interviews",
           "icon": "chat_bubble_outline",
-          "routerLink": "/usit/interviews"
+          "routerLink": "/usit/sales-interviews"
         }
       ]
     },
@@ -118,12 +118,12 @@
         {
           "text": "Submissions",
           "icon": "assignment",
-          "routerLink": "/usit/subm"
+          "routerLink": "/usit/rec-submissions"
         },
         {
           "text": "Interviews",
           "icon": "chat_bubble_outline",
-          "routerLink": "/usit/iv"
+          "routerLink": "/usit/rec-interviews"
         }
       ]
     },

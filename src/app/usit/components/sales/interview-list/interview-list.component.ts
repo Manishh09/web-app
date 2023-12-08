@@ -93,21 +93,32 @@ export class InterviewListComponent {
   private dialogServ = inject(DialogService);
 
   ngOnInit(): void {
-    this.flag = this.activatedRoute.snapshot.params['flg'];
-    if (this.flag == 'sales') {
-      this.flag = "sales";
+    this.hasAcces = localStorage.getItem('role');
+    this.userid = localStorage.getItem('userid');
+    this.getFlag();
+    this.getAll();
+  }
+
+  getFlag(){
+    const routeData = this.activatedRoute.snapshot.data;
+    console.log(routeData);
+    if (routeData['isSalesInterview']) { 
+      this.flag = "Sales";
+     
     }
-    else {
+    else { 
       this.flag = "Recruiting";
     }
-    this.hasAcces = localStorage.getItem('role');
-    this.getAll();
+
+    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
+    //   this.dataTableColumns.splice(15,0,"AddedBy")
+    // }
   }
 
 
   getAll() {
     this.userid = localStorage.getItem('userid');
-    this.interviewServ.getPaginationlist('sales', this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
+    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data = response.data.content;
@@ -125,6 +136,7 @@ export class InterviewListComponent {
       title: 'Add Interview',
       interviewData: null,
       actionName: 'add-interview',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
@@ -147,6 +159,7 @@ export class InterviewListComponent {
       title: 'Update Interview',
       interviewData: interview,
       actionName: 'edit-interview',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';

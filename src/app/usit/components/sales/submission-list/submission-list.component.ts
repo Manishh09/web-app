@@ -110,17 +110,9 @@ export class SubmissionListComponent {
   page: number = 1;
 
   ngOnInit(): void {
-
-    this.flag = this.activatedRoute.snapshot.params['flg'];
-    this.userid = localStorage.getItem('userid');
-    if (this.flag == 'sales') {
-      this.flag = "sales";
-    }
-    else {
-      this.flag = "Recruiting";
-    }
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
+    this.getFlag();
     this.getAllData();
   }
 
@@ -128,8 +120,21 @@ export class SubmissionListComponent {
     this.dataSource.sort = this.sort;
   }
 
+  getFlag(){
+    const routeData = this.activatedRoute.snapshot.data;
+    if (routeData['isSalesSubmission']) { 
+      this.flag = "Sales";
+    } else { 
+      this.flag = "Recruiting";
+    }
+
+    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
+    //   this.dataTableColumns.splice(15,0,"AddedBy")
+    // }
+  }
+
   getAllData() {
-    this.submissionServ.getsubmissiondataPagination("sales", this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
+    this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data =  response.data.content;  
@@ -164,6 +169,7 @@ export class SubmissionListComponent {
       title: 'Add Submission',
       submissionData: null,
       actionName: 'add-submission',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
@@ -183,13 +189,14 @@ export class SubmissionListComponent {
   editSubmission(submission: any) {
     const actionData = {
       title: 'Update Submission',
-      vendorData: submission,
+      submissionData: submission,
       actionName: 'edit-submission',
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
     //dialogConfig.height = '100vh';
-    dialogConfig.panelClass = 'edit-vendor';
+    dialogConfig.panelClass = 'edit-submission';
     dialogConfig.data = actionData;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddSubmissionComponent, dialogConfig);
 

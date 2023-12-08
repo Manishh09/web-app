@@ -36,7 +36,8 @@ import {
   takeUntil,
 } from 'rxjs';
 import { InterviewService } from 'src/app/usit/services/interview.service';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import { InterviewInfo } from 'src/app/usit/models/interviewinfo';
 
 @Component({
   selector: 'app-add-interview',
@@ -77,78 +78,71 @@ export class AddInterviewComponent implements OnInit {
   submitted = false;
   selectOptionObj = {
     timeZone: TIME_ZONE,
-    interviewRound: INTERVIEW_ROUND,
-    interviewMode: INTERVIEW_MODE,
-    status: STATUS,
+    radioOptions: RADIO_OPTIONS,
   };
+  entity: any;
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
+  isRadSelected: any;
+  isModeRadSelected: any;
+  isStatusRadSelected: any;
+
+  get frm() {
+    return this.interviewForm.controls;
+  }
 
   ngOnInit(): void {
-    this.flag = this.activatedRoute.snapshot.params['flg'];
-    if (this.flag == 'sales') {
-      this.flag = "sales";
+    console.log(this.data);
+    if (this.data && this.data.flag) {
+      this.getFlag(this.data.flag.toLocaleLowerCase());
     }
-    else {
-      this.flag = "Recruiting";
-    }
-    if(this.data.actionName === "edit-interview"){
-      this.bindFormControlValueOnEdit();
-    }
-    this.initializeSubmissionForm();
-  }
+    this.getsubdetails(this.flag);
+    if (this.data.actionName === "edit-interview") {
+      this.initializeInterviewForm(new InterviewInfo());
+      this.interviewServ.getEntity(this.data.interviewData.intrid).subscribe(
+        (response: any) => {
+          this.entity = response.data;
+          console.log(this.entity);
 
-  private bindFormControlValueOnEdit() {
-    // snackbar
-    const dataToBeSentToSnackBar: ISnackBarData = {
-      message: '',
-      duration: 2500,
-      verticalPosition: 'top',
-      horizontalPosition: 'center',
-      direction: 'above',
-      panelClass: ['custom-snack-success'],
-    };
-    this.initializeSubmissionForm();
-    // api call
-    this.interviewServ.getEntity(this.data.interviewData.intrid).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        if (response && response.interviewData) {
-          this.interviewObj = response.interviewData;
-          //init form and  update control values on edit
-          // this.initializeSubmissionForm(this.interviewObj);
+          this.initializeInterviewForm(response.data);
         }
-      }, error: err =>{
-        dataToBeSentToSnackBar.message = err.message;
-        dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-      }
-    });
+      );
+    } else {
+      this.initializeInterviewForm(new InterviewInfo());
+    }
+    
   }
 
+  getFlag(type: string){
+    if (type === 'sales') {
+      this.flag = 'sales';
+    } else {
+      this.flag = 'Recruiting';
+    }
+  }
 
-  private initializeSubmissionForm() {
+  
 
+
+  private initializeInterviewForm(interviewData: InterviewInfo) {
+    console.log('Interview Data:', interviewData);
     this.interviewForm = this.formBuilder.group({
 
       submission: this.formBuilder.group({
-        submissionid: ['', [Validators.required]],
+        submissionid: [interviewData ? interviewData.submission.submissionid : '', [Validators.required]],
       }),
-      flg: this.flag,
-      interviewdate: ['', Validators.required],
-      timezone: ['', Validators.required],
-      round: ['', Validators.required],
-      mode: ['', Validators.required],
-      feedback: ['', Validators.required],
-      interviewstatus: ['', Validators.required],
+      interviewflg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
+      interviewdate: [interviewData ? interviewData.interviewdate : '', Validators.required],
+      timezone: [interviewData ? interviewData.timezone : '', Validators.required],
+      round: [interviewData ? interviewData.round : '', Validators.required],
+      mode: [interviewData ? interviewData.mode : '', Validators.required],
+      feedback: [interviewData ? interviewData.feedback : '', Validators.required],
+      interviewstatus: [interviewData ? interviewData.interviewstatus : '', Validators.required],
       users: this.formBuilder.group({
         userid: localStorage.getItem('userid'),
       }),
     });
-    // if (this.data.actionName === 'edit-interview') {
-      
-    // }
-    // this.validateControls(this.data.actionName);
+    console.log('Form Values:', this.interviewForm.value);
   }
 
 
@@ -165,6 +159,11 @@ export class AddInterviewComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    if (this.interviewForm.invalid) {
+      this.isRadSelected = true;
+      this.displayFormErrors();
+      return;
+    }
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 2500,
@@ -174,14 +173,10 @@ export class AddInterviewComponent implements OnInit {
       panelClass: ['custom-snack-success'],
     };
 
-    if (this.interviewForm.invalid) {
-      this.displayFormErrors();
-      return;
-    }
     const saveReqObj = this.getSaveData();
     console.log('form.value  ===', saveReqObj);
     this.interviewServ
-      .addORUpdateInterview(saveReqObj, this.data.actionName)
+      .registerEntity(saveReqObj)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: (data: any) => {
@@ -217,10 +212,27 @@ export class AddInterviewComponent implements OnInit {
     });
   }
 
-  getSaveData() {}
+  getSaveData() {
+    if(this.data.actionName === 'edit-interview'){
+      return {...this.entity, ...this.interviewForm.value}
+    }
+    return this.interviewForm.value;
+  }
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  onRadioChange(event: MatRadioChange){
+    this.isRadSelected =  event.value
+  }
+
+  onModeRadioChange(event: MatRadioChange){
+    this.isModeRadSelected =  event.value
+  }
+
+  onStatusRadioChange(event: MatRadioChange){
+    this.isStatusRadSelected =  event.value
   }
 }
 
@@ -228,15 +240,24 @@ export const TIME_ZONE = [
   'AST', 'EST', 'EDT', 'CST', 'CDT', 'MST', 'MDT', 'PST', 'PDT', 'AKST', 'AKDT', 'HST', 'HAST', 'HADT', 'SST', 'SDT', 'CHST'
 ] as const;
 
-export const INTERVIEW_ROUND = ['First (L1)', 'Second (L2)', 'Third (Client)'] as const;
-
-export const INTERVIEW_MODE = ['F2F', 'Skype', 'Telephonic', 'Webex'] as const;
-
-export const STATUS = [
-  'Schedule',
-  'Closed',
-  'Hold',
-  'Rejected',
-  'Selected',
-  'Back Out'
-] as const;
+export const RADIO_OPTIONS = {
+  interviewround: [
+    {value: 'First (L1)', id: 1 , selected: true},
+    {value: 'Second (L2)', id: 2},
+    {value: 'Third (Client)', id: 3},
+  ],
+  interviewmode: [
+    {value: 'F2F', id: 1},
+    {value: 'Skype', id: 2},
+    {value: 'Telephonic', id: 3},
+    {value: 'Webex', id: 4},
+  ],
+  interviewstatus: [
+    {value: 'Schedule', id: 1},
+    {value: 'Closed', id: 2},
+    {value: 'Hold', id: 3},
+    {value: 'Rejected', id: 4},
+    {value: 'Selected', id: 5},
+    {value: 'Back Out', id: 6},
+  ]
+}
