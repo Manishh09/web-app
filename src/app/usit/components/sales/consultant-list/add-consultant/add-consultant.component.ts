@@ -280,7 +280,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         projectavailabity.clearValidators();
         availabilityforinterviews.clearValidators();
         position.clearValidators();
-        experience.clearValidators();
+        experience.clearValidators();contactnumber
         firstname.clearValidators();
         lastname.clearValidators();
         ratetype.clearValidators();
@@ -358,7 +358,8 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
 
   address = '';
   handleAddressChange(address: any) {
-    this.address = address.formatted_address;
+    // this.address = address.formatted_address;
+    this.consultantForm.get('currentlocation').setValue(address.formatted_address);
   }
 
   getCompanies() {
@@ -386,7 +387,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     if (this.consultantForm.invalid) {
       this.isRadSelected = true;
       this.displayFormErrors();
-      //alert()
+      alert()
       return;
     }
     if (this.flag != 'presales') {
@@ -404,6 +405,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         this.entity.priority = formVal.priority;
         this.entity.position = formVal.position;
         this.entity.status = formVal.status;
+        this.entity.contactnumber = formVal.contactnumber;
         this.entity.hourlyrate = formVal.hourlyrate;
         this.entity.skills = formVal.skills;
         this.entity.experience = formVal.experience;
@@ -506,8 +508,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   ctnumber!: any;
   changeFn(event: any) {
     const number = event.target.value;
+    alert(this.consultantForm.contactnumber);
     this.consultantServ
-      .duplicatecheck(this.ctnumber.internationalNumber)
+      .duplicatecheck(this.consultantForm.contactnumber)
       .subscribe((response: any) => {
         if (response.status == 'success') {
           this.message = '';
@@ -801,7 +804,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
                 //  this.getAllEmployees();
                   this.dataToBeSentToSnackBar.message =
                     'File Deleted successfully';
-                    this.dialogRef.close();
+                    // this.dialogRef.close();
                 } else {
                   this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
                   this.dataToBeSentToSnackBar.message = 'Record Deletion failed';
@@ -853,7 +856,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
             //  this.getAllEmployees();
               this.dataToBeSentToSnackBar.message =
                 'File Deleted successfully';
-                this.dialogRef.close();
+                // this.dialogRef.close();
             } else {
               this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
               this.dataToBeSentToSnackBar.message = 'Record Deletion failed';

@@ -243,7 +243,7 @@
         <!-- Location - HeadQuarters -->
         <mat-form-field appearance="fill">
           <mat-label>Location</mat-label>
-          <input matInput formControlName="" maxlength="250" ngx-gp-autocomplete [options]='options'
+          <input matInput formControlName="currentlocation" maxlength="250" ngx-gp-autocomplete [options]='options'
             (onAddressChange)="handleAddressChange($event)">
           <mat-error *ngIf="consultantForm.get('currentlocation')!.hasError('required')">Location
             Name is required</mat-error>
@@ -500,7 +500,7 @@
               (click)="downloadfile(entity.consultantid,entity.resume,'resume')">{{entity.resume}}</a>
           </td>
           <td *ngIf="entity.resume !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'resume')">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'resume')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
@@ -510,7 +510,7 @@
               (click)="downloadfile(entity.consultantid,entity.h1bcopy,'h1bcopy')">{{entity.h1bcopy}}</a>
           </td>
           <td *ngIf="entity.h1bcopy !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'h1bcopy')">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'h1bcopy')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
@@ -521,7 +521,7 @@
               (click)="downloadfile(entity.consultantid,entity.dlcopy,'dlcopy')">{{entity.dlcopy}}</a>
           </td>
           <td *ngIf="entity.dlcopy !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'dlcopy')">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'dlcopy')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
@@ -529,7 +529,7 @@
         <tr *ngFor="let data of filesArr">
           <td><a class="ab" style="cursor:pointer" (click)="filedetails(data)">{{data.filename}}</a></td>
           <td width="6%">
-            <button mat-icon-button class="action-button-ed" (click)="deletemultiple(data.docid)">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletemultiple(data.docid)">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
