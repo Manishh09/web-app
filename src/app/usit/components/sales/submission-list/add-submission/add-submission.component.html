@@ -53,7 +53,7 @@
                 <div style="width: 80%;">
                     <mat-label>Rate Type</mat-label><br>
                     <mat-radio-group formControlName="ratetype" aria-label="Select an option">
-                      <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.rate"  value="opt.value" (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
+                      <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.rate"  [value]="opt.value" (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
                       <mat-error *ngIf="submissionForm.get('ratetype')!.hasError('required') && isRadSelected"> Rate Type is required</mat-error>
                     </mat-radio-group>
                 </div>

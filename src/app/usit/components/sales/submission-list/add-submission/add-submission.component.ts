@@ -116,7 +116,6 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    
     this.getCompany();
     this.getConsultant(this.flag)
     if (this.data && this.data.flag) {
@@ -127,7 +126,6 @@ export class AddSubmissionComponent implements OnInit{
       this.submissionServ.getsubdetailsbyid(this.data.submissionData.submissionid).subscribe(
         (response: any) => {
           this.entity = response.data;
-          console.log(this.entity);
           this.initilizeSubmissionForm(response.data);
         }
       );
@@ -189,6 +187,7 @@ export class AddSubmissionComponent implements OnInit{
       projectlocation: [submissionData ? submissionData.projectlocation : '', [Validators.required]],
       submissionflg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
     });
+    this.submissionForm.patchValue(submissionData);
     this.validateControls();
   } 
 
@@ -269,16 +268,13 @@ export class AddSubmissionComponent implements OnInit{
   flg!: any;
   getCompany() {
     this.flg = localStorage.getItem('department');
-    console.log(this.flg);
     const role = localStorage.getItem('role');
     if (role == 'Super Admin' || role == 'Admin' || role == 'Manager') {
       this.flg = "all";
     }
     this.submissionServ.getCompanies(this.flg).subscribe(
       (response: any) => {
-        console.log('Response:', response);
         this.vendordata = response.data;
-         console.log(response.data)
       }
     )
   }
@@ -405,7 +401,7 @@ export const SOURCE_TYPE = [
 
 export const RADIO_OPTIONS = {
   rate: [
-    {value: 'C2C', id: 1 , selected: true},
+    {value: 'C2C', id: 1 },
     {value: '1099', id: 2},
     {value: 'W2', id: 3},
     {value: 'Full Time', id: 4},

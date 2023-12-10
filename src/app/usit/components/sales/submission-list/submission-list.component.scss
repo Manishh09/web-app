@@ -273,3 +273,19 @@ ul.breadcrumb li:last-child {
   color: black;
   pointer-events: none;
 }
+
+.subno, .consultant-name {
+  cursor: pointer;
+  color: #0275d8;
+}
+
+.submission-icon , .interview-icon {
+  cursor: pointer;
+  color: #3f51b5;
+}
+
+.navlink {
+  cursor: pointer;
+  margin-bottom: 2px;
+  color: #0275d8;
+}
