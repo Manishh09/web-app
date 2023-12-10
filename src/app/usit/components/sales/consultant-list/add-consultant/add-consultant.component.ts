@@ -385,7 +385,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     // stop here if consultantForm is invalid
     if (this.consultantForm.invalid) {
       this.isRadSelected = true;
-      //this.displayFormErrors();
+      this.displayFormErrors();
       //alert()
       return;
     }
