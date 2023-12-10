@@ -69,12 +69,23 @@ tbody{
   padding-right: 24px;
 
 }
-.mat-column-Name {
 
+
+.mat-column-HeadQuarter{
+  width: 62px !important;
+}
+.mat-column-Company{
+  width: 72px !important;
+}
+
+.mat-column-Name {
   border-right: 1px solid lightgray;
 
-
 }
+.mat-column-ApproveOrReject{
+  width: 82px !important;
+}
+
 .mat-column-SerialNum, .mat-column-Company,
  .mat-column-HeadQuarter,
   .mat-column-Fed-Id,

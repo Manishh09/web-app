@@ -17,6 +17,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { HttpInterceptorService } from './core/interceptors/httpInterceptor.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 
   ],
   providers: [
+    {
+      provide: LocationStrategy, useClass: HashLocationStrategy,
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpInterceptorService,

@@ -36,6 +36,7 @@ import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AddconsultantComponent } from './add-consultant/add-consultant.component';
+import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 @Component({
   selector: 'app-consultant-list',
   standalone: true,
@@ -81,7 +82,6 @@ export class ConsultantListComponent
     'Date',
     'Id',
     'Name',
-    'TrackSI',
     'Email',
     'ContactNumber',
     'Visa',
@@ -92,7 +92,6 @@ export class ConsultantListComponent
     'Relocation',
     'Rate',
     'Priority',
-
     'Status',
     'Action',
   ];
@@ -139,7 +138,7 @@ export class ConsultantListComponent
   getFlag(){
     const routeData = this.activatedRoute.snapshot.data;
     if (routeData['isSalesConsultant']) { // sales consultant
-      this.flag = "Sales";
+      this.flag = "sales";
       this.ttitle = "back to pre sales";
       this.ttitle1 = "move to sales";
       this.tclass = "move_item";
@@ -147,14 +146,17 @@ export class ConsultantListComponent
     else if (routeData['isRecConsultant']) { // recruiting consutlant
       this.flag = "Recruiting";
       this.ttitle = "move to sales";
-      this.ttitle1 = "back to pre sales";
-      this.tclass = "move_item";
+      //this.ttitle1 = "back to pre sales";
+      //this.tclass = "move_item";
     }
-    else { // presales
+    else if (routeData['isPreConsultant']) { // presales
       this.flag = "presales";
       this.ttitle = "move to sales";
       this.ttitle1 = "back to pre sales";
       this.tclass = "bi bi-arrow-right-square-fill";
+    }
+    else{
+      this.flag = "DomRecruiting";
     }
 
     if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
@@ -180,7 +182,7 @@ export class ConsultantListComponent
 
     return this.consultantServ
       .getAllConsultantData(
-        'sales',
+        this.flag,
         this.hasAcces,
         this.userid,
         pageIndex,
@@ -192,7 +194,7 @@ export class ConsultantListComponent
         next: (response: any) => {
           this.consultant = response.data.content;
           this.dataSource.data = response.data.content;
-          console.log(this.dataSource.data);
+        //  console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
@@ -223,7 +225,7 @@ export class ConsultantListComponent
 
     return this.consultantServ
       .getAllConsultantData(
-        'sales',
+        this.flag,
         this.hasAcces,
         this.userid,
         pageIndex,
@@ -449,7 +451,58 @@ export class ConsultantListComponent
   /**
    * Delete
    */
-  deleteConsultant(consultant: any) {}
+  deleteConsultant(consultant: any) {
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: consultant,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = 'fit-content';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'delete-consultant';
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
+
+    // call delete api after  clicked 'Yes' on dialog click
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: '',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+
+          this.consultantServ.deleteEntity(consultant.consultantid).pipe(takeUntil(this.destroyed$))
+          .subscribe({next:(response: any) => {
+            if (response.status == 'success') {
+              this.getAllData(this.currentPageIndex + 1);
+              dataToBeSentToSnackBar.message = 'Consultant Deleted successfully';
+            } else {
+              dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              dataToBeSentToSnackBar.message = 'Record Deletion failed';
+            }
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }, error: err => {
+            dataToBeSentToSnackBar.message = err.message;
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }});
+        }
+      },
+    });
+  }
   // status update
   onStatusUpdate(consultant: any) {
     const dataToBeSentToDailog = {

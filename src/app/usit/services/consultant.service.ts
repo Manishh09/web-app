@@ -31,11 +31,11 @@ export class ConsultantService {
   }
 
   public getSkilldata(id: number) {
-    return this.http.get( "technology/getskillsbyid/" + id);
+    return this.http.get( "consultant/technology/getskillsbyid/" + id);
   }
 
   public getCompanies() {
-    return this.http.get( "company/allcompanies");
+    return this.http.get( "consultant/company/allcompanies");
   }
   getConsultantList() {
     return this.http.get( "consultant/all");
@@ -109,20 +109,15 @@ export class ConsultantService {
     return this.http.get( "requirement/getrequirements");
   }
   public getvisa() {
-    return this.http.get( "visa/visas");
+    return this.http.get( "consultant/visa/visas");
   }
   public gettech() {
-    return this.http.get( "technology/tech");
-  }
-  getcitydetails() {
-    return this.http.get( "city/city");
-  }
-  getstatedetails() {
-    return this.http.get( "states/states");
+    return this.http.get( "consultant/technology/tech");
   }
 
+
   getQualification() {
-    return this.http.get( "qualification/all");
+    return this.http.get( "consultant/qualification/all");
   }
 
   // for report

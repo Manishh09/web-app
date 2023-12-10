@@ -61,7 +61,7 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
       {
         next:(response: any) => {
           this.qualificationList = response.data;
-          console.log("qualifications",this.qualificationList);
+        //  console.log("qualifications",this.qualificationList);
           this.dataSource.data = response.data;
         },
         error: (err)=> console.log(err)

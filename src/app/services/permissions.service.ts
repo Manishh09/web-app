@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable,inject } from '@angular/core';
 import { Observable, delay, of, tap } from 'rxjs';
 import { Employee } from '../usit/models/employee';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PrivilegesService } from './privileges.service';
 import { RoleService } from './role.service';
+import { ApiService } from '../core/services/api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,9 @@ export class PermissionsService {
   user = new Employee();
   selectedRoles: string[] = [];
   id!: any;
-  private baseUrl = "http://69.216.19.140:8080/usit/";
+  // private baseUrl = "http://69.216.19.140:8080/usit/";
+  //private baseUrl = "http://localhost:1122/auth/";
+  private apiServ = inject(ApiService);
 
   private userPrivileges: PrivilegesService[] = [];
  // private baseUrl: any = environment.API_BASE_URL;
@@ -116,7 +119,7 @@ export class PermissionsService {
 
   logOut() {
     const userId = localStorage.getItem('userid');
-    return this.http.get(this.baseUrl + "login/logout/" + userId);
+    return this.http.get(this.apiServ.apiUrl + "auth/login/logout/" + userId);
   }
 
   getCurrentURL(): string {

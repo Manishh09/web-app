@@ -34,4 +34,9 @@ export class Employee {
   accno!: string;
   ifsc!: string;
   branch!: string;
+  resume!: any;
+  pan!: any;
+  bpassbook!: any;
+  aadhar!: any;
+  alternatenumber!: any;
 }

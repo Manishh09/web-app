@@ -61,6 +61,7 @@ export class AddVisaComponent {
 
   private initializeVisaForm(data : any) {
     this.visaForm = this.formBuilder.group({
+      vid : [data ? data.vid : ''],
       visastatus: [data ? data.visastatus : '', Validators.required],
       description: [data ? data.description : ''],
     });
@@ -89,6 +90,7 @@ export class AddVisaComponent {
     const addObj = {
       addedby: userId,
       updatedby: userId,
+      vid : this.visaForm.get('vid')!.value,
       visastatus: this.visaForm.get('visastatus')!.value,
       description: this.visaForm.get('description')!.value
     };
@@ -103,7 +105,6 @@ export class AddVisaComponent {
     this.visaServ.addOrUpdateVisa(saveObj, this.data.actionName).subscribe(
       {
       next:(data: any) => {
-
       if (data.status == 'success') {
         dataToBeSentToSnackBar.message =  this.data.actionName === 'add-visa' ?
         'Visa added successfully!' :' Visa updated successfully!';

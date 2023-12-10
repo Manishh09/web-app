@@ -18,7 +18,7 @@
 </div>
 <mat-card class="center-card">
 
-  <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="employee-form">
+  <form [formGroup]="employeeForm" class="employee-form">
     <div class="form">
       <div class="form-column-left" *ngIf="employeeForm.controls">
         <!-- Full Name -->
@@ -29,8 +29,8 @@
             Name is required</mat-error>
           <mat-error *ngIf="employeeForm.get('fullname').hasError('minlength')">Full Name must be at least 6
             characters</mat-error>
-            <mat-error *ngIf="employeeForm.get('fullname').hasError('maxlength')">Full Name must not exceed 100
-              characters</mat-error>
+          <mat-error *ngIf="employeeForm.get('fullname').hasError('maxlength')">Full Name must not exceed 100
+            characters</mat-error>
         </mat-form-field>
         <!-- Psuedo Name -->
         <mat-form-field appearance="fill">
@@ -61,11 +61,11 @@
         <mat-form-field appearance="fill">
           <mat-label>Personal Contact Number </mat-label>
           <!-- <input matInput formControlName="personalcontactnumber"> -->
-          <ngx-mat-intl-tel-input class="intl-input"  formControlName="personalcontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
-          name="personalcontactnumber" id="intlInput" #personalcontactnumber #pNumb>
-        </ngx-mat-intl-tel-input>
-          <mat-error
-            *ngIf="employeeForm.get('personalcontactnumber').hasError('required')">Personal
+          <ngx-mat-intl-tel-input class="intl-input" [preferredCountries]="['in','us']"
+            formControlName="personalcontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
+            name="personalcontactnumber" id="intlInput" #personalcontactnumber #pNumb>
+          </ngx-mat-intl-tel-input>
+          <mat-error *ngIf="employeeForm.get('personalcontactnumber').hasError('required')">Personal
             Contact
             Number is required</mat-error>
         </mat-form-field>
@@ -73,48 +73,48 @@
         <mat-form-field appearance="fill">
           <mat-label>Company Contact Number</mat-label>
           <!-- <input matInput formControlName="companycontactnumber"> -->
-          <ngx-mat-intl-tel-input class="intl-input" formControlName="companycontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
-          name="companycontactnumber" id="intlInputCompany" #companycontactnumber>
-        </ngx-mat-intl-tel-input>
+          <ngx-mat-intl-tel-input [preferredCountries]="['in','us']" class="intl-input"
+            formControlName="companycontactnumber" [enablePlaceholder]="true" [enableSearch]="true"
+            name="companycontactnumber" id="intlInputCompany" #companycontactnumber>
+          </ngx-mat-intl-tel-input>
         </mat-form-field>
         <!-- Joining Date -->
         <mat-form-field appearance="fill">
           <mat-label>Joining Date</mat-label>
 
-          <input matInput [matDatepicker]="datepicker"
-            formControlName="joiningdate" placeholder="MM/DD/YYYY">
+          <input matInput [matDatepicker]="datepicker" formControlName="joiningdate" placeholder="MM/DD/YYYY">
 
           <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
           <mat-datepicker #datepicker>
 
           </mat-datepicker>
-          <mat-error
-            *ngIf="employeeForm.controls.joiningdate.hasError('required')">Joining Date Required</mat-error>
+          <mat-error *ngIf="employeeForm.controls.joiningdate.hasError('required')">Joining Date Required</mat-error>
         </mat-form-field>
         <!-- Releiving Date -->
         <mat-form-field appearance="fill">
           <mat-label>Releiving Date</mat-label>
 
-          <input matInput [matDatepicker]="datepicker2"
-            formControlName="relievingdate">
+          <input matInput [matDatepicker]="datepicker2" formControlName="relievingdate">
 
           <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
           <mat-datepicker #datepicker2>
           </mat-datepicker>
-          <mat-error
-            *ngIf="employeeForm.controls.relievingdate.hasError('relievingBeforeJoining')">Relieving date cannot be earlier than joining date.</mat-error>
+          <mat-error *ngIf="employeeForm.controls.relievingdate.hasError('relievingBeforeJoining')">Relieving date
+            cannot be earlier than joining date.</mat-error>
         </mat-form-field>
         <!-- Aadhar -->
         <mat-form-field appearance="fill">
           <mat-label>Aadhar Number</mat-label>
           <input matInput formControlName="aadharno" maxlength="12" (keypress)="onlyNumberKey($event)">
           <mat-error *ngIf="employeeForm.get('aadharno').hasError('required')">Aadhar Number is required</mat-error>
-          <mat-error *ngIf="employeeForm.get('aadharno').hasError('pattern')">Aadhar Number must be exactly 12 digits</mat-error>
+          <mat-error *ngIf="employeeForm.get('aadharno').hasError('pattern')">Aadhar Number must be exactly 12
+            digits</mat-error>
         </mat-form-field>
         <!-- PAN -->
         <mat-form-field appearance="fill">
           <mat-label>PAN Number</mat-label>
-          <input matInput formControlName="panno" placeholder="Ex: ABCDE1234F" maxlength="10" (keypress)="onlyAlphanumericKey($event)">
+          <input matInput formControlName="panno" placeholder="Ex: ABCDE1234F" maxlength="10"
+            (keypress)="onlyAlphanumericKey($event)">
           <mat-error *ngIf="employeeForm.get('panno').hasError('required')">PAN Number is required</mat-error>
           <mat-error *ngIf="employeeForm.get('panno').hasError('pattern')">Invalid PAN Number</mat-error>
         </mat-form-field>
@@ -154,11 +154,9 @@
         <!--Select Department -->
         <mat-form-field appearance="fill">
           <mat-label>Select Department</mat-label>
-          <input matInput formControlName="department"
-            [matAutocomplete]="departmentAuto">
+          <input matInput formControlName="department" [matAutocomplete]="departmentAuto">
           <mat-autocomplete #departmentAuto="matAutocomplete">
-            <mat-option *ngFor="let option of departmentOptions"
-              [value]="option">
+            <mat-option *ngFor="let option of departmentOptions" [value]="option">
               {{ option }}
             </mat-option>
           </mat-autocomplete>
@@ -170,23 +168,21 @@
           <mat-label>Select Role</mat-label>
           <input matInput formGroupName="role" [matAutocomplete]="roleAuto">
           <mat-autocomplete #roleAuto="matAutocomplete">
-            <mat-option *ngFor="let option of roleOptions"
-              [value]="option.roleid">
+            <mat-option *ngFor="let option of roleOptions" [value]="option.roleid">
               {{ option.rolename }}
             </mat-option>
           </mat-autocomplete>
           <mat-error *ngIf="employeeForm.get('role.roleid').hasError('required')">Role is
             Required</mat-error>
         </mat-form-field>
-         <!-- Select Role with MatSelect-->
+        <!-- Select Role with MatSelect-->
         <div formGroupName="role" class="select-role-field">
           <mat-form-field appearance="fill">
             <mat-label>Select Role</mat-label>
-            <mat-select  name="role" formControlName="roleid">
-              <mat-option *ngFor="let option of roleOptions"
-              [value]="option.roleid">
-              {{ option.rolename }}
-            </mat-option>
+            <mat-select name="role" formControlName="roleid">
+              <mat-option *ngFor="let option of roleOptions" [value]="option.roleid">
+                {{ option.rolename }}
+              </mat-option>
             </mat-select>
             <mat-error *ngIf="employeeForm.get('role.roleid').hasError('required')">Role is
               Required</mat-error>
@@ -194,12 +190,11 @@
         </div>
 
         <!-- Manager with MatAutoComplete-->
-        <mat-form-field *ngIf="false"
-          appearance="fill">
+        <mat-form-field *ngIf="false" appearance="fill">
           <mat-label>Select Manager</mat-label>
-          <input matInput formControlName="manager" [matAutocomplete]="roleAuto" >
+          <input matInput formControlName="manager" [matAutocomplete]="roleAuto">
           <mat-autocomplete #roleAuto="matAutocomplete">
-            <mat-option *ngFor="let option of managerOptions"  (onSelectionChange)="managerid(option[0])"
+            <mat-option *ngFor="let option of managerOptions" (onSelectionChange)="managerid(option[0])"
               [value]="option[0]">
               {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
             </mat-option>
@@ -208,52 +203,46 @@
             is Required</mat-error>
         </mat-form-field>
         <!-- Manager with MatSelect-->
-      <mat-form-field *ngIf="managerflg" appearance="fill">
-        <mat-label>Select Manager</mat-label>
-        <!-- <input matInput formControlName="manager" [matAutocomplete]="roleAuto" >
+        <mat-form-field *ngIf="managerflg" appearance="fill">
+          <mat-label>Select Manager</mat-label>
+          <!-- <input matInput formControlName="manager" [matAutocomplete]="roleAuto" >
         <mat-autocomplete #roleAuto="matAutocomplete"> -->
           <mat-select formControlName="manager" (selectionChange)="managerid($event)">
-            <mat-option *ngFor="let option of managerOptions"
-              [value]="option[0]">
+            <mat-option *ngFor="let option of managerOptions" [value]="option[0]">
               {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
             </mat-option>
           </mat-select>
-        <!-- </mat-autocomplete> -->
+          <!-- </mat-autocomplete> -->
           <mat-error *ngIf="employeeForm.get('manager').hasError('required')">Manager
             is Required
           </mat-error>
-      </mat-form-field>
+        </mat-form-field>
         <!-- Team Lead  -->
-        <mat-form-field *ngIf="false"
-          appearance="fill">
+        <mat-form-field *ngIf="false" appearance="fill">
           <mat-label>Select Team Lead</mat-label>
-          <input matInput formControlName="teamlead"
-            [matAutocomplete]="roleAuto">
+          <input matInput formControlName="teamlead" [matAutocomplete]="roleAuto">
           <mat-autocomplete #roleAuto="matAutocomplete">
-            <mat-option *ngFor="let option of teamLeadOptions"
-              [value]="option[0]">
+            <mat-option *ngFor="let option of teamLeadOptions" [value]="option[0]">
               {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
             </mat-option>
           </mat-autocomplete>
           <!-- <mat-error *ngIf="employeeForm.get('teamlead')!.hasError('required')">Manager
             is Required</mat-error> -->
         </mat-form-field>
-        <mat-form-field *ngIf="teamleadflg"
-        appearance="fill">
-        <mat-label>Select Team Lead</mat-label>
-        <!-- <input matInput formControlName="teamlead"
+        <mat-form-field *ngIf="teamleadflg" appearance="fill">
+          <mat-label>Select Team Lead</mat-label>
+          <!-- <input matInput formControlName="teamlead"
           [matAutocomplete]="roleAuto">
         <mat-autocomplete #roleAuto="matAutocomplete"> -->
           <mat-select formControlName="teamlead">
-          <mat-option *ngFor="let option of teamLeadOptions"
-            [value]="option[0]">
-            {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
-          </mat-option>
-        </mat-select>
-        <!-- </mat-autocomplete> -->
-        <!-- <mat-error *ngIf="employeeForm.get('teamlead')!.hasError('required')">Manager
+            <mat-option *ngFor="let option of teamLeadOptions" [value]="option[0]">
+              {{ option[1] }} {{option[2] ? ('- ' + option[2]) : ''}}
+            </mat-option>
+          </mat-select>
+          <!-- </mat-autocomplete> -->
+          <!-- <mat-error *ngIf="employeeForm.get('teamlead')!.hasError('required')">Manager
           is Required</mat-error> -->
-      </mat-form-field>
+        </mat-form-field>
         <!-- <mat-form-field *ngIf="employeeForm.get('role')!.value === 'Team Lead'"
           appearance="fill">
           <mat-label>Select Manager</mat-label>
@@ -269,51 +258,57 @@
         </mat-form-field> -->
       </div>
     </div>
-
     <div class="header-container-upload-documents">
       <span class="header-text">Upload Documents</span>
     </div>
+
     <div class="upload-documents">
       <div class="upload-documents-left">
         <!-- Resume Upload -->
         <mat-form-field class="upload">
           <mat-label for="resume">Resume</mat-label>
           <div class="upload-container">
-            <input matInput  readonly name="resumeName" class="file-input" [value]="resumeupload ? resumeupload.name : 'No file chosen'" />
+            <input matInput readonly name="resumeName" class="file-input"
+              [value]="resumeupload ? resumeupload.name : 'No file chosen'" />
             <label for="resume" class="browse-button-label">
               <button type="button" mat-icon-button (click)="resume.click()"><mat-icon>upload_file</mat-icon></button>
             </label>
-            <input type="file" #resume id="resume" (change)="uploadResume($event)"
-              name="resumeUploadFile"
+            <input type="file" #resume id="resume" (change)="uploadResume($event)" name="resumeUploadFile"
               accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               style="display: none;" />
           </div>
-          <mat-hint *ngIf="resumeError" style="color: #f44336; font-size: 12px;">Resume size should be less than 2 mb</mat-hint>
-          <mat-hint *ngIf="resumeFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to 15-20 characters before upload</mat-hint>
+          <mat-hint *ngIf="resumeError" style="color: #f44336; font-size: 12px;">Resume size should be less than 2
+            mb</mat-hint>
+          <mat-hint *ngIf="resumeFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+            15-20 characters before upload</mat-hint>
         </mat-form-field>
-      
+
+
         <!-- Aadhar Upload -->
         <mat-form-field class="upload">
           <mat-label for="aadhar">Aadhar</mat-label>
           <div class="upload-container">
-            <input matInput  readonly name="aadharName" class="file-input" [value]="aadharUpload ? aadharUpload.name : 'No file chosen'"/>
+            <input matInput readonly name="aadharName" class="file-input"
+              [value]="aadharUpload ? aadharUpload.name : 'No file chosen'" />
             <label for="aadhar" class="browse-button-label">
               <button type="button" mat-icon-button (click)="aadhar.click()"><mat-icon>upload_file</mat-icon></button>
             </label>
-            <input type="file" #aadhar id="aadhar" (change)="uploadAadhar($event)"
-              name="aadharUploadFile" 
+            <input type="file" #aadhar id="aadhar" (change)="uploadAadhar($event)" name="aadharUploadFile"
               accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               style="display: none;" />
           </div>
-          <mat-hint *ngIf="aadharError" style="color: #f44336; font-size: 12px;">Aadhar size should be less than 2 mb</mat-hint>
-          <mat-hint *ngIf="aadharFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to 15-20 characters before upload</mat-hint>
+          <mat-hint *ngIf="aadharError" style="color: #f44336; font-size: 12px;">Aadhar size should be less than 2
+            mb</mat-hint>
+          <mat-hint *ngIf="aadharFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+            15-20 characters before upload</mat-hint>
         </mat-form-field>
-      
+
         <!-- Pan Upload -->
         <mat-form-field class="upload">
           <mat-label for="pan">Pan</mat-label>
           <div class="upload-container">
-            <input matInput  readonly name="pan" class="file-input" [value]="panUpload ? panUpload.name : 'No file chosen'"/>
+            <input matInput readonly name="pan" class="file-input"
+              [value]="panUpload ? panUpload.name : 'No file chosen'" />
             <label for="pan" class="browse-button-label">
               <button type="button" mat-icon-button (click)="pan.click()"><mat-icon>upload_file</mat-icon></button>
             </label>
@@ -321,141 +316,119 @@
               accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               style="display: none;" />
           </div>
-          <mat-hint *ngIf="panError" style="color: #f44336; font-size: 12px;">Pan size should be less than 2 mb</mat-hint>
-          <mat-hint *ngIf="panFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to 15-20 characters before upload</mat-hint>
+          <mat-hint *ngIf="panError" style="color: #f44336; font-size: 12px;">Pan size should be less than 2
+            mb</mat-hint>
+          <mat-hint *ngIf="panFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+            15-20 characters before upload</mat-hint>
         </mat-form-field>
-
       </div>
+
       <div class="upload-documents-right">
         <!-- Bank Passbook Upload -->
         <mat-form-field class="upload">
           <mat-label for="bank">Bank Passbook</mat-label>
           <div class="upload-container">
-            <input matInput  readonly name="bank" class="file-input" [value]="bankUpload ? bankUpload .name : 'No file chosen'"/>
+            <input matInput readonly name="bank" class="file-input"
+              [value]="bankUpload ? bankUpload .name : 'No file chosen'" />
             <label for="bank" class="browse-button-label">
               <button type="button" mat-icon-button (click)="bank.click()"><mat-icon>upload_file</mat-icon></button>
             </label>
-            <input type="file" #bank id="bankPassbookUploadFile"
-              (change)="uploadBank($event)" name="bankPassbookUploadFile"
+            <input type="file" #bank id="bankPassbookUploadFile" (change)="uploadBank($event)"
+              name="bankPassbookUploadFile"
               accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               style="display: none;" />
           </div>
-          <mat-hint *ngIf="bankError" style="color: #f44336; font-size: 12px;">Bank Passbook size should be less than 2 mb</mat-hint>
-          <mat-hint *ngIf="bankFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to 15-20 characters before upload</mat-hint>
+          <mat-hint *ngIf="bankError" style="color: #f44336; font-size: 12px;">Bank Passbook size should be less than 2
+            mb</mat-hint>
+          <mat-hint *ngIf="bankFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+            15-20 characters before upload</mat-hint>
         </mat-form-field>
-      
+
         <!-- Other Documents Upload -->
         <mat-form-field class="upload">
           <mat-label for="otherDocumentsUploadFile">Other Documents</mat-label>
           <div class="upload-container">
-            <input matInput multiple  readonly name="otherDocumentsName" class="file-input"/>
+            <input matInput multiple readonly name="otherDocumentsName" class="file-input" />
             <label for="otherDocumentsUploadFile" class="browse-button-label">
-              <button type="button" mat-icon-button (click)="multifiles.click()"><mat-icon>upload_file</mat-icon></button>
+              <button type="button" mat-icon-button
+                (click)="multifiles.click()"><mat-icon>upload_file</mat-icon></button>
             </label>
-            <input type="file" id="otherDocumentsUploadFile"
-            (change)="onFileChange($event)" multiple #multifiles name="otherDocumentsUploadFile" multiple="multiple"
+            <input type="file" id="otherDocumentsUploadFile" (change)="onFileChange($event)" multiple #multifiles
+              name="otherDocumentsUploadFile" multiple="multiple"
               accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               style="display: none;" />
           </div>
-          <mat-hint *ngIf="multifilesError" style="color: #f44336; font-size: 12px;">Other Documents size should be less than 4 mb</mat-hint>
-          <mat-hint *ngIf="multifilesFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to 15-20 characters before upload</mat-hint>
+          <mat-hint *ngIf="multifilesError" style="color: #f44336; font-size: 12px;">Other Documents size should be less
+            than 4 mb</mat-hint>
+          <mat-hint *ngIf="multifilesFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename
+            to 15-20 characters before upload</mat-hint>
         </mat-form-field>
       </div>
     </div>
 
-    <div class="documents-table"  *ngIf="data.actionName === 'edit-employee'">
-      <span class="header-text">List of documents</span>
-      <table mat-table  [dataSource]="allDocumentsData" class="mat-elevation-z8">
-
-        <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef> Date </th>
-          <td mat-cell *matCellDef="let element"> {{element.createddate}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="document_name">
-          <th mat-header-cell *matHeaderCellDef> Document Name </th>
-          <td mat-cell *matCellDef="let element" style="cursor:pointer; color: #4154f1" (click)="filedetails(element)"> {{element.filename}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="delete">
-          <th mat-header-cell *matHeaderCellDef> Delete </th>
-          <td mat-cell *matCellDef="let element"> 
-          <button type="button" mat-icon-button (click)="deletefile(element.docid)"><mat-icon>delete</mat-icon></button> 
-          </td>
-        </ng-container>
-      
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-      <!-- <table class="table table-sm  table-light table-bordered table-responsive">
-        <thead class="thead-light">
-            <tr>
-                <th>Date</th>
-                <th>Document Name</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-                <tr>
-                    <td *ngIf="tech.resume !==null ">{{tech.createddate}}</td>
-                    <td *ngIf="tech.resume !==null "><a class="ab" style="cursor:pointer"
-                            (click)="downloadfile(tech.userid,tech.resume,'resume')">{{tech.resume}}</a>
-                    </td>
-                    <td *ngIf="tech.resume !==null "><i style="color:maroon;cursor:pointer"
-                            class="ri-delete-bin-fill d-flex flex-column align-items-center justify-content-center"
-                            (click)="deletefile(tech.userid,'resume')"></i></td>
-                </tr>
-            <tr>
-                <td *ngIf="tech.pan !==null ">{{tech.createddate}}</td>
-                <td *ngIf="tech.pan !==null "><a class="ab" style="cursor:pointer"
-                        (click)="downloadfile(tech.userid,tech.pan,'pan')">{{tech.pan}}</a>
-                </td>
-                <td *ngIf="tech.pan !==null "><i style="color:maroon;cursor:pointer"
-                        class="ri-delete-bin-fill d-flex flex-column align-items-center justify-content-center"
-                        (click)="deletefile(tech.userid,'pan')"></i></td>
-            </tr>
-            <tr> 
-                <td *ngIf="tech.aadhar !==null ">{{tech.createddate}}</td>
-                <td *ngIf="tech.aadhar !==null "><a class="ab"
-                        style="cursor:pointer;cursor:pointer"
-                        (click)="downloadfile(tech.userid,tech.aadhar,'aadhar')">{{tech.aadhar}}</a>
-                </td>
-                <td *ngIf="tech.aadhar !==null "><i style="color:maroon;cursor:pointer"
-                        class="ri-delete-bin-fill d-flex flex-column align-items-center justify-content-center"
-                        (click)="deletefile(tech.userid,'aadhar')"></i></td>
-            </tr> 
-
-            <tr> 
-                <td *ngIf="tech.bpassbook !==null ">{{tech.createddate}}</td>
-                <td *ngIf="tech.bpassbook !==null "><a class="ab"
-                        style="cursor:pointer;cursor:pointer"
-                        (click)="downloadfile(tech.userid,tech.bpassbook,'passbook')">{{tech.bpassbook}}</a>
-                </td>
-                <td *ngIf="tech.bpassbook !==null "><i style="color:maroon;cursor:pointer"
-                        class="ri-delete-bin-fill d-flex flex-column align-items-center justify-content-center"
-                        (click)="deletefile(tech.userid,'passbook')"></i></td>
-            </tr> 
-             <tr *ngFor="let data of filesArr">
-                <td>{{data.createddate}}</td>
-                <td><a class="ab" style="cursor:pointer"
-                          (click)="filedetails(data)">{{data.filename}}</a></td>
-                <td width="6%"><i style="color:maroon;cursor:pointer"
-                        class="ri-delete-bin-fill d-flex flex-column align-items-center justify-content-center"
-                        (click)="deletemultiple(data.docid)"></i></td>
-            </tr> 
-        </tbody>
-    </table> -->
+    <div class="header-container-upload-documents">
+      <span class="header-text">List Documents</span>
     </div>
+    <div>
+      <table>
+        <tr>
+          <th>Document Name</th>
+          <th>Delete</th>
+        </tr>
+        <tr>
+          <td *ngIf="empObj.resume !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.resume,'resume')">{{empObj.resume}}</a>
+          </td>
+          <td *ngIf="empObj.resume !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'resume')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td *ngIf="empObj.pan !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.pan,'pan')">{{empObj.pan}}</a>
+          </td>
+          <td *ngIf="empObj.pan !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'pan')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
 
-    <div class="form-button">
-      <!-- <div class="form-button-left">
-        <div class="form-button-inner">
-          <button mat-raised-button  >Back</button>
-        </div>
-      </div> -->
+        <tr>
+          <td *ngIf="empObj.aadhar !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.aadhar,'aadhar')">{{empObj.aadhar}}</a>
+          </td>
+          <td *ngIf="empObj.pan !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'aadhar')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td *ngIf="empObj.bpassbook !==null "><a class="ab" style="cursor:pointer"
+              (click)="downloadfile(empObj.userid,empObj.bpassbook,'bpassbook')">{{empObj.bpassbook}}</a>
+          </td>
+          <td *ngIf="empObj.bpassbook !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'bpassbook')">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
 
+        <tr *ngFor="let data of filesArr">
+          <td><a class="ab" style="cursor:pointer" (click)="filedetails(data)">{{data.filename}}</a></td>
+          <td width="6%">
+            <button mat-icon-button class="action-button-ed" (click)="deletemultiple(data.docid)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
     </div>
   </form>
+
   <div class="form-button-right">
     <!-- <div class="form-button-inner"> -->
     <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>

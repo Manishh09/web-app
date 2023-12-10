@@ -61,7 +61,6 @@ export class SubmissionListComponent {
     'Dos',
     'Id',
     'Consultant',
-    'TrackSI',
     'Requirement',
     'ImplementationPartner',
     'EndClient',
@@ -110,34 +109,36 @@ export class SubmissionListComponent {
   page: number = 1;
 
   ngOnInit(): void {
+
+    this.userid = localStorage.getItem('userid');
+    const routeData = this.activatedRoute.snapshot.data;
+    if (routeData['isSaleSub']) { // sales submission
+      this.flag = "sales";
+    }
+    else if (routeData['isRecSub']) { // recruiting submission
+      this.flag = "Recruiting";
+    }
+
+    else{
+      this.flag = "DomRecruiting";
+    }
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
-    this.getFlag();
     this.getAllData();
+
+
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
-  getFlag(){
-    const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSalesSubmission']) { 
-      this.flag = "Sales";
-    } else { 
-      this.flag = "Recruiting";
-    }
-
-    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
-    //   this.dataTableColumns.splice(15,0,"AddedBy")
-    // }
-  }
 
   getAllData() {
     this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
-        this.dataSource.data =  response.data.content;  
+        this.dataSource.data =  response.data.content;
         console.log(this.dataSource.data);
         this.totalItems = response.data.totalElements;
         // for serial-num {}
@@ -216,5 +217,53 @@ export class SubmissionListComponent {
     const serialNumber = (pagIdx - 1) * 50 + index + 1;
     return serialNumber;
   }
+  handlePageEvent(event: PageEvent) {
+   // console.log('page.event', event);
+    if (event) {
+      this.pageEvent = event;
+      this.currentPageIndex = event.pageIndex;
+      this.getAllData2(event.pageIndex + 1)
+    }
+    return;
+  }
 
+  getAllData2(pageIndex = 1) {
+    const dataToBeSentToSnackBar: ISnackBarData = {
+      message: '',
+      duration: 1500,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      direction: 'above',
+      panelClass: ['custom-snack-success'],
+    };
+
+    return this.submissionServ.getsubmissiondataPagination(
+        this.flag,
+        this.hasAcces,
+        this.userid,
+        pageIndex,
+        this.pageSize,
+        this.field
+      )
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (response: any) => {
+        //  this.consultant = response.data.content;
+          this.entity = response.data.content;
+          this.dataSource.data = response.data.content;
+        //  console.log(this.dataSource.data);
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = this.generateSerialNumber(i);
+          });
+          this.totalItems = response.data.totalElements;
+          //  this.length = response.data.totalElements;
+        },
+        error: (err: any) => {
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          dataToBeSentToSnackBar.message = err.message;
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+      });
+  }
 }
