@@ -125,8 +125,10 @@ export class AddRequirementComponent {
       this.requirementServ.getEntity(this.data.requirementData.requirementid).subscribe(
         (response: any) => {
           console.log(response);
+          this.recruiterList(response.data.vendorimpl.vmsid);
           this.requirementObj = response.data;
           this.initializeRequirementForm(response.data);
+          
         }
       )
       this.requirementServ.getAssignedRecruiter(this.data.requirementData.requirementid).subscribe(
@@ -150,14 +152,16 @@ export class AddRequirementComponent {
           this.requirementForm.get('reqnumber')?.setValue(this.reqnumber);
           this.requirementForm.get('postedon')?.setValue(this.todayDate);
         })
-        this.requirementServ.getVendorCompanies('Recruiting').subscribe(
-          (response: any) => {
-            this.vendorCompanyArr = response.data;
-          }
-        );
+        
         
         this.initializeRequirementForm(null);
     }
+    this.requirementServ.getVendorCompanies('Recruiting').subscribe(
+      (response: any) => {
+        this.vendorCompanyArr = response.data;
+        console.log(this.vendorCompanyArr);
+      }
+    );
   }
 
   private initializeRequirementForm(requirementData : any) {
@@ -174,7 +178,7 @@ export class AddRequirementComponent {
       jobdescription: [requirementData ? requirementData.jobdescription : '', Validators.required],
       duration: [requirementData ? requirementData.duration :'', Validators.required],
       technology: this.formBuilder.group({
-        id: [requirementData ? requirementData.technology?.id : '']
+        id: [requirementData ? requirementData.technology?.id : ''],
       }),
       empid: [requirementData ? requirementData.empid :'', Validators.required],
       recruiter: this.formBuilder.group({
@@ -198,6 +202,7 @@ export class AddRequirementComponent {
     this.techAutoCompleteSearch();
     this.companyAutoCompleteSearch();
     this.empAutoCompleteSearch()
+    
   }
 
   validateControls() {
@@ -235,6 +240,7 @@ export class AddRequirementComponent {
     this.requirementServ.getTech().subscribe(
       (response: any) => {
         this.techArr = response.data;
+        console.log(this.techArr);
       }
     )
   }
@@ -279,14 +285,15 @@ export class AddRequirementComponent {
 
   recruiterArr: any[] = [];
   recruiterList(option: any) {
-    const newVal = option.id;
+    const newVal = option;
     this.requirementServ.getRecruiterOfTheVendor(newVal, 'Recruiter').subscribe(
       (response: any) => {
         this.recruiterArr = response.data;
-        this.requirementForm.get("pocphonenumber")!.patchValue('');
-        this.requirementForm.get("pocemail")!.patchValue('');
-        this.requirementForm.get("recruiter.recid")!.patchValue('');
-        this.requirementForm.get("pocposition")!.patchValue('');
+        console.log(this.recruiterArr);
+        this.requirementForm.get("pocphonenumber")!.patchValue(response.data.recruiter.pocphonenumber);
+        this.requirementForm.get("pocemail")!.patchValue(response.data.recruiter.pocemail);
+        this.requirementForm.get("recruiter.recid")!.patchValue(response.data.recruiter.recid);
+        this.requirementForm.get("pocposition")!.patchValue(response.data.recruiter.pocposition);
       }
     );
   }

@@ -242,9 +242,9 @@ export const TIME_ZONE = [
 
 export const RADIO_OPTIONS = {
   interviewround: [
-    {value: 'First (L1)', id: 1 , selected: true},
-    {value: 'Second (L2)', id: 2},
-    {value: 'Third (Client)', id: 3},
+    {value: 'First', id: 1 , selected: true},
+    {value: 'Second', id: 2},
+    {value: 'Third', id: 3},
   ],
   interviewmode: [
     {value: 'F2F', id: 1},

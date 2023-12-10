@@ -29,7 +29,7 @@
             <mat-label>Select Vendor/Impl</mat-label>
             <input matInput formControlName="vmsid" [matAutocomplete]="vendorAutoCmp" maxlength="50">
             <mat-autocomplete #vendorAutoCmp="matAutocomplete">
-              <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company" (onSelectionChange)="recruiterList(option)">{{ option.company.trim() }}</mat-option>
+              <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company" (onSelectionChange)="recruiterList(option.id)">{{ option.company.trim() }}</mat-option>
             </mat-autocomplete>
             <button type="button" matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
             <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found, click '+' to add vendor</mat-hint>
@@ -52,13 +52,28 @@
           </mat-form-field>
 
           <!-- Select Technology -->
-          <div class="fg-div" formGroupName="technology">
+          <!-- <div class="fg-div" formGroupName="technology">
             <mat-form-field appearance="fill" class="form-technology">
               <mat-label>Select Technology</mat-label>
               <input matInput formControlName="id" [matAutocomplete]="techAutoCmp" maxlength="50">
               <mat-autocomplete #techAutoCmp="matAutocomplete">
-                <mat-option *ngFor="let option of  (techSearchObs$ | async)" [value]="option[1]" (onSelectionChange)="techSkills(option)">{{ option[1] }}</mat-option>
+                <mat-option *ngFor="let option of  (techSearchObs$ | async)" [value]="option[0]" (onSelectionChange)="techSkills(option)">{{ option[1] }}</mat-option>
               </mat-autocomplete>
+              <button type="button" matSuffix mat-icon-button (click)="goToTechnologyList()"><mat-icon>add</mat-icon></button>
+            </mat-form-field>
+          </div> -->
+
+          <div class="fg-div" formGroupName="technology">
+            <mat-form-field appearance="fill" class="form-technology">
+              <mat-label>Select Technology</mat-label>
+              <!-- <input matInput formControlName="id" maxlength="50"> -->
+              <!-- <mat-autocomplete #techAutoCmp="matAutocomplete">
+                <mat-option *ngFor="let option of  (techSearchObs$ | async)" [value]="option[0]" (onSelectionChange)="techSkills(option)">{{ option[1] }}</mat-option>
+              </mat-autocomplete> -->
+              <mat-select formControlName="id">
+                <mat-option *ngFor="let option of  techArr" [value]="option[0]" (onSelectionChange)="techSkills(option)">{{ option[1] }}</mat-option>
+                
+              </mat-select>
               <button type="button" matSuffix mat-icon-button (click)="goToTechnologyList()"><mat-icon>add</mat-icon></button>
             </mat-form-field>
           </div>
