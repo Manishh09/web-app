@@ -59,8 +59,9 @@
         <!-- Contact Number-->
         <mat-form-field appearance="fill">
           <mat-label> Contact Number </mat-label>
-          <ngx-mat-intl-tel-input class="intl-input" [preferredCountries]="['in','us']" formControlName="contactnumber" (change)="changeFn($event)"
-            [enablePlaceholder]="true" [enableSearch]="true" name="contactnumber" id="intlInput" #contactnumber #pNumb>
+          <ngx-mat-intl-tel-input class="intl-input" [preferredCountries]="['in','us']" formControlName="contactnumber"
+            (change)="changeFn($event)" [enablePlaceholder]="true" [enableSearch]="true" name="contactnumber"
+            id="intlInput" #contactnumber #pNumb>
           </ngx-mat-intl-tel-input>
           <mat-error *ngIf="consultantForm.get('contactnumber').hasError('required')">Personal
             Contact
@@ -239,11 +240,28 @@
         <!-- Location - HeadQuarters -->
         <mat-form-field appearance="fill">
           <mat-label>Location</mat-label>
-          <input matInput formControlName="currentlocation" maxlength="250" ngx-gp-autocomplete [options]='options'
+          <input matInput formControlName="" maxlength="250" ngx-gp-autocomplete [options]='options'
             (onAddressChange)="handleAddressChange($event)">
           <mat-error *ngIf="consultantForm.get('currentlocation')!.hasError('required')">Location
             Name is required</mat-error>
         </mat-form-field>
+        <!-- Relocation Radio group-->
+        <div class="radio-group" style="width: 80%;">
+
+          <mat-label>Relocation Type</mat-label>
+          <mat-radio-group aria-label="Select an option" formControlName="relocation">
+            <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.relocation" [value]="opt.value"
+              (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
+
+          </mat-radio-group>
+        </div>
+        <!-- Others Details -->
+        <div class="form-details-textarea" *ngIf="other">
+          <mat-form-field>
+            <mat-label>Others Details</mat-label>
+            <textarea matInput formControlName="relocatOther" maxlength="250" placeholder="Skill Set"></textarea>
+          </mat-form-field>
+        </div>
 
         <!-- summary -->
         <div class="form-details-textarea">
@@ -405,7 +423,7 @@
     <div class="header-container">
       <span class="header-text">Upload Documents</span>
     </div>
-   <div class="upload-documents">
+    <div class="upload-documents">
       <div class="form-column-left">
         <mat-form-field class="upload">
           <mat-label for="resume">Resume</mat-label>

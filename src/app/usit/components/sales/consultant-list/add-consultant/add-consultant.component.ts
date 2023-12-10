@@ -233,8 +233,8 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
      refcont: [consultantData ? consultantData.refcont : ''],
       //number: [consultantData ? consultantData.number : '', Validators.required],
       // status:[this.consultantForm.status],
-      // relocation: [consultantData ? consultantData.relocation : ''],  kiran
-      // relocatOther: [consultantData ? consultantData.relocatOther : ''],kiran
+     relocation: [consultantData ? consultantData.relocation : ''],//  kiran
+     relocatOther: [consultantData ? consultantData.relocatOther : ''],//,kiran
       consultantflg: this.data.flag.toLocaleLowerCase(),
       /* requirements: this.formBuilder.group({
          requirementid: id
