@@ -779,6 +779,7 @@ export class AddEmployeeComponent {
                 //  this.getAllEmployees();
                   this.dataTobeSentToSnackBarService.message =
                     'File Deleted successfully';
+                    this.dialogRef.close();
                 } else {
                   this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
                   this.dataTobeSentToSnackBarService.message = 'Record Deletion failed';
@@ -840,6 +841,7 @@ export class AddEmployeeComponent {
               //  this.getAllEmployees();
                 this.dataTobeSentToSnackBarService.message =
                   'File Deleted successfully';
+                  this.dialogRef.close();
               } else {
                 this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-failure'];
                 this.dataTobeSentToSnackBarService.message = 'Record Deletion failed';
