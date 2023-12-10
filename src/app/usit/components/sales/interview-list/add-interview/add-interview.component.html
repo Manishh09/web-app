@@ -25,12 +25,23 @@
         </div>
 
         <!-- Interview Date -->
-        <mat-form-field appearance="fill">
+        <!-- <mat-form-field appearance="fill">
             <mat-label>Interview Date & Time</mat-label>
             <input matInput [matDatepicker]="datepicker" formControlName="interviewdate" placeholder="MM/DD/YYYY">
             <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
             <mat-datepicker #datepicker></mat-datepicker>
             <mat-error *ngIf="interviewForm.get('interviewdate')!.hasError('required')"> Interview Date is required</mat-error>
+        </mat-form-field> -->
+
+        <mat-form-field appearance="fill">
+          <mat-label>Interview Date & Time</mat-label>
+          <input matInput [matDatepicker]="datepicker" formControlName="interviewdate" placeholder="DD/MM/YYYY">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker></mat-datepicker>
+          <div *ngIf="interviewForm.get('interviewdate').value" class="formatted-date">
+            {{ interviewForm.get('interviewdate').value | date:'short' }}
+          </div>
+          <mat-error *ngIf="interviewForm.get('interviewdate')!.hasError('required')"> Interview Date is required</mat-error>
         </mat-form-field>
            
           <!--  Time Zone -->
