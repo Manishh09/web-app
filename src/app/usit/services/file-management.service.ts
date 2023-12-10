@@ -20,12 +20,27 @@ export class FileManagementService {
     return this.apiServ.get(`auth/users/removefile/${id}/${flg}`);
   }
 
+  conremovefile(id: number, flg: string) {
+    return this.apiServ.get(`consultant/removefile/${id}/${flg}`);
+  }
+
+
   removefiles(id: number) {
     return this.apiServ.get(`auth/users/removefiles/${id}`);
   }
 
+  conremovefiles(id: number) {
+    return this.apiServ.get(`consultant/removefiles/${id}`);
+  }
+
   downloadresume(id: number, flg: string): Observable<Blob> {
     return this.http.get(`${this.apiServ.apiUrl}auth/users/download/${id}/${flg}`, {
+      responseType: 'blob',
+    });
+  }
+
+  downloadconresume(id: number, flg: string): Observable<Blob> {
+    return this.http.get(`${this.apiServ.apiUrl}consultant/download/${id}/${flg}`, {
       responseType: 'blob',
     });
   }

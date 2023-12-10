@@ -49,7 +49,6 @@ export class Consultantinfo {
     technology!:string;
     visa !: string;
     addedby = new Employee();
-
     technologyarea!:string;
     visa_status!:string;
     companyemail!:number;

@@ -14,6 +14,9 @@
     <input type="hidden" formControlName="dommaxno">
     <input type="hidden" formControlName="salesmaxno">
     <input type="hidden" formControlName="recmaxno">
+    <input type="hidden" formControlName="h1bcopy">
+    <input type="hidden" formControlName="resume">
+    <input type="hidden" formControlName="dlcopy">
 
 
 
@@ -489,7 +492,7 @@
               (click)="downloadfile(entity.consultantid,entity.h1bcopy,'h1bcopy')">{{entity.h1bcopy}}</a>
           </td>
           <td *ngIf="entity.h1bcopy !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'dlcopy')">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'h1bcopy')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
@@ -498,6 +501,11 @@
         <tr>
           <td *ngIf="entity.dlcopy !==null "><a class="ab" style="cursor:pointer"
               (click)="downloadfile(entity.consultantid,entity.dlcopy,'dlcopy')">{{entity.dlcopy}}</a>
+          </td>
+          <td *ngIf="entity.dlcopy !==null ">
+            <button mat-icon-button class="action-button-ed" (click)="deletefile(entity.consultantid,'dlcopy')">
+              <mat-icon>delete</mat-icon>
+            </button>
           </td>
         </tr>
         <tr *ngFor="let data of filesArr">

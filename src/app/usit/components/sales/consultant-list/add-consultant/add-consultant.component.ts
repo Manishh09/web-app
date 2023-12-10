@@ -74,8 +74,9 @@ import { FileManagementService } from 'src/app/usit/services/file-management.ser
 })
 export class AddconsultantComponent implements OnInit, OnDestroy {
   flag!: string;
-  private baseUrl = 'http://69.216.19.140:8080/usit/';
+  // private baseUrl = 'http://69.216.19.140:8080/usit/';
   //private baseUrl = "http://localhost:8090/usit/";
+  private baseUrl = 'http://localhost:1122/';
   // private baseUrl: string = environment.API_BASE_URL;
   uploadedfiles: string[] = [];
   message: any;
@@ -187,6 +188,11 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       salesmaxno : [consultantData ? consultantData.salesmaxno : ''],
       dommaxno : [consultantData ? consultantData.dommaxno : ''],
       recmaxno: [consultantData ? consultantData.recmaxno : ''],
+      h1bcopy: [consultantData ? consultantData.h1bcopy : ''],
+      resume: [consultantData ? consultantData.resume : ''],
+      dlcopy: [consultantData ? consultantData.dlcopy : ''],
+
+      
 
       firstname: [consultantData ? consultantData.firstname : '', Validators.required], //['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z]*$")]],
       lastname: [consultantData ? consultantData.lastname : '', Validators.required], ///^[+]\d{12}$   /^[+]\d{12}$   ^[0-9]*$
@@ -386,12 +392,44 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     if (this.flag != 'presales') {
       this.consultantForm.get("status").setValue("Active");
     }
+    if (this.data.actionName === "edit-consultant"){
+      [this.consultantForm.value].forEach((formVal, idx) => {
+        this.entity.firstname = formVal.firstname;
+        this.entity.lastname = formVal.lastname;
+        this.entity.consultantemail = formVal.consultantemail;
+        this.entity.linkedin = formVal.linkedin;
+        this.entity.projectavailabity = formVal.projectavailabity;
+        this.entity.visa = formVal.visa;
+        this.entity.availabilityforinterviews = formVal.availabilityforinterviews;
+        this.entity.priority = formVal.priority;
+        this.entity.position = formVal.position;
+        this.entity.status = formVal.status;
+        this.entity.hourlyrate = formVal.hourlyrate;
+        this.entity.skills = formVal.skills;
+        this.entity.experience = formVal.experience;
+        this.entity.ratetype = formVal.ratetype;
+        this.entity.technology = formVal.technology;
+        this.entity.currentlocation = formVal.currentlocation;
+        this.entity.summary = formVal.summary;
+        this.entity.qualification = formVal.qualification;
+        this.entity.university = formVal.university;
+        this.entity.yop = formVal.yop;
+        this.entity.emprefname = formVal.emprefname;
+        this.entity.emprefemail = formVal.emprefemail;
+        this.entity.emprefcont = formVal.emprefcont;
+        this.entity.companyname = formVal.companyname;
+        this.entity.refname = formVal.refname;
+        this.entity.refcont = formVal.refcont;
+      })
+    }
+
+    const saveObj = this.data.actionName === "edit-consultant" ? this.entity : this.consultantForm.value;
 
     const lenkedIn = this.consultantForm.get('linkedin')?.value;
     console.log(JSON.stringify(this.consultantForm.value, null, 2) + " =============== ");
     if (this.flg == true) {
       const saveReqObj = this.getSaveObjData()
-      this.consultantServ.registerconsultant(saveReqObj)
+      this.consultantServ.registerconsultant(saveObj)
       .subscribe({
         next: (data: any) => {
           if (data.status == 'success') {
@@ -699,9 +737,10 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
 
    }
    downloadfile(id: number, filename: string, flg: string) {
+
     var items = filename.split(".");
      this.fileService
-       .downloadresume(id, flg)
+       .downloadconresume(id, flg)
        .subscribe(blob => {
          if (items[1] == 'pdf' || items[1] == 'PDF') {
            var fileURL: any = URL.createObjectURL(blob);
@@ -756,7 +795,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         next: (resp) => {
           if (dialogRef.componentInstance.allowAction) {
             // call delete api
-            this.fileService.removefile(id,doctype).pipe(takeUntil(this.destroyed$)).subscribe({
+            this.fileService.conremovefile(id,doctype).pipe(takeUntil(this.destroyed$)).subscribe({
               next: (response: any) => {
                 if (response.status == 'success') {
                 //  this.getAllEmployees();
@@ -807,7 +846,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     next: (resp) => {
       if (dialogRef.componentInstance.allowAction) {
         // call delete api
-        this.fileService.removefiles(id).pipe(takeUntil(this.destroyed$)).subscribe({
+        this.fileService.conremovefiles(id).pipe(takeUntil(this.destroyed$)).subscribe({
           next: (response: any) => {
             if (response.status == 'success') {
             //  this.getAllEmployees();
