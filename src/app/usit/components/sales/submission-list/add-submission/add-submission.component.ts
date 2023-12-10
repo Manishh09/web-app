@@ -117,11 +117,11 @@ export class AddSubmissionComponent implements OnInit{
 
   ngOnInit(): void {
     this.getCompany();
-    this.getConsultant(this.flag)
+    this.getConsultant(this.data.flag.toLocaleLowerCase())
     if (this.data && this.data.flag) {
       this.getFlag(this.data.flag.toLocaleLowerCase());
     }
-    
+
     if(this.data.actionName === "edit-submission"){
       this.submissionServ.getsubdetailsbyid(this.data.submissionData.submissionid).subscribe(
         (response: any) => {
@@ -138,7 +138,7 @@ export class AddSubmissionComponent implements OnInit{
     if (type === 'sales') {
       this.flag = 'sales';
       this.flgOpposite = "Recruiter";
-    } 
+    }
      else {
       this.flag = 'Recruiting';
       this.flgOpposite = "Bench Sales";
@@ -148,7 +148,7 @@ export class AddSubmissionComponent implements OnInit{
 
 
   private initilizeSubmissionForm(submissionData: any) {
-    
+
     this.submissionForm = this.formBuilder.group({
 
       // user: this.formBuilder.group({
@@ -189,7 +189,7 @@ export class AddSubmissionComponent implements OnInit{
     });
     this.submissionForm.patchValue(submissionData);
     this.validateControls();
-  } 
+  }
 
   private validateControls() {
     const requirement = this.submissionForm.get('requirement');
@@ -327,7 +327,7 @@ export class AddSubmissionComponent implements OnInit{
       panelClass: ['custom-snack-success'],
     };
 
-    
+
     const saveReqObj = this.getSaveData();
     console.log('form.value  ===', saveReqObj);
     this.submissionServ

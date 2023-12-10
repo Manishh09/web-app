@@ -366,10 +366,10 @@
       </div>
     </div>
 
-    <div class="header-container-upload-documents">
+    <div class="header-container-upload-documents" *ngIf="data.actionName === 'edit-employee'">
       <span class="header-text">List Documents</span>
     </div>
-    <div>
+    <div class="list-documents" *ngIf="data.actionName === 'edit-employee'">
       <table>
         <tr>
           <th>Document Name</th>

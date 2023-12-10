@@ -51,7 +51,8 @@ import { AddSubmissionComponent } from './add-submission/add-submission.componen
     CommonModule,
     MatTooltipModule],
   templateUrl: './submission-list.component.html',
-  styleUrls: ['./submission-list.component.scss']
+  styleUrls: ['./submission-list.component.scss'],
+  providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 })
 export class SubmissionListComponent {
 
@@ -112,10 +113,10 @@ export class SubmissionListComponent {
 
     this.userid = localStorage.getItem('userid');
     const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSaleSub']) { // sales submission
+    if (routeData['isSalesSubmission']) { // sales submission
       this.flag = "sales";
     }
-    else if (routeData['isRecSub']) { // recruiting submission
+    else if (routeData['isRecSubmission']) { // recruiting submission
       this.flag = "Recruiting";
     }
 
@@ -134,8 +135,8 @@ export class SubmissionListComponent {
   }
 
 
-  getAllData() {
-    this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
+  getAllData(pageIndex = 1 ) {
+    this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, pageIndex, this.pageSize, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data =  response.data.content;
@@ -151,6 +152,27 @@ export class SubmissionListComponent {
 
   onFilter(event: any) {
 
+  }
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    this.field=keyword;
+    if (keyword != '') {
+      return this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, keyword).subscribe(
+        ((response: any) => {
+          this.entity = response.data.content;
+          this.totalItems = response.data.totalElements;
+          this.dataSource.data = response.data.content;
+          // for serial-num {}
+        this.dataSource.data.map((x: any, i) => {
+          x.serialNum = this.generateSerialNumber(i);
+        });
+        })
+      );
+    }
+    if(keyword==''){
+      this.field = 'empty';
+    }
+    return this.getAllData(this.currentPageIndex + 1);
   }
 
   onSort(event: any) {
@@ -182,7 +204,7 @@ export class SubmissionListComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
@@ -196,14 +218,13 @@ export class SubmissionListComponent {
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
-    //dialogConfig.height = '100vh';
     dialogConfig.panelClass = 'edit-submission';
     dialogConfig.data = actionData;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddSubmissionComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        // this.getAllData(this.currentPageIndex + 1);
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
@@ -222,7 +243,7 @@ export class SubmissionListComponent {
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;
-      this.getAllData2(event.pageIndex + 1)
+      this.getAllData(event.pageIndex + 1)
     }
     return;
   }

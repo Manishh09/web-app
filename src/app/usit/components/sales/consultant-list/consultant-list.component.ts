@@ -37,6 +37,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AddconsultantComponent } from './add-consultant/add-consultant.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
+import { ConsultantTrackComponent } from './consultant-track/consultant-track.component';
 @Component({
   selector: 'app-consultant-list',
   standalone: true,
@@ -50,14 +51,13 @@ import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
     MatSortModule,
     MatPaginatorModule,
     CommonModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './consultant-list.component.html',
   styleUrls: ['./consultant-list.component.scss'],
 
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
-
 })
 export class ConsultantListComponent
   implements OnInit, OnDestroy, AfterViewInit
@@ -68,13 +68,21 @@ export class ConsultantListComponent
   message: any;
   showAlert = false;
   submitted = false;
-  flag = "";
+  flag = '';
   searchstring!: any;
   ttitle!: string;
   ttitle1!: string;
   tclass!: string;
   dept!: any;
   consultant_track: any[] = [];
+  dataToBeSentToSnackBar: ISnackBarData = {
+    message: '',
+    duration: 1500,
+    verticalPosition: 'top',
+    horizontalPosition: 'center',
+    direction: 'above',
+    panelClass: ['custom-snack-success'],
+  };
   field = 'empty';
   // pagination code
   dataTableColumns: string[] = [
@@ -111,8 +119,8 @@ export class ConsultantListComponent
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private consultantServ = inject(ConsultantService);
-  private activatedRoute =  inject(ActivatedRoute);
-  private router = inject(Router)
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
 
@@ -135,34 +143,35 @@ export class ConsultantListComponent
   /**
    * get flag details
    */
-  getFlag(){
+  getFlag() {
     const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSalesConsultant']) { // sales consultant
-      this.flag = "sales";
-      this.ttitle = "back to pre sales";
-      this.ttitle1 = "move to sales";
-      this.tclass = "move_item";
-    }
-    else if (routeData['isRecConsultant']) { // recruiting consutlant
-      this.flag = "Recruiting";
-      this.ttitle = "move to sales";
+    if (routeData['isSalesConsultant']) {
+      // sales consultant
+      this.flag = 'sales';
+      this.ttitle = 'back to pre sales';
+      this.ttitle1 = 'move to sales';
+      this.tclass = 'arrow_left_alt';
+    } else if (routeData['isRecConsultant']) {
+      // recruiting consutlant
+      this.flag = 'Recruiting';
+      this.ttitle = 'move to sales';
       //this.ttitle1 = "back to pre sales";
-      //this.tclass = "move_item";
-    }
-    else if (routeData['isPreConsultant']) { // presales
-      this.flag = "presales";
-      this.ttitle = "move to sales";
-      this.ttitle1 = "back to pre sales";
-      this.tclass = "bi bi-arrow-right-square-fill";
-    }
-    else{
-      this.flag = "DomRecruiting";
+      this.tclass = "arrow_right_alt";
+    } else if (routeData['isPreConsultant']) {
+      // presales
+      this.flag = 'presales';
+      this.ttitle = 'move to sales';
+      this.ttitle1 = 'back to pre sales';
+      this.tclass = 'arrow_right_alt';
+    } else {
+      this.flag = 'DomRecruiting';
     }
 
-    if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
-
-
-      this.dataTableColumns.splice(15,0,"AddedBy")
+    if (
+      this.flag.toLocaleLowerCase() === 'presales' ||
+      this.flag.toLocaleLowerCase() === 'recruiting'
+    ) {
+      this.dataTableColumns.splice(15, 0, 'AddedBy');
     }
   }
 
@@ -194,7 +203,7 @@ export class ConsultantListComponent
         next: (response: any) => {
           this.consultant = response.data.content;
           this.dataSource.data = response.data.content;
-        //  console.log(this.dataSource.data);
+          //  console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
@@ -257,7 +266,28 @@ export class ConsultantListComponent
    * @param event
    */
   onFilter(event: any) {
-    this.dataSource.filter = event.target.value;
+   // this.dataSource.filter = event.target.value;
+  }
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    this.field = keyword;
+    if (keyword != '') {
+      return this.consultantServ.getAllConsultantData(this.flag, this.hasAcces, this.userid, 1, this.pageSize, keyword).subscribe(
+        ((response: any) => {
+          this.consultant = response.data.content;
+          this.dataSource.data  = response.data.content;
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+           x.serialNum = this.generateSerialNumber(i);
+         });
+         this.totalItems = response.data.totalElements;
+        })
+      );
+    }
+    if (keyword == '') {
+      this.field = 'empty';
+    }
+    return this.getAllData(this.currentPageIndex + 1);
   }
   /**
    * Sort
@@ -350,8 +380,10 @@ export class ConsultantListComponent
     });
   }
 
-  navTo(to: string, id: any){
-    this.router.navigate([`usit/user/${to.toLocaleLowerCase()}-consultant/${id}`])
+  navTo(to: string, id: any) {
+    this.router.navigate([
+      `usit/user/${to.toLocaleLowerCase()}-consultant/${id}`,
+    ]);
   }
   /**
    *
@@ -392,8 +424,58 @@ export class ConsultantListComponent
    *
    * @param consultant
    */
-  moveProfileToSales(consultant: any){
+  moveProfileToSales(consultant: any) {
+    //alertify.confirm("Move Profile", "Are you sure you want to move Profile to Sales ? ", () => {
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to Move Profiles to Sales?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: consultant,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = 'fit-content';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
 
+    // call moveToSales api after  clicked 'Yes' on dialog click
+
+    dialogRef.afterClosed().subscribe({
+      next: () => {
+        if (dialogRef.componentInstance.allowAction) {
+          this.consultantServ
+            .moveToSales(
+              this.consultant2.consultantid,
+              this.flag,
+              this.consultant2.comment,
+              this.userid
+            )
+            .subscribe((resp: any) => {
+              if (resp.status == 'success') {
+                this.dataToBeSentToSnackBar.panelClass = [
+                  'custom-snack-success',
+                ];
+                this.dataToBeSentToSnackBar.message =
+                  'Profile moved to sales successfully';
+              } else {
+                this.dataToBeSentToSnackBar.panelClass = [
+                  'custom-snack-failure',
+                ];
+                this.dataToBeSentToSnackBar.message = resp.message;
+              }
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataToBeSentToSnackBar
+              );
+              this.getAllData(this.currentPageIndex + 1);
+            });
+        }
+      },
+    });
   }
   /**
    * Add
@@ -415,14 +497,16 @@ export class ConsultantListComponent
 
     //this.dialogServ.openDialogWithComponent(AddconsultantComponent, dialogConfig);
 
-    const dialogRef = this.dialogServ.openDialogWithComponent(AddconsultantComponent, dialogConfig);
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      AddconsultantComponent,
+      dialogConfig
+    );
 
     dialogRef.afterClosed().subscribe(() => {
-      if(dialogRef.componentInstance.submitted){
+      if (dialogRef.componentInstance.submitted) {
         this.getAllData(this.currentPageIndex + 1);
       }
-    })
-
+    });
   }
   /**
    * Edit / Update
@@ -432,7 +516,7 @@ export class ConsultantListComponent
       title: 'Update Consultant',
       consultantData: consultant,
       actionName: 'edit-consultant',
-      flag: this.flag
+      flag: this.flag,
     };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = '65vw';
@@ -440,13 +524,16 @@ export class ConsultantListComponent
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = 'edit-consultant';
     dialogConfig.data = actionData;
-    const dialogRef = this.dialogServ.openDialogWithComponent(AddconsultantComponent, dialogConfig);
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      AddconsultantComponent,
+      dialogConfig
+    );
 
     dialogRef.afterClosed().subscribe(() => {
-      if(dialogRef.componentInstance.submitted){
+      if (dialogRef.componentInstance.submitted) {
         this.getAllData(this.currentPageIndex + 1);
       }
-    })
+    });
   }
   /**
    * Delete
@@ -484,21 +571,31 @@ export class ConsultantListComponent
             panelClass: ['custom-snack-success'],
           };
 
-          this.consultantServ.deleteEntity(consultant.consultantid).pipe(takeUntil(this.destroyed$))
-          .subscribe({next:(response: any) => {
-            if (response.status == 'success') {
-              this.getAllData(this.currentPageIndex + 1);
-              dataToBeSentToSnackBar.message = 'Consultant Deleted successfully';
-            } else {
-              dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-              dataToBeSentToSnackBar.message = 'Record Deletion failed';
-            }
-            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-          }, error: err => {
-            dataToBeSentToSnackBar.message = err.message;
-            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-          }});
+          this.consultantServ
+            .deleteEntity(consultant.consultantid)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe({
+              next: (response: any) => {
+                if (response.status == 'success') {
+                  this.getAllData(this.currentPageIndex + 1);
+                  dataToBeSentToSnackBar.message =
+                    'Consultant Deleted successfully';
+                } else {
+                  dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                  dataToBeSentToSnackBar.message = 'Record Deletion failed';
+                }
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              },
+              error: (err) => {
+                dataToBeSentToSnackBar.message = err.message;
+                dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+                this.snackBarServ.openSnackBarFromComponent(
+                  dataToBeSentToSnackBar
+                );
+              },
+            });
         }
       },
     });
@@ -556,6 +653,22 @@ export class ConsultantListComponent
     dialogConfig.data = dataToBeSentToDailog;
     return dialogConfig;
   }
+
+  goToConsultantTrackDetails(vms: any) {
+    const actionData = {
+      title: 'Consultant Track',
+      consultantData: vms,
+      actionName: 'track-consultant',
+      flag: this.flag,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '55vw';
+    dialogConfig.data = actionData;
+    this.dialogServ.openDialogWithComponent(
+      ConsultantTrackComponent,
+      dialogConfig
+    );
+  }
   /**
    * handle page event - pagination
    * @param endor
@@ -565,7 +678,7 @@ export class ConsultantListComponent
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;
-      this.getAllData(event.pageIndex + 1)
+      this.getAllData(event.pageIndex + 1);
     }
     return;
   }
