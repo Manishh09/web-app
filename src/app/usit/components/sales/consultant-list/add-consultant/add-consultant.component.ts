@@ -762,6 +762,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
                 //  this.getAllEmployees();
                   this.dataToBeSentToSnackBar.message =
                     'File Deleted successfully';
+                    this.dialogRef.close();
                 } else {
                   this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
                   this.dataToBeSentToSnackBar.message = 'Record Deletion failed';
@@ -813,7 +814,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
             //  this.getAllEmployees();
               this.dataToBeSentToSnackBar.message =
                 'File Deleted successfully';
-
+                this.dialogRef.close();
             } else {
               this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
               this.dataToBeSentToSnackBar.message = 'Record Deletion failed';
