@@ -200,7 +200,7 @@
 
               <ng-template #sales>
                 <button mat-icon-button  *ngIf=" hasAcces!='Employee'  && (consultant.status === 'Active' ||  consultant.status === 'Verified')"
-                 (click)="moveProfileToSales(consultant)"
+                 (click)="goToConsultantTrackDetails(consultant)"
                     matTooltip="{{ttitle}}"
                     matTooltipPosition="above"
                 class="action-button-ed">
