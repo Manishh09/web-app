@@ -355,3 +355,24 @@ tr:nth-child(even) {
   align-items: center;
   margin: 0;
 }
+
+// ngx-mat-tel-input - phone number styles
+.mat-mdc-menu-panel .ngx-mat-tel-input-mat-menu-panel {
+  max-height: 250px !important;
+}
+
+.intl-input {
+  opacity: 1;
+}
+
+::ng-deep .custom-intl-input .mat-mdc-menu-panel .ngx-mat-tel-input-mat-menu-panel {
+  max-height: 250px !important;
+}
+
+::ng-deep .intl-input .mdc-button .mdc-button__label {
+  margin-top: 15px;
+}
+
+::ng-deep .ngx-mat-tel-input-mat-menu-panel {
+  max-height: 280px !important;
+}

@@ -10,7 +10,7 @@ export class ConsultantService {
 
   constructor(private http: ApiService) { }
 
-  public duplicatecheck(phonenumber: number) {
+  public duplicatecheck(phonenumber: string) {
     return this.http.get( "consultant/duplicatecheck/" + phonenumber);
   }
 
