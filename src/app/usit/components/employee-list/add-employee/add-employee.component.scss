@@ -338,7 +338,7 @@ mat-mdc-menu-content {
 }
 
 // .mat-mdc-row {
-//   height: 30px !important; 
+//   height: 30px !important;
 // }
 
 .mat-column-date,
@@ -350,8 +350,8 @@ mat-mdc-menu-content {
 table {
   border-collapse: collapse;
   width: 92%;
-  margin-left: 4%;
-  margin-right: 3%;
+  // margin-left: 4%;
+  // margin-right: 3%;
 }
 
 th,
@@ -363,6 +363,7 @@ td {
 
 th {
   background-color: #f2f2f2;
+  font-weight: 600 !important;
 }
 
 tr:nth-child(even) {

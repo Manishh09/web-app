@@ -94,10 +94,10 @@ export class InterviewListComponent {
 
   ngOnInit(): void {
     const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSalesInt']) { // sales consultant
+    if (routeData['isSalesInterview']) { // sales consultant
       this.flag = "sales";
     }
-    else if (routeData['isRecInt']) { // recruiting consutlant
+    else if (routeData['isRecInterview']) { // recruiting consutlant
       this.flag = "Recruiting";
     }
 
@@ -105,12 +105,13 @@ export class InterviewListComponent {
       this.flag = "DomRecruiting";
     }
     this.hasAcces = localStorage.getItem('role');
-    this.getAll();
+    this.userid = localStorage.getItem('userid');
+    this.getAllData();
 
   }
 
 
-  getAll() {
+  getAll( ) {
     this.userid = localStorage.getItem('userid');
     this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
@@ -144,7 +145,7 @@ export class InterviewListComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        // this.getAllData(this.currentPageIndex + 1);
+         this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
@@ -164,13 +165,31 @@ export class InterviewListComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        // this.getAllData(this.currentPageIndex + 1);
+         this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
 
   onFilter(event: any) {
 
+  }
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    if (keyword != '') {
+      return this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, keyword).subscribe(
+        ((response: any) => {
+          this.entity = response.data.content;
+          this.dataSource.data  = response.data.content;
+           // for serial-num {}
+           this.dataSource.data.map((x: any, i) => {
+            x.serialNum = this.generateSerialNumber(i);
+          });
+          this.totalItems = response.data.totalElements;
+
+        })
+      );
+    }
+    return  this.getAllData(this.currentPageIndex + 1)
   }
 
   onSort(event: any) {
@@ -184,7 +203,7 @@ export class InterviewListComponent {
   }
   pageSize = 50;
   showFirstLastButtons = true;
-  showPageSizeOptions = true;
+  showPageSizeOptions = false;
   hidePageSize = true;
   pageEvent!: PageEvent;
   pageSizeOptions = [5, 10, 25];

@@ -110,7 +110,7 @@ export class AddInterviewComponent implements OnInit {
     } else {
       this.initializeInterviewForm(new InterviewInfo());
     }
-    
+
   }
 
   getFlag(type: string){
@@ -121,7 +121,7 @@ export class AddInterviewComponent implements OnInit {
     }
   }
 
-  
+
 
 
   private initializeInterviewForm(interviewData: InterviewInfo) {
@@ -176,7 +176,7 @@ export class AddInterviewComponent implements OnInit {
     const saveReqObj = this.getSaveData();
     console.log('form.value  ===', saveReqObj);
     this.interviewServ
-      .registerEntity(saveReqObj)
+      .addORUpdateInterview(saveReqObj,this.data.actionName)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: (data: any) => {

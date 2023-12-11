@@ -13,13 +13,13 @@
             <!-- <button mat-icon-button class="add-user" (click)="uploadVendor()">
           <mat-icon class="item-icon">upload</mat-icon>
         </button> -->
-            <button mat-icon-button class="add-submission" (click)="addSubmission()">
-                <mat-icon class="item-icon">person_add</mat-icon>
+            <button matTooltip="Add" matTooltipPosition="left" mat-icon-button class="add-submission" (click)="addSubmission()">
+                <mat-icon class="item-icon">add_circle</mat-icon>
             </button>
 
             <div class="search-submission">
                 <!-- <mat-icon class="item-icon">person_search</mat-icon> -->
-                <input matInput type="search" class="search" placeholder="search consultant" (keyup)="onFilter($event)">
+                <input matInput type="search" class="search" placeholder="search submissions" (keyup)="applyFilter($event)">
             </div>
         </div>
     </div>
@@ -167,14 +167,15 @@
     </div>
 
     <div class="paginator">
-        <!-- paginator -->
-        <mat-paginator   (page)="handlePageEvent($event)"
-          [length]="totalItems" [pageSize]="pageSize"
-          [disabled]="false" [showFirstLastButtons]="showFirstLastButtons"
-          [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-          [hidePageSize]="hidePageSize"
-          [pageIndex]="currentPageIndex" aria-label="Select page">
-        </mat-paginator>
+
+         <!-- paginator -->
+      <mat-paginator   (page)="handlePageEvent($event)"
+      [length]="totalItems" [pageSize]="pageSize"
+      [disabled]="false" [showFirstLastButtons]="showFirstLastButtons"
+      [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+      [hidePageSize]="hidePageSize"
+      [pageIndex]="currentPageIndex" aria-label="Select page">
+    </mat-paginator>
       </div>
 
 </div>

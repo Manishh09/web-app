@@ -35,7 +35,7 @@
   flex-direction: column;
   align-items: center;
  // text-align: center;
-  .form-details-textarea, .company-qualification-field{
+  .form-details-textarea, .company-qualification-field, .select-technology-field {
     width: 100%;
     text-align: center;
   }
@@ -47,7 +47,7 @@
   flex-direction: column;
   align-items: center;
  // text-align: center;
- .select-technology-field, .select-visa-field, .company-select-field{
+.select-visa-field, .company-select-field{
   width: 100%;
   display: contents;
 }
@@ -142,6 +142,7 @@
 .radio-group{
   display: flex;
   flex-direction: column;
+  margin-bottom: 28px;
 }
 
 .form-button{
@@ -343,8 +344,14 @@ td {
 
 th {
   background-color: #f2f2f2;
+  font-weight: 600 !important;
 }
 
 tr:nth-child(even) {
   background-color: #f9f9f9;
+}
+.upload-container {
+  display: flex;
+  align-items: center;
+  margin: 0;
 }

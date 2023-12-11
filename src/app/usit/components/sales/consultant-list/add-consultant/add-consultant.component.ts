@@ -128,6 +128,8 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
   isRadSelected: any;
+  submitted: boolean = false;
+  dailCode: string = "";
   constructor(
     private http: HttpClient,
   ) { }
@@ -192,7 +194,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       resume: [consultantData ? consultantData.resume : ''],
       dlcopy: [consultantData ? consultantData.dlcopy : ''],
 
-      
+
 
       firstname: [consultantData ? consultantData.firstname : '', Validators.required], //['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z]*$")]],
       lastname: [consultantData ? consultantData.lastname : '', Validators.required], ///^[+]\d{12}$   /^[+]\d{12}$   ^[0-9]*$
@@ -215,7 +217,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       priority: [consultantData ? consultantData.priority : ''],
       company: [consultantData ? consultantData.company : '', Validators.required],
       position: [consultantData ? consultantData.position : '', Validators.required],
-      status: [consultantData ? consultantData.status : 'Initiated'],
+      status: [this.data.actioName === "edit-consultant" ?  consultantData.status : 'Initiated'],
       experience: [consultantData ? consultantData.experience : '', [Validators.required, Validators.pattern('^[0-9]*$')]],
       hourlyrate: [consultantData ? consultantData.hourlyrate : ''],
       skills: [consultantData ? consultantData.skills : ''],
@@ -237,7 +239,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
      refemail: [consultantData ? consultantData.refemail : ''],
      //refcont: new FormControl(consultantData ? consultantData.refcont : ''),
      refcont: [consultantData ? consultantData.refcont : ''],
-      //number: [consultantData ? consultantData.number : '', Validators.required],
+      number: ['', Validators.required],
       // status:[this.consultantForm.status],
      relocation: [consultantData ? consultantData.relocation : ''],//  kiran
      relocatOther: [consultantData ? consultantData.relocatOther : ''],//,kiran
@@ -249,7 +251,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       addedby: localStorage.getItem('userid'),
     });
 
-    //this.validateControls();
+    this.validateControls();
   }
   private validateControls() {
     if (this.flag == 'Recruiting' || this.flag == 'sales') {
@@ -382,12 +384,11 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   enableButton = '';
   onSubmit() {
     this.onFileSubmitted = true;
-
+    this.submitted = true;
     // stop here if consultantForm is invalid
     if (this.consultantForm.invalid) {
       this.isRadSelected = true;
       this.displayFormErrors();
-      alert()
       return;
     }
     if (this.flag != 'presales') {
@@ -435,7 +436,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data.status == 'success') {
-            //alertify.success("Consultant added successfully");
             this.dataToBeSentToSnackBar.message = 'Consultant added successfully';
             this.dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
             this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
@@ -447,8 +447,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
             this.dataToBeSentToSnackBar.message = "Record Insertion failed";
             this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
             this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
-
-            //alertify.error("Record Insertion failed");
           }
         },
         error: err => {
@@ -507,10 +505,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   }
   ctnumber!: any;
   changeFn(event: any) {
-    const number = event.target.value;
-    alert(this.consultantForm.contactnumber);
+    const number = `+${this.dailCode}${event.target.value}`;
     this.consultantServ
-      .duplicatecheck(this.consultantForm.contactnumber)
+      .duplicatecheck(+number)
       .subscribe((response: any) => {
         if (response.status == 'success') {
           this.message = '';
@@ -528,7 +525,13 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         }
       });
   }
-
+  /**
+   *
+   * @param event fetch dial-code of the country for contact number
+   */
+  onContryChange(event: any){
+    this.dailCode = event.dialCode;
+  }
   @ViewChild('multifiles')
   multifiles: any = ElementRef;
   sum = 0;
@@ -669,9 +672,16 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     });
   }
   onAddCompany() {
+    const dataToBeSentToDailog = {
+      title: 'Add Company',
+      buttonCancelText: 'Cancel',
+      buttonSubmitText: 'Submit',
+      actionData: this.company,
+      actionName: 'add-company'
+    };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '50vw';
-    dialogConfig.data = this.company;
+    dialogConfig.width = '40vw';
+    dialogConfig.data = dataToBeSentToDailog;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddCompanyComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
       if (dialogRef.componentInstance.allowAction) {
@@ -680,9 +690,16 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     })
   }
   onAddVisa() {
+    const dataToBeSentToDailog = {
+      title: 'Add Visa',
+      buttonCancelText: 'Cancel',
+      buttonSubmitText: 'Submit',
+      actionData: this.visadata,
+      actionName: 'add-visa'
+    };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '50vw';
-    dialogConfig.data = this.visadata;
+    dialogConfig.width = '40vw';
+    dialogConfig.data = dataToBeSentToDailog;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddVisaComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
       if (dialogRef.componentInstance.allowAction) {
@@ -691,9 +708,16 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     })
   }
   onAddTechnology() {
+    const dataToBeSentToDailog = {
+      title: 'Add Technology',
+      buttonCancelText: 'Cancel',
+      buttonSubmitText: 'Submit',
+      actionData: this.techdata,
+      actionName: 'add-technology'
+    };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '50vw';
-    dialogConfig.data = this.techdata;
+    dialogConfig.width = '40vw';
+    dialogConfig.data = dataToBeSentToDailog;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddTechnologyTagComponent, dialogConfig)
     dialogRef.afterClosed().subscribe(() => {
       if (dialogRef.componentInstance.allowAction) {
@@ -702,9 +726,16 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     })
   }
   onAddQualification() {
+    const dataToBeSentToDailog = {
+      title: 'Add Qualification',
+      buttonCancelText: 'Cancel',
+      buttonSubmitText: 'Submit',
+      actionData: this.QualArr,
+      actionName: 'add-qualification'
+    };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '50vw';
-    dialogConfig.data = this.QualArr;
+    dialogConfig.width = '40vw';
+    dialogConfig.data =  dataToBeSentToDailog;
     const dialogRef = this.dialogServ.openDialogWithComponent(AddQualificationComponent, dialogConfig)
     dialogRef.afterClosed().subscribe(() => {
       if (dialogRef.componentInstance.allowAction) {

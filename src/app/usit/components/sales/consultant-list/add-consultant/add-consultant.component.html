@@ -63,7 +63,7 @@
         <mat-form-field appearance="fill">
           <mat-label> Contact Number </mat-label>
           <ngx-mat-intl-tel-input class="intl-input" [preferredCountries]="['in','us']" formControlName="contactnumber"
-            (change)="changeFn($event)" [enablePlaceholder]="true" [enableSearch]="true" name="contactnumber"
+            (change)="changeFn($event)" (countryChanged)="onContryChange($event)" [enablePlaceholder]="true" [enableSearch]="true" name="contactnumber"
             id="intlInput" #contactnumber #pNumb>
           </ngx-mat-intl-tel-input>
           <mat-error *ngIf="consultantForm.get('contactnumber').hasError('required')">Personal
@@ -189,82 +189,34 @@
             is required</mat-error>
           <mat-error *ngIf="consultantForm.get('experience')!.hasError('pattern')">Enter only number</mat-error>
         </mat-form-field>
-        <!-- Hourly Rate -->
-        <mat-form-field appearance="fill">
-          <mat-label>Hourly Rate</mat-label>
-          <input matInput formControlName="hourlyrate" placeholder="Hourly Rate" maxlength="30">
-        </mat-form-field>
-        <!-- details -->
-        <div class="form-details-textarea">
-          <mat-form-field>
-            <mat-label>Skills</mat-label>
-            <textarea matInput formControlName="skills" maxlength="2000" placeholder="Skill Set"></textarea>
-          </mat-form-field>
-        </div>
-        <!-- Rate Radio group-->
-        <div class="radio-group" style="width: 80%;">
-
-          <mat-label>Rate Type</mat-label>
-          <mat-radio-group aria-label="Select an option" formControlName="ratetype">
-            <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.rate" [value]="opt.value"
-              (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
-            <mat-error *ngIf="consultantForm.get('ratetype').hasError('required')">Rate Type is
-              required</mat-error>
-          </mat-radio-group>
-        </div>
-      </div>
-      <div class="form-column-right">
-        <!-- technology -->
-        <!-- <div class="select-technology-field">
-          <mat-form-field appearance="fill">
-            <mat-label>Select Technology</mat-label>
-            <mat-select name="technology" formControlName="technology">
-              <mat-option *ngFor="let option of visadata" [value]="option[0]" (onSelectionChange)="techskills($event)">
-                {{ option[1] }}
-              </mat-option>
-            </mat-select>
-            <button matSuffix mat-icon-button (click)="onAddTechnology()"><mat-icon>add</mat-icon></button>
-            <mat-error *ngIf="consultantForm.get('technology').hasError('required')">Technology is
-              required</mat-error>
-          </mat-form-field>
-        </div> -->
-        <div class="select-technology-field">
-          <mat-form-field appearance="fill">
-            <mat-label>Select Technology</mat-label>
-            <mat-select name="technology" formControlName="technology" (selectionChange)="techskills($event)">
-              <mat-option *ngFor="let option of techdata" [value]="option[0]">
-                {{ option[1] }}
-              </mat-option>
-            </mat-select>
-            <button matSuffix mat-icon-button (click)="onAddTechnology()"><mat-icon>add</mat-icon></button>
-            <mat-error *ngIf="consultantForm.get('technology').hasError('required')">Technology is required</mat-error>
-          </mat-form-field>
-        </div>
-        <!-- Location - HeadQuarters -->
-        <mat-form-field appearance="fill">
+         <!-- Location - HeadQuarters -->
+         <mat-form-field appearance="fill">
           <mat-label>Location</mat-label>
           <input matInput formControlName="currentlocation" maxlength="250" ngx-gp-autocomplete [options]='options'
             (onAddressChange)="handleAddressChange($event)">
           <mat-error *ngIf="consultantForm.get('currentlocation')!.hasError('required')">Location
             Name is required</mat-error>
         </mat-form-field>
-        <!-- Relocation Radio group-->
-        <div class="radio-group" style="width: 80%;">
-
-          <mat-label>Relocation Type</mat-label>
-          <mat-radio-group aria-label="Select an option" formControlName="relocation">
-            <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.relocation" [value]="opt.value"
-              (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
-
-          </mat-radio-group>
-        </div>
-        <!-- Others Details -->
-        <div class="form-details-textarea" *ngIf="other">
-          <mat-form-field>
-            <mat-label>Others Details</mat-label>
-            <textarea matInput formControlName="relocatOther" maxlength="250" placeholder="Skill Set"></textarea>
-          </mat-form-field>
-        </div>
+          <!-- Technology -->
+          <div class="select-technology-field">
+            <mat-form-field appearance="fill">
+              <mat-label>Select Technology</mat-label>
+              <mat-select name="technology" formControlName="technology" (selectionChange)="techskills($event)">
+                <mat-option *ngFor="let option of techdata" [value]="option[0]">
+                  {{ option[1] }}
+                </mat-option>
+              </mat-select>
+              <button matSuffix mat-icon-button (click)="onAddTechnology()"><mat-icon>add</mat-icon></button>
+              <mat-error *ngIf="consultantForm.get('technology').hasError('required')">Technology is required</mat-error>
+            </mat-form-field>
+          </div>
+           <!-- Skill Set -->
+           <div class="form-details-textarea">
+            <mat-form-field>
+              <mat-label>Skills</mat-label>
+              <textarea matInput formControlName="skills" maxlength="2000" placeholder="Skill Set"></textarea>
+            </mat-form-field>
+          </div>
 
         <!-- summary -->
         <div class="form-details-textarea">
@@ -273,6 +225,49 @@
             <textarea matInput formControlName="summary" maxlength="2000" placeholder="Skill Set"></textarea>
           </mat-form-field>
         </div>
+
+      </div>
+      <div class="form-column-right">
+
+         <!-- Hourly Rate -->
+         <mat-form-field appearance="fill">
+          <mat-label>Hourly Rate</mat-label>
+          <input matInput formControlName="hourlyrate" placeholder="Hourly Rate" maxlength="30">
+        </mat-form-field>
+
+           <!-- Rate Radio group-->
+           <div class="radio-group" style="width: 80%;">
+
+            <mat-label>Rate Type</mat-label>
+            <mat-radio-group aria-label="Select an option" formControlName="ratetype">
+              <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.rate" [value]="opt.value"
+                (change)="onRadioChange($event)">{{opt.value}}</mat-radio-button>
+              <mat-error *ngIf="consultantForm.get('ratetype').hasError('required') && isRadSelected">Rate Type is
+                required</mat-error>
+            </mat-radio-group>
+          </div>
+        <!-- Relocate Other Radio group-->
+        <div class="radio-group" style="width: 80%;">
+
+          <mat-label>Relocation Type</mat-label>
+          <mat-radio-group aria-label="Select an option" formControlName="relocation">
+            <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.relocation" [value]="opt.value"
+              >{{opt.value}}</mat-radio-button>
+
+          </mat-radio-group>
+        </div>
+        <!-- Others Details -->
+        <div class="form-details-textarea" *ngIf="other">
+          <mat-form-field>
+            <mat-label>Others Details</mat-label>
+            <textarea matInput formControlName="relocatOther" maxlength="250" placeholder="Enter other details">
+            </textarea>
+            <mat-error *ngIf="consultantForm.get('relocatOther')!.hasError('required')">Please enter other details
+              required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
       </div>
     </div>
 
@@ -410,7 +405,7 @@
         <!-- Contact Number-->
         <mat-form-field appearance="fill">
           <mat-label> Contact Number </mat-label>
-          <ngx-mat-intl-tel-input class="intl-input" formControlName="refcont" [enablePlaceholder]="true"
+          <ngx-mat-intl-tel-input class="intl-input" [preferredCountries]="['in','us']" formControlName="refcont" [enablePlaceholder]="true"
             [enableSearch]="true" name="refcont" id="intlInput" #contactnumber #pNumb>
           </ngx-mat-intl-tel-input>
           <!-- <mat-error *ngIf="consultantForm.get('refcont').hasError('required')">Personal
@@ -486,10 +481,10 @@
         </mat-form-field>
       </div>
     </div>
-    <div class="header-container-upload-documents">
+    <div class="header-container"  *ngIf="data.actionName === 'edit-consultant'">
       <span class="header-text">List Documents</span>
     </div>
-    <div>
+    <div class="list-documents"  *ngIf="data.actionName === 'edit-consultant'">
       <table>
         <tr>
           <th>Document Name</th>
