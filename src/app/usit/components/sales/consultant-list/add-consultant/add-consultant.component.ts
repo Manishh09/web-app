@@ -239,7 +239,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
      refemail: [consultantData ? consultantData.refemail : ''],
      //refcont: new FormControl(consultantData ? consultantData.refcont : ''),
      refcont: [consultantData ? consultantData.refcont : ''],
-      number: ['', Validators.required],
+      // number: ['', Validators.required],
       // status:[this.consultantForm.status],
      relocation: [consultantData ? consultantData.relocation : ''],//  kiran
      relocatOther: [consultantData ? consultantData.relocatOther : ''],//,kiran
@@ -436,7 +436,9 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data.status == 'success') {
-            this.dataToBeSentToSnackBar.message = 'Consultant added successfully';
+
+            this.dataToBeSentToSnackBar.message = this.data.actionName === "edit-consultant" ? 'Consultant Updated successfully' :'Consultant added successfully';
+            
             this.dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
             this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
             this.onFileSubmit(data.data.consultantid);
