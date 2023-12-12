@@ -16,6 +16,10 @@ export class FileManagementService {
     return this.http.post(this.apiServ.apiUrl + `auth/users/uploadMultiple/${id}`, formData, {observe: "response"});
   }
 
+  ConUploadFile(formData:any, id: number) {
+    return this.http.post(this.apiServ.apiUrl + `consultant/uploadMultiple/${id}`, formData, {observe: "response"});
+  }
+
   removefile(id: number, flg: string) {
     return this.apiServ.get(`auth/users/removefile/${id}/${flg}`);
   }
