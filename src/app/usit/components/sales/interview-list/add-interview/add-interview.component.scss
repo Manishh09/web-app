@@ -255,3 +255,7 @@ mat-mdc-menu-content {
 .intl-input {
     opacity: 1;
 }
+
+.mdc-text-field__input::-webkit-calendar-picker-indicator {
+  display: block !important;
+}

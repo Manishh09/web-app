@@ -217,7 +217,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       priority: [consultantData ? consultantData.priority : ''],
       company: [consultantData ? consultantData.company : '', Validators.required],
       position: [consultantData ? consultantData.position : '', Validators.required],
-      status: [this.data.actioName === "edit-consultant" ?  consultantData.status : 'Initiated'],
+      status: [this.data.actionName === "edit-consultant" ?  consultantData.status : 'Initiated'],
       experience: [consultantData ? consultantData.experience : '', [Validators.required, Validators.pattern('^[0-9]*$')]],
       hourlyrate: [consultantData ? consultantData.hourlyrate : ''],
       skills: [consultantData ? consultantData.skills : ''],
@@ -239,7 +239,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
      refemail: [consultantData ? consultantData.refemail : ''],
      //refcont: new FormControl(consultantData ? consultantData.refcont : ''),
      refcont: [consultantData ? consultantData.refcont : ''],
-      // number: ['', Validators.required],
+     // // number: ['', Validators.required],
       // status:[this.consultantForm.status],
      relocation: [consultantData ? consultantData.relocation : ''],//  kiran
      relocatOther: [consultantData ? consultantData.relocatOther : ''],//,kiran
@@ -423,6 +423,8 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         this.entity.companyname = formVal.companyname;
         this.entity.refname = formVal.refname;
         this.entity.refcont = formVal.refcont;
+        this.entity.relocation = formVal.relocation;
+        this.entity.relocatOther = formVal.relocatOther;
       })
     }
 
@@ -431,14 +433,12 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     const lenkedIn = this.consultantForm.get('linkedin')?.value;
     console.log(JSON.stringify(this.consultantForm.value, null, 2) + " =============== ");
     if (this.flg == true) {
-      const saveReqObj = this.getSaveObjData()
+     // const saveReqObj = this.getSaveObjData()
       this.consultantServ.registerconsultant(saveObj)
       .subscribe({
         next: (data: any) => {
           if (data.status == 'success') {
-
-            this.dataToBeSentToSnackBar.message = this.data.actionName === "edit-consultant" ? 'Consultant Updated successfully' :'Consultant added successfully';
-            
+            this.dataToBeSentToSnackBar.message = this.data.actionName === "edit-consultant" ? 'Consultant updated successfully' : 'Consultant added successfully';
             this.dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
             this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
             this.onFileSubmit(data.data.consultantid);
@@ -509,13 +509,13 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   changeFn(event: any) {
     const number = `+${this.dailCode}${event.target.value}`;
     this.consultantServ
-      .duplicatecheck(+number)
+      .duplicatecheck(number)
       .subscribe((response: any) => {
         if (response.status == 'success') {
           this.message = '';
         } else if (response.status == 'fail') {
-          const cn = this.consultantForm.get('number');
-          cn.setValue('');
+          // const cn = this.consultantForm.get('number');
+          // cn.setValue('');
           this.message = 'Record already available with given Contact Number';
           this.dataToBeSentToSnackBar.message =  'Record already available with given Contact Number';
           this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -543,7 +543,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       var items = file.name.split('.');
       const str = items[0];
       if (str.length > 20) {
-        this.dataToBeSentToSnackBar.message =  'File name is toot large, please rename the file before upload, it should be 15 to 20 characters';
+        this.dataToBeSentToSnackBar.message =  'File name is too large, please rename the file before upload, it should be 15 to 20 characters';
         this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
         this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
         this.multifiles.nativeElement.value = '';
@@ -655,12 +655,16 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     }
 
     //upload
-    let url = this.baseUrl + 'consultant/uploadMultiple/' + id;
-    this.http
-      .post(url, formData, { observe: 'response' })
+    this.fileService
+      .uploadFile(formData, id)
       .subscribe((response: any) => {
         if (response.status === 200) {
         } else {
+          this.dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.dataToBeSentToSnackBar.message = 'File upload failed';
+          this.snackBarServ.openSnackBarFromComponent(
+            this.dataToBeSentToSnackBar
+          );
         }
       });
   }
@@ -690,6 +694,10 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         this.getCompanies()
       }
     })
+  }
+  stopEvntProp(event: Event){
+    event.preventDefault();
+    event.stopPropagation();
   }
   onAddVisa() {
     const dataToBeSentToDailog = {
@@ -910,6 +918,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     },
   });
  }
+
 
   /**
   * Cancel
