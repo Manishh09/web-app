@@ -424,7 +424,7 @@ export class ConsultantListComponent
    *
    * @param consultant
    */
-  moveProfileToSales(consultant: any) {
+  moveProfileToSales(consultant: Consultantinfo) {
     //alertify.confirm("Move Profile", "Are you sure you want to move Profile to Sales ? ", () => {
     const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
       title: 'Confirmation',
@@ -447,12 +447,12 @@ export class ConsultantListComponent
 
     dialogRef.afterClosed().subscribe({
       next: () => {
-        if (dialogRef.componentInstance.allowAction) {
+        if (dialogRef.componentInstance.allowAction) { 
           this.consultantServ
             .moveToSales(
-              this.consultant2.consultantid,
+              consultant.consultantid,
               this.flag,
-              this.consultant2.comment,
+              consultant.comment,
               this.userid
             )
             .subscribe((resp: any) => {

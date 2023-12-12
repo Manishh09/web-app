@@ -38,6 +38,7 @@ import { FileData } from '../../../employee-list/add-employee/add-employee.compo
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { FileManagementService } from 'src/app/usit/services/file-management.service';
+import { ApiService } from 'src/app/core/services/api.service';
 
 @Component({
   selector: 'app-add-consultant',
@@ -74,10 +75,10 @@ import { FileManagementService } from 'src/app/usit/services/file-management.ser
 })
 export class AddconsultantComponent implements OnInit, OnDestroy {
   flag!: string;
-  // private baseUrl = 'http://69.216.19.140:8080/usit/';
-  //private baseUrl = "http://localhost:8090/usit/";
-  private baseUrl = 'http://localhost:1122/';
   // private baseUrl: string = environment.API_BASE_URL;
+
+  private api = inject(ApiService);
+  private baseUrl = this.api.apiUrl;
   uploadedfiles: string[] = [];
   message: any;
   consultantForm: any = FormGroup;
@@ -239,7 +240,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
      refemail: [consultantData ? consultantData.refemail : ''],
      //refcont: new FormControl(consultantData ? consultantData.refcont : ''),
      refcont: [consultantData ? consultantData.refcont : ''],
-     // number: ['', Validators.required],
+     // // number: ['', Validators.required],
       // status:[this.consultantForm.status],
      relocation: [consultantData ? consultantData.relocation : ''],//  kiran
      relocatOther: [consultantData ? consultantData.relocatOther : ''],//,kiran
@@ -421,6 +422,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
         this.entity.emprefemail = formVal.emprefemail;
         this.entity.emprefcont = formVal.emprefcont;
         this.entity.companyname = formVal.companyname;
+        this.entity.company = formVal.company;
         this.entity.refname = formVal.refname;
         this.entity.refcont = formVal.refcont;
         this.entity.relocation = formVal.relocation;
@@ -656,7 +658,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
 
     //upload
     this.fileService
-      .uploadFile(formData, id)
+      .ConUploadFile(formData, id)
       .subscribe((response: any) => {
         if (response.status === 200) {
         } else {
@@ -804,21 +806,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
   }
 
   deletefile(id: number, doctype: string) {
-    /*  alertify.confirm("Remove File", "Are you sure you want to remove the " + fl + " ? ", () => {
-        this._service.removefile(id, doctype).subscribe(
-          (response: any) => {
-            if (response.status === 'success') {
-              alertify.success(fl + " removed successfully");
-              this.loadData(did);
-            }
-            else {
-              alertify.error("file not removed");
-            }
-          }
-        )
-      }, function () { });
-
-      */
       const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
         title: 'Confirmation',
         message: 'Are you sure you want to delete?',
