@@ -15,11 +15,13 @@ import { TimeoutError } from 'rxjs';
 import { PermissionsService } from 'src/app/services/permissions.service';
 import { HttpErrors } from '../models/http-errors';
 import { LoaderService } from 'src/app/services/loader.service';
+import { Router } from '@angular/router';
 @Injectable()
 export class HttpInterceptorService implements HttpInterceptor {
   constructor(
     private authService: PermissionsService,
-    private loaderServ: LoaderService
+    private loaderServ: LoaderService,
+    private router : Router
   ) //private ngxService: NgxUiLoaderService
   {}
 
@@ -43,6 +45,7 @@ export class HttpInterceptorService implements HttpInterceptor {
         catchError((error: HttpErrorResponse) => {
           // this.ngxService.stop();
           // const errorMessage = this.handleServerSideError(error);
+          this.handleServerSideError(error);
           console.log("error-message", error)
           return throwError(() => error );
         })
@@ -52,6 +55,7 @@ export class HttpInterceptorService implements HttpInterceptor {
   }
 
   handleServerSideError(error: HttpErrorResponse) {
+
    /* if (error instanceof TimeoutError) {
       // return alertify.error("TimeoutError");//  this.openDialog('error', `Няма връзка до сървъра.`);
     }
@@ -127,9 +131,29 @@ export class HttpInterceptorService implements HttpInterceptor {
       case 500: {
         return `${HttpErrors[500]}: put your message here`;
       }
+      case 503: {
+        this.clearLocalStorageItemsOnLogOut();
+        // navigate to login
+        return `${HttpErrors[500]}: Service Not Available`;
+      }
       default: {
         return `Please Try Again Later`;
       }
     }
+  }
+
+  clearLocalStorageItemsOnLogOut() {
+    localStorage.removeItem('userName');
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userid');
+    localStorage.removeItem('roleno');
+    localStorage.removeItem('department');
+    localStorage.removeItem('designation');
+    localStorage.removeItem('rnum');
+    localStorage.removeItem('vnum');
+    localStorage.removeItem('privileges');
+    this.router.navigate(['/']);
+    //alertify.warning("Token expired please login");
   }
 }

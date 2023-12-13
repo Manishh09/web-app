@@ -54,6 +54,7 @@ export class AddRoleComponent {
   protected isFormSubmitted: boolean = false;
   roleDescription = ''
   roleName = ''
+  roleid = ''
   alloAction = false;
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
@@ -66,6 +67,7 @@ export class AddRoleComponent {
 
     if(this.data.actionName === "update-role"){
       this.roleName = this.data.roleData.rolename;
+      this.roleid = this.data.roleData.roleid;
       this.roleDescription = this.data.roleData.description;
       this.initializeRoleForm(this.data.roleData);
     }else{
@@ -78,6 +80,7 @@ export class AddRoleComponent {
       rolename: [data ? data.rolename : '', Validators.required],
       //roleId: ['', Validators.required],
       description: [data ? data.description : ''],
+      roleid: [data ? data.roleid : ''],
     });
   }
 
@@ -118,7 +121,7 @@ export class AddRoleComponent {
       {
       next:(data: any) => {
 
-      if (data.status == 'Success') {
+      if (data.status == 'success') {
         dataToBeSentToSnackBar.message =  this.data.actionName === 'add-role' ?
         'Role added successfully!' :' Role updated successfully!';
         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);

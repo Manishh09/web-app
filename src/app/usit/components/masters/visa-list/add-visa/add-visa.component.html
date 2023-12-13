@@ -9,13 +9,12 @@
 
   <div class="content" mat-dialog-content>
     <form class="add-visa-form" [formGroup]="visaForm" name="visa-form" (ngSubmit)="onSubmit()">
+      <input type="hidden" formControlName="vid">
       <mat-form-field class="visaname-field">
         <mat-label>Visa Status</mat-label>
         <input matInput formControlName="visastatus" maxlength="15">
-        <!-- error -->
         <mat-error class="error-message" *ngIf="controls['visastatus'].errors && controls['visastatus'].errors['required']">Visa Status is required</mat-error>
       </mat-form-field>
-      
       <mat-form-field class="description-field">
         <mat-label>Description</mat-label>
         <textarea title="" maxlength="250" matInput

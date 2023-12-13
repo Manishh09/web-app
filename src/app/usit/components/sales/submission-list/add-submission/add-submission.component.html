@@ -11,7 +11,7 @@
         <div class="form">
             <div class="form-column-left">
 
-                <div class="fg-div" formGroupName="requirement" *ngIf="this.flag === 'Recruiting'">
+                <div class="fg-div" formGroupName="requirement" *ngIf="flag === 'Recruiting'">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Requirement</mat-label>
                         <mat-select formControlName="requirementid"  (change)="requirements($event)">
@@ -24,7 +24,7 @@
                           </mat-error>
                     </mat-form-field>
                 </div>
-                
+
                 <div class="fg-div" formGroupName="consultant">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Consultant</mat-label>
@@ -43,13 +43,13 @@
                     <mat-label>Position Title</mat-label>
                     <input matInput formControlName="position" maxlength="25">
                 </mat-form-field>
-    
+
                 <mat-form-field appearance="fill">
                     <mat-label>Project Location</mat-label>
                     <input matInput formControlName="projectlocation" ngx-gp-autocomplete [options]='options' (onAddressChange)="handleAddressChange($event)">
                     <mat-error *ngIf="submissionForm.get('projectlocation')!.hasError('required')"> Location is required</mat-error>
                 </mat-form-field>
-    
+
                 <div style="width: 80%;">
                     <mat-label>Rate Type</mat-label><br>
                     <mat-radio-group formControlName="ratetype" aria-label="Select an option">
@@ -57,14 +57,14 @@
                       <mat-error *ngIf="submissionForm.get('ratetype')!.hasError('required') && isRadSelected"> Rate Type is required</mat-error>
                     </mat-radio-group>
                 </div>
-    
+
                 <mat-form-field appearance="fill">
                     <mat-label>Submission Rate</mat-label>
                     <input matInput  formControlName="submissionrate" maxlength="10">
                     <mat-error *ngIf="submissionForm.get('submissionrate')!.hasError('required')">Submission Rate is required</mat-error>
                 </mat-form-field>
             </div>
-    
+
             <div class="form-column-right">
                 <mat-form-field appearance="fill">
                     <mat-label>End Client</mat-label>
@@ -107,7 +107,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-    
+
                 <mat-form-field appearance="fill">
                     <mat-label>Contact Number</mat-label>
                     <input matInput formControlName="empcontact" max-length="50" />
@@ -131,7 +131,7 @@
                     <mat-error *ngIf="submissionForm.get('source')!.hasError('required')">Choose Source
                     </mat-error>
                 </mat-form-field>
-    
+
             </div>
         </div>
     </form>

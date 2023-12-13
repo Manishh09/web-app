@@ -29,58 +29,59 @@
   margin-left: auto;
 }
 
-.form-column-left{
+.form-column-left {
   width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
- // text-align: center;
+  // text-align: center;
 }
 
-.form-column-right{
+.form-column-right {
   width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
- // text-align: center;
-.select-role-field{
-  width: 100%;
-  display: contents;
-}
+
+  // text-align: center;
+  .select-role-field {
+    width: 100%;
+    display: contents;
+  }
 }
 
 
-.form{
+.form {
   display: flex;
   flex-direction: row;
 }
 
-.form .form-column-left .mat-mdc-form-field{
-  width: 80%;
- // height: 60px;
-  margin-bottom: 12px;
-}
-
-.form .form-column-right .mat-mdc-form-field{
+.form .form-column-left .mat-mdc-form-field {
   width: 80%;
   // height: 60px;
   margin-bottom: 12px;
 }
 
-.form-button{
+.form .form-column-right .mat-mdc-form-field {
+  width: 80%;
+  // height: 60px;
+  margin-bottom: 12px;
+}
+
+.form-button {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 
 }
 
-.form-button-left{
+.form-button-left {
   width: 50%;
   display: flex !important;
   justify-content: flex-start;
 }
 
-.form-button-right{
+.form-button-right {
   margin-top: 8px;
   display: flex !important;
   justify-content: flex-end;
@@ -88,7 +89,7 @@
   padding-right: 45px;
 }
 
-ul{
+ul {
   padding-inline-start: 10px;
 }
 
@@ -115,24 +116,24 @@ ul.breadcrumb li a:hover {
   text-decoration: underline;
 }
 
-.mat-card{
+.mat-card {
   max-width: 96%;
   padding-top: 20px;
 
 }
 
-.mat-list{
+.mat-list {
   max-width: 100%;
   padding: 0;
   margin: 0;
 }
 
-.mat-mdc-list-item-content{
+.mat-mdc-list-item-content {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
-.mat-icon-button{
+.mat-icon-button {
   width: auto;
 }
 
@@ -145,7 +146,7 @@ ul.breadcrumb li a:hover {
   overflow: hidden;
 }
 
-.employee-form{
+.employee-form {
 
   height: 75vh;
 
@@ -159,16 +160,16 @@ ul.breadcrumb li a:hover {
   align-items: center;
 }
 
-.header-text{
- padding-left: 8px;
- font-weight: 600 ;
+.header-text {
+  padding-left: 8px;
+  font-weight: 600;
 }
 
-.mat-mdc-form-field-infix{
+.mat-mdc-form-field-infix {
   padding-top: 0;
 }
 
-.header-container{
+.header-container {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -179,14 +180,15 @@ ul.breadcrumb li a:hover {
   z-index: 99999;
   top: 0;
   overflow: hidden;
- // margin: 4px 4px 0 4px;
-}
-.header-text{
- //padding-left: 55px;
- font-weight: 600 ;
+  // margin: 4px 4px 0 4px;
 }
 
-.mat-elevation-z1{
+.header-text {
+  //padding-left: 55px;
+  font-weight: 600;
+}
+
+.mat-elevation-z1 {
   box-shadow: none;
 }
 
@@ -210,17 +212,17 @@ mat-error {
     padding: 8px;
   }
 
-  .header-container{
+  .header-container {
     padding: 6px 28px;
   }
 }
 
-.country-selector{
-  opacity:1 !important;
-  bottom:8px !important;
+.country-selector {
+  opacity: 1 !important;
+  bottom: 8px !important;
 }
 
-input:not(.country-search){
+input:not(.country-search) {
   bottom: 3px;
   left: 10px;
 }
@@ -234,65 +236,68 @@ input:not(.country-search){
   padding: 10px 10px !important;
 }
 
-.country-list-button{
-  font-size: 0.8rem!important;
+.country-list-button {
+  font-size: 0.8rem !important;
 }
 
-.mat-mdc-menu-content:not(:empty){
-  max-height:250px !important;
+.mat-mdc-menu-content:not(:empty) {
+  max-height: 250px !important;
 }
-mat-mdc-menu-content{
-  max-height:250px !important;
+
+mat-mdc-menu-content {
+  max-height: 250px !important;
 }
-::ng-deep .custom-intl-input .mat-mdc-menu-panel  .ngx-mat-tel-input-mat-menu-panel{
-  max-height:250px !important;
+
+::ng-deep .custom-intl-input .mat-mdc-menu-panel .ngx-mat-tel-input-mat-menu-panel {
+  max-height: 250px !important;
 }
+
 // .intl-input{
 //   opacity: 1;
 // }
 
-::ng-deep .intl-input .mdc-button .mdc-button__label{
+::ng-deep .intl-input .mdc-button .mdc-button__label {
   margin-top: 15px;
 }
 
 ::ng-deep .ngx-mat-tel-input-mat-menu-panel {
-  max-height:280px !important;
+  max-height: 280px !important;
 }
 
 ::ng-deep .country-search {
   width: calc(100% - 10px) !important;
-  padding: 4px !important; 
+  padding: 4px !important;
 }
 
 ::ng-deep .country-list-button {
   padding: 0px 4px !important;
 }
 
-.upload-documents{
+.upload-documents {
   display: flex;
   flex-direction: row;
 }
 
-.upload-documents-left{
+.upload-documents-left {
   width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.upload-documents-right{
+.upload-documents-right {
   width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.upload-documents .upload-documents-left .mat-mdc-form-field{
+.upload-documents .upload-documents-left .mat-mdc-form-field {
   width: 80%;
   // margin-bottom: 12px;
 }
 
-.upload-documents .upload-documents-right .mat-mdc-form-field{
+.upload-documents .upload-documents-right .mat-mdc-form-field {
   width: 80%;
   // margin-bottom: 12px;
 }
@@ -308,7 +313,7 @@ mat-mdc-menu-content{
   white-space: nowrap;
 }
 
-.header-container-upload-documents{
+.header-container-upload-documents {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -320,22 +325,47 @@ mat-mdc-menu-content{
   overflow: hidden;
 }
 
-.documents-table{
+.documents-table {
   width: 90%;
   justify-content: center;
   align-items: center;
   margin: auto;
 }
 
-.mat-mdc-header-row  {
+.mat-mdc-header-row {
   background-color: rgb(213, 231, 231);
   // height: 30px !important;
 }
 
 // .mat-mdc-row {
-//   height: 30px !important; 
+//   height: 30px !important;
 // }
 
-.mat-column-date, .mat-column-document_name, .mat-column-delete{
+.mat-column-date,
+.mat-column-document_name,
+.mat-column-delete {
   border-right: 1px solid lightgray;
+}
+
+table {
+  border-collapse: collapse;
+  width: 92%;
+  // margin-left: 4%;
+  // margin-right: 3%;
+}
+
+th,
+td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: 600 !important;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
 }

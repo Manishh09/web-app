@@ -12,27 +12,26 @@ export class TechnologyTagService {
 
   //register technology
   addTechnology(entity: any) {
-    return this.apiServ.post("technology/save", entity);
+    return this.apiServ.post("auth/technology/save", entity);
   }
 
   //update technology
   updateTechnology(entity: any) {
-    return this.apiServ.put("technology/technologies", entity);
-  }
-  
-  // get all technologies
-  getAllTechnologies() {
-    return this.apiServ.get("technology/all");
+    return this.apiServ.put("auth/technology/technologies", entity);
   }
 
-  //used for get the resource
-  getTechnologiesByPagination(pageno: number) {
-    return this.apiServ.get("technology/pagination/" + pageno);
+  // get all technologies
+  getAllTechnologies() {
+    return this.apiServ.get("auth/technology/all");
+  }
+
+  getAllTechnologiesByPagination(access: string, userid: number, page: any, size: any, field: any) {
+    return this.apiServ.get("auth/technology/all/" + access + "/" + userid + "/" + page + "/" + size + "/" + field);
   }
 
   // delete technology
   deleteTechnology(id: number) {
-    return this.apiServ.delete("technology/delete/" + id);
+    return this.apiServ.delete("auth/technology/delete/" + id);
   }
 
   addOrUpdateTechnology(entity: any, action: string) {

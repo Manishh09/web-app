@@ -35,7 +35,7 @@
   flex-direction: column;
   align-items: center;
  // text-align: center;
-  .form-details-textarea, .company-qualification-field{
+  .form-details-textarea, .company-qualification-field, .select-technology-field {
     width: 100%;
     text-align: center;
   }
@@ -47,7 +47,7 @@
   flex-direction: column;
   align-items: center;
  // text-align: center;
- .select-technology-field, .select-visa-field, .company-select-field{
+.select-visa-field, .company-select-field{
   width: 100%;
   display: contents;
 }
@@ -142,6 +142,7 @@
 .radio-group{
   display: flex;
   flex-direction: column;
+  margin-bottom: 28px;
 }
 
 .form-button{
@@ -325,4 +326,53 @@ mat-mdc-menu-content{
 }
 .intl-input{
   opacity: 1;
+}
+
+table {
+  border-collapse: collapse;
+  width: 92%;
+  margin-left: 4%;
+  margin-right: 3%;
+}
+
+th,
+td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: 600 !important;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+.upload-container {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+// ngx-mat-tel-input - phone number styles
+.mat-mdc-menu-panel .ngx-mat-tel-input-mat-menu-panel {
+  max-height: 250px !important;
+}
+
+.intl-input {
+  opacity: 1;
+}
+
+::ng-deep .custom-intl-input .mat-mdc-menu-panel .ngx-mat-tel-input-mat-menu-panel {
+  max-height: 250px !important;
+}
+
+::ng-deep .intl-input .mdc-button .mdc-button__label {
+  margin-top: 15px;
+}
+
+::ng-deep .ngx-mat-tel-input-mat-menu-panel {
+  max-height: 280px !important;
 }

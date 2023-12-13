@@ -23,6 +23,8 @@ export class AppComponent implements OnInit, OnDestroy {
   protected router = inject(Router);
   protected isUserSignedIn = false;
   protected permServ = inject(PermissionsService);
+
+  public  _router= inject(Router);
 //   loaderServ = inject(LoaderService);
 //   isLoading$ = this.loaderServ.isLoading$;
 //   color: ThemePalette = 'warn';
@@ -31,8 +33,9 @@ export class AppComponent implements OnInit, OnDestroy {
 //   value = 50;
   currentURL: string = '';
   ngOnInit(): void {
-     //this.getCurrentURL();
+    // this.getCurrentURL();
      this.currentURL = window.location.pathname;
+     //console.log(this.currentURL+" vvvv  Kiran Testing ");
     this.isUserSignedIn = this.permServ.isUserSignedin()
   }
 
@@ -40,7 +43,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.event$ = this.router.events.subscribe({
       next: (event: NavigationEvent) => {
         if (event instanceof NavigationStart) {
-          console.log(event.url);
           this.currentURL = event.url
         }
       },

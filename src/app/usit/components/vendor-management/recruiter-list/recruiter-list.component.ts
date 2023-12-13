@@ -75,7 +75,7 @@ export class RecruiterListComponent implements OnInit {
   length = 50;
   pageSize = 50; // items per page
   currentPageIndex = 0;
-  pageSizeOptions = [25, 50, 100];
+  pageSizeOptions = [ 50, 75, 100];
   hidePageSize = true;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
@@ -156,7 +156,7 @@ export class RecruiterListComponent implements OnInit {
       .subscribe((response: any) => {
         this.datarr = response.data.content;
         this.dataSource.data = response.data.content;
-        console.log(this.dataSource.data);
+       // console.log(this.dataSource.data);
         // for serial-num {}
         this.dataSource.data.map((x: any, i) => {
           x.serialNum = this.generateSerialNumber(i);
@@ -312,7 +312,7 @@ export class RecruiterListComponent implements OnInit {
   editRecruiter(recruiter: any) {
     const actionData = {
       title: 'Update Recruiter',
-      RecruiterData: recruiter,
+      recruiterData: recruiter,
       actionName: 'edit-recruiter',
     };
     const dialogConfig = new MatDialogConfig();
@@ -372,7 +372,7 @@ export class RecruiterListComponent implements OnInit {
           this.recruiterServ
             .deleteEntity(recruiter.id)
             .subscribe((response: any) => {
-              if (response.status == 'Success') {
+              if (response.status == 'success') {
                 this.getAllRecruiters(this.currentPageIndex + 1);
                 dataToBeSentToSnackBar.message =
                   'Recruiter Deleted successfully';
@@ -445,87 +445,8 @@ export class RecruiterListComponent implements OnInit {
   }
 
   // approve initiate reject
-  _onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
-    if (recruiter.rec_stat !== 'Approved') {
-      const dataToBeSentToSnackBar: ISnackBarData = {
-        message: 'Status updated successfully!',
-        duration: 1500,
-        verticalPosition: 'top',
-        horizontalPosition: 'center',
-        direction: 'above',
-        panelClass: ['custom-snack-success'],
-      };
-      if (this.department == recruiter.ctype) {
-        // alertify.error("Your not Authorized to approve the recruiter");
-        dataToBeSentToSnackBar.message =
-          'You are not Authorized to approve the Recruiter';
-        dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-        this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-        return;
-      }
-
-      const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
-        title:
-          recruiter.rec_stat == 'Initiated' && !rejectRecruiter
-            ? 'Approve Recruiter'
-            : 'Reject Recruiter',
-        message:
-          recruiter.rec_stat == 'Initiated' && !rejectRecruiter
-            ? 'Are you sure you want to Approve the Recruiter ?'
-            : 'Are you sure you want to Reject the Recruiter ?',
-        confirmText: 'Yes',
-        cancelText: 'No',
-        actionData: recruiter,
-      };
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.width = 'fit-content';
-      dialogConfig.height = 'auto';
-      dialogConfig.disableClose = false;
-      dialogConfig.panelClass = `${recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? 'approve' : 'reject'
-        }-recruiter`;
-      dialogConfig.data = dataToBeSentToDailog;
-      const dialogRef = this.dialogServ.openDialogWithComponent(
-        ConfirmComponent,
-        dialogConfig
-      );
-
-      const statReqObj = {
-        action: recruiter.rec_stat === 'Initiated' ? 'Approved' : 'Reject',
-        id: recruiter.id,
-        loginId: this.loginId,
-      };
-      console.log(statReqObj);
-      dialogRef.afterClosed().subscribe(() => {
-        this.recruiterServ
-          .approve(statReqObj.action, statReqObj.id, statReqObj.loginId)
-          .subscribe((response: any) => {
-            console.log(JSON.stringify(response));
-            if (dialogRef.componentInstance.allowAction) {
-              if (response.status == 'Approved') {
-                dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                this.snackBarServ.openSnackBarFromComponent(
-                  dataToBeSentToSnackBar
-                );
-              } else {
-                //  alertify.success("recruiter " + response.data + " successfully");
-                dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-                dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                this.snackBarServ.openSnackBarFromComponent(
-                  dataToBeSentToSnackBar
-                );
-              }
-            }
-            this.gty(this.page);
-          });
-      });
-      // after closing popup
-    }
-    return;
-  }
-
+  
   onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
-    this.isRejected = rejectRecruiter;
     if (recruiter.rec_stat !== 'Approved') {
       const dataToBeSentToSnackBar: ISnackBarData = {
         message: 'Status updated successfully!',
@@ -569,11 +490,11 @@ export class RecruiterListComponent implements OnInit {
       dialogConfig.disableClose = false;
       dialogConfig.panelClass = `${
         recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? 'approve' : 'reject'
-      }-vendor`;
+      }-recruiter`;
       const isApprove =   recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? dataToBeSentToDailogForStatus : dataToBeSentToDailogForReject;
       dialogConfig.data =  isApprove;
       const dialogRef = this.dialogServ.openDialogWithComponent(
-        recruiter.rec_stat = isApprove && !rejectRecruiter ? ConfirmComponent : StatusComponent,
+        recruiter.rec_stat == 'Initiated' && !rejectRecruiter ? ConfirmComponent : StatusComponent,
         dialogConfig
       );
 
@@ -591,23 +512,25 @@ export class RecruiterListComponent implements OnInit {
             .subscribe({
               next: (response: any) => {
                 // console.log(JSON.stringify(response));
+             //   console.log("rec-stat", response.status)
 
-                  if (response.status == 'Approved') {
+                  if (response.status == 'success') {
                     // dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-                    dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
+                    const message = response.message.includes("Change") ? 'Recruiter Approved sucssessfully' : response.message;
+                    dataToBeSentToSnackBar.message = message;
 
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                    this.snackBarServ.openSnackBarFromComponent(
-                      dataToBeSentToSnackBar
-                    );
+                   
                   } else {
                     //  alertify.success("Recruiter " + response.data + " successfully");
-                    dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
-                    dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                    this.snackBarServ.openSnackBarFromComponent(
-                      dataToBeSentToSnackBar
-                    );
+                    dataToBeSentToSnackBar.message = 'Status update failed';
+                    dataToBeSentToSnackBar.panelClass = ['custom-snack-failed'];
+                   
                   }
+                  
+                  this.snackBarServ.openSnackBarFromComponent(
+                    dataToBeSentToSnackBar
+                  );
 
                 // this.gty(this.page);
                 this.getAllRecruiters(this.currentPageIndex + 1);
@@ -677,7 +600,7 @@ export class RecruiterListComponent implements OnInit {
    * @param event
    */
    handlePageEvent(event: PageEvent) {
-    console.log('page.event', event);
+    //console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;

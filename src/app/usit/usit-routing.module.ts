@@ -15,17 +15,40 @@ import { TechnologyTagListComponent } from './components/technology-tag-list/tec
 import { RequirementListComponent } from './components/recruitment/requirement-list/requirement-list.component';
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent , pathMatch: 'full'},
+  { path: '', component: DashboardComponent, pathMatch: 'full' },
   {
     path: 'dashboard',
     component: DashboardComponent
   },
-  { path: 'employees', component: EmployeeListComponent},
+  { path: 'employees', component: EmployeeListComponent },
   { path: 'vendors', component: VendorListComponent },
   { path: 'roles', component: RolesListComponent },
-  { path: 'recruiters', component: RecruiterListComponent},
-  { path: 'submissions', component: SubmissionListComponent },
-  { path: 'interviews', component: InterviewListComponent },
+  { path: 'recruiters', component: RecruiterListComponent },
+  {
+    path: 'sales-submission', component: SubmissionListComponent,
+    data: { isSaleSub: true }
+  },
+  {
+    path: 'rec-submission', component: SubmissionListComponent,
+    data: { isRecSub: true }
+  },
+  {
+    path: 'dom-submission', component: SubmissionListComponent,
+    data: { isDomSub: true }
+  },
+  {
+    path: 'sales-interview', component: InterviewListComponent,
+    data: { isSalesInt: true }
+  },
+  {
+    path: 'rec-interview', component: InterviewListComponent,
+    data: { isRecInt: true }
+  },
+  {
+    path: 'dom-interview', component: InterviewListComponent,
+    data: { isDomInt: true }
+  },
+
   { path: 'visa', component: VisaListComponent },
   { path: 'qualification', component: QualificationListComponent },
   { path: 'companies', component: CompaniesListComponent },
@@ -34,12 +57,22 @@ const routes: Routes = [
   data: {isRecRequirement : true} },
   { path: 'dom-requirements', component: RequirementListComponent,
   data: {isDomRequirement : true} },
-  { path: 'sales-consultants', component: ConsultantListComponent,
-    data: {isSalesConsultant : true}},
-  { path: 'rec-consultants', component: ConsultantListComponent,
-  data: {isRecConsultant : true}},
-  { path: 'dom-consultants', component: ConsultantListComponent,
-  data: {isDomConsultant : true}},
+  {
+    path: 'sales-consultants', component: ConsultantListComponent,
+    data: { isSalesConsultant: true }
+  },
+  {
+    path: 'rec-consultants', component: ConsultantListComponent,
+    data: { isRecConsultant: true }
+  },
+  {
+    path: 'pre-sales', component: ConsultantListComponent,
+    data: { isPreConsultant: true }
+  },
+  {
+    path: 'dom-consultants', component: ConsultantListComponent,
+    data: { isDomConsultant: true }
+  },
   {
     path: 'sales-submissions', component: SubmissionListComponent,
     data: { isSalesSubmission: true }

@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
   private initializeLoginForm() {
     this.form = this.formBuilder.group({
       email: [
-        'saikiran@narveetech.com', // remove later
+       'saikiran@narveetech.com', // remove later
         [
           Validators.required,
           Validators.email,
@@ -103,10 +103,10 @@ export class LoginComponent implements OnInit {
     };
     this.userManagementServ.login(userObj).subscribe({
      next: (result: any) => {
-      console.log("result", result)
+      //console.log("result", result)
         if (result.status == 'success') {
           const loggedInUserData = result.data;
-          console.log(result.data);
+         // console.log(result.data);
 
           this.permissionServ.login(loggedInUserData).subscribe((data) => {
             this.router.navigate(['usit/dashboard']);

@@ -118,11 +118,12 @@ export class InterviewListComponent {
   }
 
 
-  getAll() {
+  getAll(pagIdx=1 ) {
     this.userid = localStorage.getItem('userid');
-    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
+    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, pagIdx, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
+       // console.log(response.data.totalElements)
         this.dataSource.data = response.data.content;
         this.totalItems = response.data.totalElements;
         // for serial-num {}
@@ -151,7 +152,7 @@ export class InterviewListComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        // this.getAllData(this.currentPageIndex + 1);
+         this.getAll(this.currentPageIndex + 1);
       }
     })
   }
@@ -171,13 +172,31 @@ export class InterviewListComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        // this.getAllData(this.currentPageIndex + 1);
+         this.getAll(this.currentPageIndex + 1);
       }
     })
   }
 
   onFilter(event: any) {
 
+  }
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    if (keyword != '') {
+      return this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, keyword).subscribe(
+        ((response: any) => {
+          this.entity = response.data.content;
+          this.dataSource.data  = response.data.content;
+           // for serial-num {}
+           this.dataSource.data.map((x: any, i) => {
+            x.serialNum = this.generateSerialNumber(i);
+          });
+          this.totalItems = response.data.totalElements;
+
+        })
+      );
+    }
+    return  this.getAll(this.currentPageIndex + 1)
   }
 
   onSort(event: any) {
@@ -188,33 +207,6 @@ export class InterviewListComponent {
     const pagIdx = this.currentPageIndex === 0 ? 1 : this.currentPageIndex + 1;
     const serialNumber = (pagIdx - 1) * 50 + index + 1;
     return serialNumber;
-  }
-
-  getRowStyles(row: any): any {
-    const interviewStatus = row.interview_status;
-    let backgroundColor = '';
-    let color = '';
-
-    switch (interviewStatus) {
-      case 'Selected':
-        backgroundColor = 'rgba(243, 208, 9, 0.945)';
-        color = 'black';
-        break;
-      case 'OnBoarded':
-        backgroundColor = 'rgba(40, 160, 76, 0.945)';
-        color = 'white';
-        break;
-      case 'Rejected':
-        backgroundColor = '';
-        color = 'rgba(177, 19, 19, 0.945)';
-        break;
-      default:
-        backgroundColor = '';
-        color = '';
-        break;
-    }
-
-    return { 'background-color': backgroundColor, 'color': color };
   }
 
 }

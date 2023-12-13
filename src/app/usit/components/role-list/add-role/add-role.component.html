@@ -13,6 +13,7 @@
 
   <div class="content" mat-dialog-content>
     <form class="add-role-form" [formGroup]="addRoleForm" #myFrom name="role-form" (ngSubmit)="onSubmit()">
+      <input type="hidden" formControlName="roleid">
       <mat-form-field class="rolename-field">
         <mat-label>Role Name</mat-label>
         <input title="" matInput placeholder="Enter Role Name" formControlName="rolename" maxlength="15" >

@@ -65,6 +65,7 @@ export class AddQualificationComponent {
   private initializeQualificationForm(data : any) {
     this.qualificationForm = this.formBuilder.group({
       name: [data ? data.name : '', Validators.required],
+      id: [data ? data.id : ''],
     });
   }
 
@@ -90,10 +91,12 @@ export class AddQualificationComponent {
     const userId = localStorage.getItem('userid');
     const addObj = {
       name: this.qualificationForm.get('name')!.value,
+      id : this.qualificationForm.get('id')!.value,
     };
     const updateObj = {
       ...this.data.qualificationData,
       name: this.qualificationForm.get('name')!.value,
+      id : this.qualificationForm.get('id')!.value,
     };
     const saveObj = this.data.actionName === "update-qualification" ? updateObj : addObj;
 

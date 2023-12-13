@@ -14,34 +14,34 @@ export class RoleManagementService {
   // roles management
   //register role
   addRole(entity: any) {
-    return this.apiServ.post("roles/save", entity);
+    return this.apiServ.post("auth/roles/save", entity);
   }
 
   //used for get one resource
   getRoleById(id: number) {
-    return this.apiServ.get("roles/getrole/" + id);
+    return this.apiServ.get("auth/roles/getrole/" + id);
   }
 
   //update role
   updateRole(entity: any) {
-    return this.apiServ.put("roles/updaterole", entity);
+    return this.apiServ.put("auth/roles/updaterole", entity);
   }
   // get all roles
   getAllRoles() {
-    return this.apiServ.get("roles/all");
+    return this.apiServ.get("auth/roles/all");
   }
   // get roles based on page num
   getRolesBasedOnPageNum(page: any, size: any) {
-    return this.apiServ.get("roles/all2/"+page+"/"+size);
+    return this.apiServ.get("auth/roles/all2/"+page+"/"+size);
   }
 
   // delete role
   deleteRole(id: number) {
-    return this.apiServ.delete("roles/delete/" + id);
+    return this.apiServ.delete("auth/roles/delete/" + id);
   }
   //used for delete the resource
   updateRoleStatus(entity: any) {
-    return this.apiServ.patch("roles/status", entity);
+    return this.apiServ.patch("auth/roles/status", entity);
   }
 
   // add or update role bases on action edit => update; add=> add

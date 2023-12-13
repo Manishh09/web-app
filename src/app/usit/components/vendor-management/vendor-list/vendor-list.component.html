@@ -121,8 +121,8 @@
         </ng-container>
 
         <!-- Approve/Reject Column -->
-        <ng-container matColumnDef="Approve/Reject">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Approve/Reject"> Approve/Reject </th>
+        <ng-container matColumnDef="ApproveOrReject">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by ApproveOrReject"> Approve/Reject </th>
           <td mat-cell *matCellDef="let vendor" class="approve-buttons">
             <ng-container *ngIf="['Approved'].includes(vendor.vms_stat);  else ifNotApproved">
 
@@ -144,11 +144,17 @@
 
               <!-- Reject BUTTON -->
 
-                <button  *ngIf="vendor.vms_stat !== 'Approved'" mat-raised-button class="approve-reject-buttons" (click)="onApproveOrRejectVMS(vendor ,true)"
+                <button  *ngIf="vendor.vms_stat !== 'Approved'&&vendor.vms_stat !== 'Rejected'" mat-raised-button class="approve-reject-buttons" (click)="onApproveOrRejectVMS(vendor ,true)"
                 [ngStyle]="{ color: 'white' }"
                 style="width: 75px; height: 25px;"
                 [ngClass]="'mat-warn'"> {{'Reject'}}
               </button>
+
+              <button  *ngIf="vendor.vms_stat === 'Rejected'" mat-raised-button class="approve-reject-buttons" 
+              [ngStyle]="{ color: 'white' }"
+              style="width: 75px; height: 25px;"
+              [ngClass]="'mat-warn'"> {{vendor.vms_stat}}
+            </button>
 
             </ng-template>
         </td>

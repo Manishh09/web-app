@@ -62,6 +62,7 @@ export class AddCompanyComponent {
 
   private initializeCompanyForm(data : any) {
     this.companyForm = this.formBuilder.group({
+      companyid : [data ? data.companyid : ''],
       companyname: [data ? data.companyname : '', Validators.required],
       description: [data ? data.description : ''],
     });
@@ -89,12 +90,14 @@ export class AddCompanyComponent {
     const userId = localStorage.getItem('userid');
     const addObj = {
       companyname: this.companyForm.get('companyname')!.value,
-      description: this.companyForm.get('description')!.value
+      description: this.companyForm.get('description')!.value,
+      companyid: this.companyForm.get('companyid')!.value,
     };
     const updateObj = {
       ...this.data.companyData,
       companyname: this.companyForm.get('companyname')!.value,
-      description: this.companyForm.get('description')!.value
+      description: this.companyForm.get('description')!.value,
+      companyid: this.companyForm.get('companyid')!.value,
     };
     const saveObj = this.data.actionName === "update-company" ? updateObj : addObj;
 

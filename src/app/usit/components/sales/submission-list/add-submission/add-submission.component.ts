@@ -150,7 +150,7 @@ export class AddSubmissionComponent implements OnInit{
 
 
   private initilizeSubmissionForm(submissionData: any) {
-    
+
     this.submissionForm = this.formBuilder.group({
 
       // user: this.formBuilder.group({
@@ -194,7 +194,7 @@ export class AddSubmissionComponent implements OnInit{
     console.log('Form Value After Setting Consultant ID:', this.submissionForm.value);
     // this.submissionForm.patchValue(submissionData);
     this.validateControls();
-  } 
+  }
 
   private validateControls() {
     const requirement = this.submissionForm.get('requirement');
@@ -332,7 +332,7 @@ export class AddSubmissionComponent implements OnInit{
       panelClass: ['custom-snack-success'],
     };
 
-    
+
     const saveReqObj = this.getSaveData();
     console.log('form.value  ===', saveReqObj);
     this.submissionServ

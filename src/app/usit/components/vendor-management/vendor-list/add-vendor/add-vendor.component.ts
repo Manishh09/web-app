@@ -157,7 +157,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
         Validators.required,
       ],
       companytype: [
-       vendorData ?vendorData.companytype : '',
+       vendorData ?vendorData.companytype : '',Validators.required,
       ],
       tyretype: [vendorData ?vendorData.tyretype : ''],
       client: [vendorData ?vendorData.client : ''],
@@ -173,9 +173,10 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       ],
       linkedinid: [vendorData ?vendorData.linkedinid : ''],
       twitterid: [vendorData ?vendorData.twitterid : ''],
-      user: this.formBuilder.group({
-        userid: localStorage.getItem('userid'),
-      }),
+      // user: this.formBuilder.group({
+      //   userid: localStorage.getItem('userid'),
+      // }),
+      user: localStorage.getItem('userid'),
       headquerter: [
        vendorData ?vendorData.headquerter : '',
         Validators.required,
@@ -262,7 +263,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.rolearr = response.data;
-          console.log('rolearr.data', response.data);
+        //  console.log('rolearr.data', response.data);
         },
         error: (err) => {
           dataToBeSentToSnackBar.message = err.message;
@@ -312,12 +313,13 @@ export class AddVendorComponent implements OnInit, OnDestroy {
     }
     const saveReqObj = this.getSaveData();
     //this.vendorForm.controls.updatedby.setValue(localStorage.getItem('userid'));
-    console.log('form.value  ===', saveReqObj);
+  //  console.log('form.value  ===', saveReqObj);
     this.vendorServ
       .addORUpdateVendor(saveReqObj, this.data.actionName)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
         next: (data: any) => {
+       //   console.log(data)
           if (data.status == 'success') {
             dataToBeSentToSnackBar.message =
               this.data.actionName === 'add-vendor'
@@ -355,8 +357,9 @@ export class AddVendorComponent implements OnInit, OnDestroy {
         this.vendorObj.updatedby =  localStorage.getItem('userid');
         this.vendorObj.headquerter =  formVal.headquerter;
         this.vendorObj.status =  formVal.status;
-        this.vendorObj.vmsid =  formVal.id;
-        this.vendorObj.vms_stat =  formVal.vms_stat;
+        this.vendorObj.vmsid =  this.data.vendorData.id;
+        this.vendorObj.vms_stat = formVal.status === "Active" ? "Initiated" : formVal.status === "Approved" ? "Approved" : formVal.vms_stat;
+        // this.vendorObj.vms_stat =  formVal.status === "Active"  ? "Initiated" : formVal.vms_stat;
         this.vendorObj.twitterid = formVal.twitterid;
         this.vendorObj.linkedinid =  formVal.linkedinid;
         this.vendorObj.industrytype = formVal.industrytype;
@@ -389,7 +392,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       switchMap((term: any) => {
         if (term) {
-          console.log(term);
+        //  console.log(term);
           return this.getFilteredValue(term);
         } else {
           this.companySearchData = [];
@@ -429,7 +432,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
    */
 
   handleAddressChange(address: any) {
-    console.log('address', address.formatted_address);
+   // console.log('address', address.formatted_address);
     this.vendorForm.controls.headquerter.setValue(address.formatted_address);
     // this.entity.headquerter = address.formatted_address;
   }
@@ -451,7 +454,7 @@ export const VENDOR_TYPE = [
   'Primary Vendor',
   'Implementation Partner',
   'Client',
-  'Layers',
+  'Tier',
 ] as const;
 
 export const TIER_TYPE = [

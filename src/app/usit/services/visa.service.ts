@@ -12,27 +12,27 @@ export class VisaService {
 
   //register visa
   addVisa(entity: any) {
-    return this.apiServ.post("visa/save", entity);
+    return this.apiServ.post("auth/visa/save", entity);
   }
 
   // get all visas
   getAllVisas() {
-    return this.apiServ.get("visa/all");
+    return this.apiServ.get("auth/visa/all");
   }
 
   //used for get one resource
   getVisaById(id: number) {
-    return this.apiServ.get("visa/getbyid/" + id);
+    return this.apiServ.get("auth/visa/getbyid/" + id);
   }
 
   //update visa
   updateVisa(entity: any) {
-    return this.apiServ.post("visa/save", entity);
+    return this.apiServ.post("auth/visa/save", entity);
   }
 
   // delete visa
   deleteVisa(id: number) {
-    return this.apiServ.delete("visa/delete/" + id);
+    return this.apiServ.delete("auth/visa/delete/" + id);
   }
 
   addOrUpdateVisa(entity: any, action: string) {
