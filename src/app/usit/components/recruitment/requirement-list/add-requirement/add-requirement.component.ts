@@ -36,11 +36,13 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Requirements } from 'src/app/usit/models/requirements';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-add-requirement',
   standalone: true,
   imports: [
+    
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -55,6 +57,7 @@ import { Requirements } from 'src/app/usit/models/requirements';
     MatSelectModule,
     MatChipsModule,
     NgMultiSelectDropDownModule,
+    MatCheckboxModule
   ],
   providers: [
     {
@@ -111,6 +114,13 @@ export class AddRequirementComponent {
     statusType: STATUS_TYPE,
   };
   selectAllChecked = false;
+  flag!: string;
+
+  filteredData: any;
+  selectData: any = [];
+  rawData: any = [];
+  isAllOptionsSelected = false;
+  entity: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
@@ -119,25 +129,30 @@ export class AddRequirementComponent {
 
   ngOnInit(): void {
     this.getTech();
-    this.getEmployee();
+    //this.getEmployee();
+    this.getFlag(this.data.flag.toLocaleLowerCase());
+    // this.selectData.forEach((employee: any) => {
+    //   this.rawData.push({ employee, selected: false });
+    // });
     if(this.data.actionName === "edit-requirement"){
       this.initializeRequirementForm(new Requirements());
       this.requirementServ.getEntity(this.data.requirementData.requirementid).subscribe(
         (response: any) => {
+          this.entity = response.data;
           console.log(response);
           this.recruiterList(response.data.vendorimpl.vmsid);
           this.requirementObj = response.data;
+          this.getEmployee();
+          this.getAssignedEmployee();
           this.initializeRequirementForm(response.data);
           
         }
       )
-      this.requirementServ.getAssignedRecruiter(this.data.requirementData.requirementid).subscribe(
-        (response: any) => {
-          this.employeedata = response.data;
-          this.prepopulateSelectedEmployees();
-        }
-      );
+      //this.getAssignedEmployee();
+      
+      //this.prepopulateSelectedEmployees();
     }else{
+      this.getEmployee();
       this.requirementServ.getReqNumber().subscribe(
         (response: any) => {
           if (response.data == null) {
@@ -162,6 +177,24 @@ export class AddRequirementComponent {
         console.log(this.vendorCompanyArr);
       }
     );
+  }
+
+  private getAssignedEmployee() {
+    this.requirementServ.getAssignedRecruiter(this.data.requirementData.requirementid).subscribe(
+      (response: any) => {
+        this.employeedata = response.data; // saveed selected items from assign rec field
+        console.log(this.employeedata);
+        this.prepopulateSelectedEmployees();
+      }
+    );
+  }
+
+  getFlag(type: string){
+    if (type === 'sales') {
+      this.flag = 'Recruiting';
+    } else {
+      this.flag = 'Domrecruiting';
+    }
   }
 
   private initializeRequirementForm(requirementData : any) {
@@ -194,6 +227,7 @@ export class AddRequirementComponent {
       vendorimpl: this.formBuilder.group({
         vmsid: [requirementData ? requirementData.vendorimpl.company :'', [Validators.required]],
       }),
+      requirementflg: this.data.flag.toLocaleLowerCase(),
     });
     if (this.data.actionName === 'edit-requirement') {
       this.requirementForm.addControl('status',this.formBuilder.control(requirementData ? requirementData.status : ''));
@@ -279,7 +313,8 @@ export class AddRequirementComponent {
     this.requirementServ.getEmployee().subscribe(
       (response: any) => {
         this.empArr = response.data;
-      }
+        this.empArr.map((x: any)=> x.selected = false);
+    }
     )
   }
 
@@ -339,7 +374,7 @@ export class AddRequirementComponent {
     const saveReqObj = this.getSaveData();
     console.log('form.value  ===', saveReqObj);
     // this.requirementServ
-    //   .addORUpdateVendor(saveReqObj, this.data.actionName)
+    //   .addORUpdateRequirement(saveReqObj, this.data.actionName)
     //   .pipe(takeUntil(this.destroyed$))
     //   .subscribe({
     //     next: (data: any) => {
@@ -372,7 +407,6 @@ export class AddRequirementComponent {
   handleAddressChange(address: any) {
     console.log('address', address.formatted_address);
     this.requirementForm.controls['location'].setValue(address.formatted_address);
-    // this.entity.headquerter = address.formatted_address;
   }
 
   goToVendorList() {
@@ -417,7 +451,6 @@ export class AddRequirementComponent {
     if (value) {
       this.employees.push(value);
     }
-    console.log(this.employees)
 
     // Clear the input value
     event.chipInput!.clear();
@@ -426,30 +459,66 @@ export class AddRequirementComponent {
   }
 
   remove(employee: any): void {
-    const index = this.employees.indexOf(employee);
+    const index = this.selectData.indexOf(employee);
 
     if (index >= 0) {
-      this.employees.splice(index, 1);
+      this.selectData.splice(index, 1);
+    }
+
+    this.toggleSelection(employee);
+    this.controls['empid'].updateValueAndValidity();
+
+    const input = this.employeeInput;
+    if (input) {
+      console.log(input);
     }
   }
 
   prepopulateSelectedEmployees() {
     // Clear the existing employees array
-    this.employees = [];
+    this.selectData = [];
+    this.selectData = this.employeedata;
 
-    // Add the prepopulated employees from the fetched data
-    this.employeedata.forEach((employee: any) => {
-      this.employees.push(employee.fullname);
-    });
+    this.employeedata.forEach((x: any, listId: number) => {
+      this.empArr.find((y: any) => y.userid === x.userid).selected = true;
+    })
+
+    this.isAllOptionsSelected = this.empArr.every((x: any) => x.selected === true)
+
   }
 
-  selected(event: any): void {
-    // MatAutocompleteSelectedEvent
-    console.log(event);
-    this.employees.push(event.option.viewValue);
-    console.log(this.employees);
-    this.employeeInput.nativeElement.value = '';
-    this.controls['empid']!.setValue(null);
+  optionClicked(event: any, employee: any): void {
+    event.stopPropagation();
+    this.toggleSelection(employee);
+  }
+
+  toggleSelection(employee: any) {
+    employee.selected = !employee.selected;
+    console.log(employee.selected);
+  ​
+    if (employee.selected === true) {
+      this.selectData.push(employee);
+    } 
+    else {
+      const i = this.selectData.findIndex((value: any) => value.fullname === employee.fullname);
+      this.selectData.splice(i, 1);
+    }
+    console.log(this.selectData);
+  ​
+    this.requirementForm.get('empid')!.setValue(this.selectData);
+  };
+
+  onSelectAll(event: MatCheckboxChange){
+    this.isAllOptionsSelected = event.checked;
+    this.empArr.map(
+      (x: any)=> x.selected = event.checked
+    )
+   if(event.checked){
+    this.selectData = this.empArr;
+   }
+   else{
+    this.selectData = []
+   }
   }
 
   empAutoCompleteSearch() {
@@ -458,16 +527,23 @@ export class AddRequirementComponent {
       distinctUntilChanged(),
       switchMap((term: any) => {
         if (typeof term === 'string') {
-          console.log(term);
           return this.getEmpFilteredValue(term);
         }
         else {
-          this.employeeSearchData = [];
-          return of<any>([]);
+          return this.getAllEmpOptions();
         }
       }
       ),
     );
+  }
+
+  getAllEmpOptions(): Observable<any> {
+    if (this.empArr) {
+      this.employeeSearchData = this.empArr;
+      console.log(this.employeeSearchData);
+      return of(this.employeeSearchData);
+    }
+    return of([]);
   }
 
   getEmpFilteredValue(term: string): Observable<any> {
@@ -494,26 +570,33 @@ export class AddRequirementComponent {
     });
   }
 
+  // getSaveData() {
+  //   if(this.data.actionName === "edit-requirement"){
+  //     [this.requirementForm.value].forEach( (formVal, idx) => {
+  //       this.requirementObj.reqnumber = formVal.reqnumber;
+  //       this.requirementObj.postedon = formVal.postedon;
+  //       this.requirementObj.location = formVal.location;
+  //       this.requirementObj.client =  formVal.client;
+  //       this.requirementObj.jobexperience =  formVal.jobexperience;
+  //       this.requirementObj.employmenttype =  formVal.employmenttype;
+  //       this.requirementObj.status =  formVal.status;
+  //       this.requirementObj.jobtitle =  formVal.jobtitle;
+  //       this.requirementObj.jobskills = formVal.jobskills;
+  //       this.requirementObj.jobdescription =  formVal.jobdescription;
+  //       this.requirementObj.duration = formVal.duration;
+  //       this.requirementObj.pocphonenumber = formVal.pocphonenumber;
+  //       this.requirementObj.pocemail = formVal.pocemail;
+  //       this.requirementObj.pocposition =  formVal.pocposition;
+  //       this.requirementObj.salary = formVal.salary;
+  //     })
+  //     return this.requirementObj
+  //   }
+  //   return this.requirementForm.value;
+  // }
+
   getSaveData() {
-    if(this.data.actionName === "edit-vendor"){
-      [this.requirementForm.value].forEach( (formVal, idx) => {
-        this.requirementObj.reqnumber = formVal.reqnumber;
-        this.requirementObj.postedon = formVal.postedon;
-        this.requirementObj.location = formVal.location;
-        this.requirementObj.client =  formVal.client;
-        this.requirementObj.jobexperience =  formVal.jobexperience;
-        this.requirementObj.employmenttype =  formVal.employmenttype;
-        this.requirementObj.status =  formVal.status;
-        this.requirementObj.jobtitle =  formVal.jobtitle;
-        this.requirementObj.jobskills = formVal.jobskills;
-        this.requirementObj.jobdescription =  formVal.jobdescription;
-        this.requirementObj.duration = formVal.duration;
-        this.requirementObj.pocphonenumber = formVal.pocphonenumber;
-        this.requirementObj.pocemail = formVal.pocemail;
-        this.requirementObj.pocposition =  formVal.pocposition;
-        this.requirementObj.salary = formVal.salary;
-      })
-      return this.requirementObj
+    if(this.data.actionName === 'edit-interview'){
+      return {...this.entity, ...this.requirementForm.value}
     }
     return this.requirementForm.value;
   }

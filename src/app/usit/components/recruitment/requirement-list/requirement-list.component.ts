@@ -33,7 +33,7 @@ import { StatusComponent } from 'src/app/dialogs/status/status.component';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RequirementService } from 'src/app/usit/services/requirement.service';
 import { AddRequirementComponent } from './add-requirement/add-requirement.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
@@ -84,7 +84,7 @@ export class RequirementListComponent implements OnInit {
   message: any;
   showAlert = false;
   submitted = false;
-  flag!: any;
+  flag = "";
   searchstring!: any;
   ttitle!: string;
   ttitle1!: string;
@@ -101,6 +101,7 @@ export class RequirementListComponent implements OnInit {
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private requirementServ = inject(RequirementService);
+  private activatedRoute =  inject(ActivatedRoute);
   private router = inject(Router);
 
   // to clear subscriptions
@@ -111,6 +112,20 @@ export class RequirementListComponent implements OnInit {
     this.userid = localStorage.getItem('userid');
     this.dept = localStorage.getItem('department');
     this.getAllData();
+    this.getFlag();
+  }
+
+  getFlag(){
+    const routeData = this.activatedRoute.snapshot.data;
+    if (routeData['isRecRequirement']) { // sales consultant
+      this.flag = "Recruiting";
+    } else { // presales
+      this.flag = "Domrecruiting";
+    }
+
+    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
+    //   this.dataTableColumns.splice(15,0,"AddedBy")
+    // }
   }
 
   getAllData(currentPageIndex = 1) {
@@ -154,6 +169,7 @@ export class RequirementListComponent implements OnInit {
     const actionData = {
       title: 'Add Requirement',
       requirementData: null,
+      flag: this.flag,
       actionName: 'add-requirement',
     };
     const dialogConfig = new MatDialogConfig();
@@ -178,6 +194,7 @@ export class RequirementListComponent implements OnInit {
     const actionData = {
       title: 'Update Requirement',
       requirementData: requirement,
+      flag: this.flag,
       actionName: 'edit-requirement',
     };
     const dialogConfig = new MatDialogConfig();

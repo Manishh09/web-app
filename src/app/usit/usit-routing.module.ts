@@ -30,11 +30,16 @@ const routes: Routes = [
   { path: 'qualification', component: QualificationListComponent },
   { path: 'companies', component: CompaniesListComponent },
   { path: 'technology-tag', component: TechnologyTagListComponent },
-  { path: 'recruiting-requirements', component: RequirementListComponent },
+  { path: 'rec-requirements', component: RequirementListComponent,
+  data: {isRecRequirement : true} },
+  { path: 'dom-requirements', component: RequirementListComponent,
+  data: {isDomRequirement : true} },
   { path: 'sales-consultants', component: ConsultantListComponent,
     data: {isSalesConsultant : true}},
   { path: 'rec-consultants', component: ConsultantListComponent,
   data: {isRecConsultant : true}},
+  { path: 'dom-consultants', component: ConsultantListComponent,
+  data: {isDomConsultant : true}},
   {
     path: 'sales-submissions', component: SubmissionListComponent,
     data: { isSalesSubmission: true }
@@ -44,12 +49,20 @@ const routes: Routes = [
     data: { isRecSubmission: true }
   },
   {
+    path: 'dom-submissions', component: SubmissionListComponent,
+    data: { isDomSubmission: true }
+  },
+  {
     path: 'sales-interviews', component: InterviewListComponent,
     data: { isSalesInterview: true }
   },
   {
     path: 'rec-interviews', component: InterviewListComponent,
     data: { isRecInterview: true }
+  },
+  {
+    path: 'dom-interviews', component: InterviewListComponent,
+    data: { isDomInterview: true }
   }
 ];
 

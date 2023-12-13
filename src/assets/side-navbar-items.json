@@ -108,7 +108,7 @@
         {
           "text": "Requirements",
           "icon": "assignment_turned_in",
-          "routerLink": "/usit/recruiting-requirements"
+          "routerLink": "/usit/rec-requirements"
         },
         {
           "text": "Consultants",
@@ -124,6 +124,32 @@
           "text": "Interviews",
           "icon": "chat_bubble_outline",
           "routerLink": "/usit/rec-interviews"
+        }
+      ]
+    },
+    {
+      "text": "DOM Recruitment",
+      "icon": "business",
+      "children": [
+        {
+          "text": "Requirements",
+          "icon": "assignment_turned_in",
+          "routerLink": "/usit/dom-requirements"
+        },
+        {
+          "text": "Consultants",
+          "icon": "person_search",
+          "routerLink": "/usit/dom-consultants"
+        },
+        {
+          "text": "Submissions",
+          "icon": "assignment",
+          "routerLink": "/usit/dom-submissions"
+        },
+        {
+          "text": "Interviews",
+          "icon": "chat_bubble_outline",
+          "routerLink": "/usit/dom-interviews"
         }
       ]
     },

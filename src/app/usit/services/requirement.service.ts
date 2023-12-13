@@ -51,7 +51,7 @@ export class RequirementService {
     return this.apiServ.post("requirement/update", entity);
   }
 
-  addORUpdateVendor(entity: any, action: 'edit-requirement' | 'add-requirement'){
+  addORUpdateRequirement(entity: any, action: 'edit-requirement' | 'add-requirement'){
     return action === 'edit-requirement' ? this.updateRequirement(entity): this.registerRequirement(entity);
   }
 
