@@ -105,9 +105,11 @@ export class InterviewListComponent {
     if (routeData['isSalesInterview']) { 
       this.flag = "Sales";
      
+    } else if (routeData['isRecInterview']) { // recruiting consutlant
+      this.flag = "Recruiting";
     }
     else { 
-      this.flag = "Recruiting";
+      this.flag = "Domrecruiting";
     }
 
     // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
@@ -186,6 +188,33 @@ export class InterviewListComponent {
     const pagIdx = this.currentPageIndex === 0 ? 1 : this.currentPageIndex + 1;
     const serialNumber = (pagIdx - 1) * 50 + index + 1;
     return serialNumber;
+  }
+
+  getRowStyles(row: any): any {
+    const interviewStatus = row.interview_status;
+    let backgroundColor = '';
+    let color = '';
+
+    switch (interviewStatus) {
+      case 'Selected':
+        backgroundColor = 'rgba(243, 208, 9, 0.945)';
+        color = 'black';
+        break;
+      case 'OnBoarded':
+        backgroundColor = 'rgba(40, 160, 76, 0.945)';
+        color = 'white';
+        break;
+      case 'Rejected':
+        backgroundColor = '';
+        color = 'rgba(177, 19, 19, 0.945)';
+        break;
+      default:
+        backgroundColor = '';
+        color = '';
+        break;
+    }
+
+    return { 'background-color': backgroundColor, 'color': color };
   }
 
 }

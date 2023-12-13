@@ -128,12 +128,77 @@
           <mat-label>Status</mat-label><br>
           <mat-radio-group formControlName="interviewstatus" aria-label="Select an option">
             <mat-radio-button *ngFor="let opt of selectOptionObj.radioOptions.interviewstatus" [value]="opt.value" (change)="onStatusRadioChange($event)">{{opt.value}}</mat-radio-button>
+            <mat-radio-button *ngIf="isStatusRadSelected === 'Selected'" [value]="'Onboard'">
+              Onboard
+            </mat-radio-button>
             <mat-error *ngIf="interviewForm.get('interviewstatus')!.hasError('required') && isStatusRadSelected"> Status is required</mat-error>
           </mat-radio-group>
         </div>
 
         </div>
       </div>
+
+      <!-- <div>
+        <div class="form-column-left">
+          <mat-form-field class="example-form-field">
+            <mat-label>Visa Validity</mat-label>
+            <input matInput [matDatepicker]="datepicker">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+            <mat-datepicker #datepicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Project Duration</mat-label>
+            <input type="text" matInput>
+          </mat-form-field>
+
+
+          <mat-form-field>
+            <mat-label>Bill Rate from Client</mat-label>
+            <input type="text" matInput>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Billing Cycle</mat-label>
+            <input type="text" matInput>
+          </mat-form-field>
+
+          <mat-form-field class="example-form-field">
+            <mat-label>Project End Date</mat-label>
+            <input matInput [matDatepicker]="datepicker">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+            <mat-datepicker #datepicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="form-column-right">
+          <mat-form-field class="example-form-field">
+            <mat-label>Project Start Date</mat-label>
+            <input matInput [matDatepicker]="datepicker">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+            <mat-datepicker #datepicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Pay Rate to Vendor</mat-label>
+            <input type="text" matInput>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Vendor AR Contact</mat-label>
+            <input type="text" matInput>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Payment Cycle</mat-label>
+            <input type="text" matInput>
+          </mat-form-field>
+          
+        </div>
+
+      </div> -->
     </form>
     <div class="form-button-right">
       <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>

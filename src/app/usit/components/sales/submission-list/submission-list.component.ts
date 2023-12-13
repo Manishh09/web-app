@@ -124,8 +124,10 @@ export class SubmissionListComponent {
     const routeData = this.activatedRoute.snapshot.data;
     if (routeData['isSalesSubmission']) { 
       this.flag = "Sales";
-    } else { 
+    }else if (routeData['isRecSubmission']) { // recruiting consutlant
       this.flag = "Recruiting";
+    } else { 
+      this.flag = "Domrecruiting";
     }
 
     // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
@@ -215,6 +217,29 @@ export class SubmissionListComponent {
     const pagIdx = this.currentPageIndex === 0 ? 1 : this.currentPageIndex + 1;
     const serialNumber = (pagIdx - 1) * 50 + index + 1;
     return serialNumber;
+  }
+
+  getRowStyles(row: any): any {
+    const subStatus = row.substatus;
+    let backgroundColor = '';
+    let color = '';
+
+    switch (subStatus) {
+      case 'Schedule':
+        backgroundColor = 'rgba(40, 160, 76, 0.945)';
+        color = 'white';
+        break;
+      case 'Rejected':
+        backgroundColor = '';
+        color = 'rgba(177, 19, 19, 0.945)';
+        break;
+      default:
+        backgroundColor = '';
+        color = '';
+        break;
+    }
+
+    return { 'background-color': backgroundColor, 'color': color };
   }
 
 }

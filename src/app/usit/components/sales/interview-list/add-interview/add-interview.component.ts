@@ -116,8 +116,10 @@ export class AddInterviewComponent implements OnInit {
   getFlag(type: string){
     if (type === 'sales') {
       this.flag = 'sales';
+    } else if(type === 'recruiting') { 
+      this.flag = "Recruiting";
     } else {
-      this.flag = 'Recruiting';
+      this.flag = 'Domrecruiting';
     }
   }
 

@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -117,15 +118,14 @@ export class AddSubmissionComponent implements OnInit{
 
   ngOnInit(): void {
     this.getCompany();
+    this.getFlag(this.data.flag.toLocaleLowerCase());
     this.getConsultant(this.flag)
-    if (this.data && this.data.flag) {
-      this.getFlag(this.data.flag.toLocaleLowerCase());
-    }
-    
     if(this.data.actionName === "edit-submission"){
+      this.initilizeSubmissionForm(new SubmissionInfo());
       this.submissionServ.getsubdetailsbyid(this.data.submissionData.submissionid).subscribe(
         (response: any) => {
           this.entity = response.data;
+          this.recruiterList(response.data.vendor.vmsid);
           this.initilizeSubmissionForm(response.data);
         }
       );
@@ -138,11 +138,13 @@ export class AddSubmissionComponent implements OnInit{
     if (type === 'sales') {
       this.flag = 'sales';
       this.flgOpposite = "Recruiter";
-    } 
-     else {
+    } else if(type === 'recruiting') { 
       this.flag = 'Recruiting';
       this.flgOpposite = "Bench Sales";
       this.getRequirements();
+    }
+     else {
+      this.flag = 'Domrecruiting';
     }
   }
 
@@ -158,10 +160,10 @@ export class AddSubmissionComponent implements OnInit{
       // flg: [],
 
       requirement: this.formBuilder.group({
-        requirementid:  [submissionData ? submissionData.requirementid : '', [Validators.required]],
+        requirementid:  [submissionData ? submissionData?.requirement?.requirementid : '', [Validators.required]],
       }),
       consultant: this.formBuilder.group({
-        consultantid: [submissionData ? submissionData.consultant.consultantid : '', [Validators.required]],
+        consultantid: [submissionData ? submissionData?.consultant?.consultantid : '', [Validators.required]],
       }),
       position: [submissionData ? submissionData.position : '', [Validators.required]],
       ratetype: [submissionData ? submissionData.ratetype : '', [Validators.required]],
@@ -187,12 +189,16 @@ export class AddSubmissionComponent implements OnInit{
       projectlocation: [submissionData ? submissionData.projectlocation : '', [Validators.required]],
       submissionflg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
     });
-    this.submissionForm.patchValue(submissionData);
+    console.log('Consultant ID Value:', submissionData?.consultant?.consultantid);
+    this.submissionForm.get('consultant.consultantid')?.setValue(submissionData?.consultant?.consultantid);
+    console.log('Form Value After Setting Consultant ID:', this.submissionForm.value);
+    // this.submissionForm.patchValue(submissionData);
     this.validateControls();
   } 
 
   private validateControls() {
     const requirement = this.submissionForm.get('requirement');
+    console.log(requirement);
     if (this.flag == 'Recruiting') {
       requirement.setValidators(Validators.required);
     }
@@ -250,9 +256,9 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   getConsultant(flg: string) {
-    flg = 'recruiting';
     this.submissionServ.getConsultantDropdown(flg).subscribe(
       (response: any) => {
+        console.log(response.data);
         this.consultantdata = response.data;
       })
   }
@@ -280,12 +286,11 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   recruiterName: any[] = [];
-  recruiterList(event: any) {
-    const newVal = event.value;
+  recruiterList(obj: any) {
+    const newVal = obj;
     this.submissionServ.getRecruiterOfTheVendor(newVal, this.flgOpposite).subscribe(
       (response: any) => {
         this.recruiterName = response.data;
-        console.log(this.recruiterName);
       }
     );
   }

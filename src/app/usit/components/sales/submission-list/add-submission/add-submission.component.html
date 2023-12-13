@@ -19,7 +19,7 @@
                                       {{obj[3]}} - {{obj[1]}} ({{obj[2]}})
                             </mat-option>
                         </mat-select>
-                        <mat-error *ngIf="submissionForm.get('requirement.requirementid')?.hasError('required')">Requirement
+                        <mat-error *ngIf="submissionForm?.get('requirement.requirementid')?.hasError('required')">Requirement
                             is Required
                           </mat-error>
                     </mat-form-field>
@@ -79,9 +79,9 @@
                 <div class="fg-div" formGroupName="vendor">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Company</mat-label>
-                        <mat-select formControlName="vmsid"  (selectionChange)="recruiterList($event)">
+                        <mat-select formControlName="vmsid">
                             <mat-option *ngFor="let obj of vendordata"
-                                      [value]="obj.id">
+                                      [value]="obj.id" (onSelectionChange)="recruiterList(obj.id)">
                                       {{ obj.company }}
                             </mat-option>
                         </mat-select>
