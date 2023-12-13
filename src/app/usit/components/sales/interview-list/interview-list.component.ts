@@ -88,6 +88,11 @@ export class InterviewListComponent {
   userid!: any;
   field = "empty";
   currentPageIndex = 0;
+  pageEvent!: PageEvent;
+  pageSize = 50;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  pageSizeOptions = [5, 10, 25];
   private activatedRoute = inject(ActivatedRoute);
   private interviewServ = inject(InterviewService);
   private dialogServ = inject(DialogService);
@@ -208,5 +213,38 @@ export class InterviewListComponent {
     const serialNumber = (pagIdx - 1) * 50 + index + 1;
     return serialNumber;
   }
+
+  getRowStyles(row: any): any {
+    const subStatus = row.substatus;
+    let backgroundColor = '';
+    let color = '';
+
+    switch (subStatus) {
+      case 'Schedule':
+        backgroundColor = 'rgba(40, 160, 76, 0.945)';
+        color = 'white';
+        break;
+      case 'Rejected':
+        backgroundColor = '';
+        color = 'rgba(177, 19, 19, 0.945)';
+        break;
+      default:
+        backgroundColor = '';
+        color = '';
+        break;
+    }
+
+    return { 'background-color': backgroundColor, 'color': color };
+  }
+
+  handlePageEvent(event: PageEvent) {
+    // console.log('page.event', event);
+     if (event) {
+       this.pageEvent = event;
+       this.currentPageIndex = event.pageIndex;
+       this.getAll(event.pageIndex + 1)
+     }
+     return;
+   }
 
 }
