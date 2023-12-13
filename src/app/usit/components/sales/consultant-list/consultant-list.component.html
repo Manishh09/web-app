@@ -193,29 +193,35 @@
               </button>
               &nbsp;
 
-
               <ng-container
-                  *ngIf="(flag.toLocaleLowerCase() === 'presales' || flag.toLocaleLowerCase() === 'recruiting') ; then presales else sales">
+                  *ngIf="(flag.toLocaleLowerCase() === 'presales' ||  'recruiting') then presales else sales">
               </ng-container>
 
               <ng-template #sales>
-                <button mat-icon-button  *ngIf=" hasAcces!='Employee'  && (consultant.status === 'Active' ||  consultant.status === 'Verified')"
-                 (click)="goToConsultantTrackDetails(consultant)"
+                <!-- <span  [style.cursor]="'pointer'" *ngIf=" hasAcces!='Employee'  && (consultant.status === 'Active' ||  consultant.status === 'Verified')"
+                 (click)="onStatusUpdate(consultant)"
                     matTooltip="{{ttitle}}"
                     matTooltipPosition="above"
-                class="action-button-ed">
+                 >
                 <mat-icon class="edit-icon">arrow_left_alt</mat-icon>
-              </button>
+                </span> -->
+                <span  [style.cursor]="'pointer'" *ngIf=" hasAcces!='Employee'  && (consultant.status === 'Active' ||  consultant.status === 'Verified')"
+
+                    matTooltip="{{ttitle}}"
+                    matTooltipPosition="above"
+                 >
+                <mat-icon class="edit-icon">arrow_left_alt</mat-icon>
+                </span>
               </ng-template>
 
               <ng-template #presales>
                 <span [style.cursor]="'pointer'" *ngIf="dept=='Administration' && consultant.status=='Verified'"
                   (click)="moveProfileToSales(consultant)">
-                  <mat-icon>arrow_right_alt</mat-icon>
+                  <mat-icon class="edit-icon">arrow_right_alt</mat-icon>
                 </span>
                 <span [style.cursor]="'pointer'" *ngIf="dept=='Administration' && flag=='Recruiting'"
                   (click)="moveProfileToSales(consultant)">
-                  <mat-icon>arrow_right_alt</mat-icon>
+                  <mat-icon class="edit-icon">arrow_right_alt</mat-icon>
                 </span>
               </ng-template>
               <!-- delete -->
