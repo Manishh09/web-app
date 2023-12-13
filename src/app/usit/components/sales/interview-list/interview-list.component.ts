@@ -88,32 +88,44 @@ export class InterviewListComponent {
   userid!: any;
   field = "empty";
   currentPageIndex = 0;
+  pageEvent!: PageEvent;
+  pageSize = 50;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  pageSizeOptions = [5, 10, 25];
   private activatedRoute = inject(ActivatedRoute);
   private interviewServ = inject(InterviewService);
   private dialogServ = inject(DialogService);
 
   ngOnInit(): void {
-    const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSalesInterview']) { // sales consultant
-      this.flag = "sales";
-    }
-    else if (routeData['isRecInterview']) { // recruiting consutlant
-      this.flag = "Recruiting";
-    }
-
-    else{
-      this.flag = "DomRecruiting";
-    }
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
-    this.getAllData();
+    this.getFlag();
+    this.getAll();
+  }
 
+  getFlag(){
+    const routeData = this.activatedRoute.snapshot.data;
+    console.log(routeData);
+    if (routeData['isSalesInterview']) { 
+      this.flag = "Sales";
+     
+    } else if (routeData['isRecInterview']) { // recruiting consutlant
+      this.flag = "Recruiting";
+    }
+    else { 
+      this.flag = "Domrecruiting";
+    }
+
+    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
+    //   this.dataTableColumns.splice(15,0,"AddedBy")
+    // }
   }
 
 
-  getAll( ) {
+  getAll(pagIdx=1 ) {
     this.userid = localStorage.getItem('userid');
-    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, 1, this.itemsPerPage, this.field).subscribe(
+    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, pagIdx, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
        // console.log(response.data.totalElements)
@@ -145,7 +157,7 @@ export class InterviewListComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-         this.getAllData(this.currentPageIndex + 1);
+         this.getAll(this.currentPageIndex + 1);
       }
     })
   }
@@ -165,7 +177,7 @@ export class InterviewListComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-         this.getAllData(this.currentPageIndex + 1);
+         this.getAll(this.currentPageIndex + 1);
       }
     })
   }
@@ -189,7 +201,7 @@ export class InterviewListComponent {
         })
       );
     }
-    return  this.getAllData(this.currentPageIndex + 1)
+    return  this.getAll(this.currentPageIndex + 1)
   }
 
   onSort(event: any) {
@@ -201,60 +213,38 @@ export class InterviewListComponent {
     const serialNumber = (pagIdx - 1) * 50 + index + 1;
     return serialNumber;
   }
-  pageSize = 50;
-  showFirstLastButtons = true;
-  showPageSizeOptions = false;
-  hidePageSize = true;
-  pageEvent!: PageEvent;
-  pageSizeOptions = [5, 10, 25];
-  handlePageEvent(event: PageEvent) {
-   // console.log('page.event', event);
-    if (event) {
-      this.pageEvent = event;
-      this.currentPageIndex = event.pageIndex;
-      this.getAllData(event.pageIndex + 1)
-    }
-    return;
-  }
-  private snackBarServ = inject(SnackBarService);
-  private destroyed$ = new Subject<void>();
-  getAllData(pageIndex = 1) {
-    const dataToBeSentToSnackBar: ISnackBarData = {
-      message: '',
-      duration: 1500,
-      verticalPosition: 'top',
-      horizontalPosition: 'center',
-      direction: 'above',
-      panelClass: ['custom-snack-success'],
-    };
 
-    return this.interviewServ.getPaginationlist(
-        this.flag,
-        this.hasAcces,
-        this.userid,
-        pageIndex,
-        this.pageSize,
-        this.field
-      )
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe({
-        next: (response: any) => {
-        //  this.consultant = response.data.content;
-          this.entity = response.data.content;
-          this.dataSource.data = response.data.content;
-        //  console.log(this.dataSource.data);
-          // for serial-num {}
-          this.dataSource.data.map((x: any, i) => {
-            x.serialNum = this.generateSerialNumber(i);
-          });
-          this.totalItems = response.data.totalElements;
-          //  this.length = response.data.totalElements;
-        },
-        error: (err: any) => {
-          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-          dataToBeSentToSnackBar.message = err.message;
-          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-        },
-      });
+  getRowStyles(row: any): any {
+    const subStatus = row.substatus;
+    let backgroundColor = '';
+    let color = '';
+
+    switch (subStatus) {
+      case 'Schedule':
+        backgroundColor = 'rgba(40, 160, 76, 0.945)';
+        color = 'white';
+        break;
+      case 'Rejected':
+        backgroundColor = '';
+        color = 'rgba(177, 19, 19, 0.945)';
+        break;
+      default:
+        backgroundColor = '';
+        color = '';
+        break;
+    }
+
+    return { 'background-color': backgroundColor, 'color': color };
   }
+
+  handlePageEvent(event: PageEvent) {
+    // console.log('page.event', event);
+     if (event) {
+       this.pageEvent = event;
+       this.currentPageIndex = event.pageIndex;
+       this.getAll(event.pageIndex + 1)
+     }
+     return;
+   }
+
 }

@@ -113,16 +113,17 @@ export class SubmissionListComponent {
 
     this.userid = localStorage.getItem('userid');
     const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSalesSubmission']) { // sales submission
-      this.flag = "sales";
-    }
-    else if (routeData['isRecSubmission']) { // recruiting submission
-      this.flag = "Recruiting";
-    }
+    // if (routeData['isSalesSubmission']) { // sales submission
+    //   this.flag = "sales";
+    // }
+    // else if (routeData['isRecSubmission']) { // recruiting submission
+    //   this.flag = "Recruiting";
+    // }
 
-    else{
-      this.flag = "DomRecruiting";
-    }
+    // else{
+    //   this.flag = "DomRecruiting";
+    // }
+    this.getFlag()
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
     this.getAllData();
@@ -134,6 +135,16 @@ export class SubmissionListComponent {
     this.dataSource.sort = this.sort;
   }
 
+  getFlag(){
+    const routeData = this.activatedRoute.snapshot.data;
+    if (routeData['isSalesSubmission']) { 
+      this.flag = "Sales";
+    }else if (routeData['isRecSubmission']) { // recruiting consutlant
+      this.flag = "Recruiting";
+    } else { 
+      this.flag = "Domrecruiting";
+    }
+  }
 
   getAllData(pageIndex = 1 ) {
     this.submissionServ.getsubmissiondataPagination(this.flag, this.hasAcces, this.userid, pageIndex, this.pageSize, this.field).subscribe(
@@ -246,6 +257,29 @@ export class SubmissionListComponent {
       this.getAllData(event.pageIndex + 1)
     }
     return;
+  }
+
+  getRowStyles(row: any): any {
+    const subStatus = row.substatus;
+    let backgroundColor = '';
+    let color = '';
+
+    switch (subStatus) {
+      case 'Schedule':
+        backgroundColor = 'rgba(40, 160, 76, 0.945)';
+        color = 'white';
+        break;
+      case 'Rejected':
+        backgroundColor = '';
+        color = 'rgba(177, 19, 19, 0.945)';
+        break;
+      default:
+        backgroundColor = '';
+        color = '';
+        break;
+    }
+
+    return { 'background-color': backgroundColor, 'color': color };
   }
 
   getAllData2(pageIndex = 1) {

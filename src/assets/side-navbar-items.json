@@ -73,7 +73,7 @@
         {
           "text": "Requirements",
           "icon": "assignment_turned_in",
-          "routerLink": "/usit/recruiting-requirements"
+          "routerLink": "/usit/rec-requirements"
         },
         {
           "text": "Consultants",
