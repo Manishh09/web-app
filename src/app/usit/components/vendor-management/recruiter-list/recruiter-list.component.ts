@@ -192,6 +192,28 @@ export class RecruiterListComponent implements OnInit {
     this.dataSource.filter = event.target.value;
   }
 
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    this.field = keyword;
+    if (keyword != '') {
+      return this.recruiterServ.getAllRecruitersPagination(this.hasAcces, this.loginId, 1, this.pageSize, keyword).subscribe(
+        ((response: any) => {
+          this.datarr = response.data.content;
+          this.dataSource.data  = response.data.content;
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+           x.serialNum = this.generateSerialNumber(i);
+         });
+         this.totalItems = response.data.totalElements;
+        })
+      );
+    }
+    if (keyword == '') {
+      this.field = 'empty';
+    }
+    return this.getAllRecruiters(this.currentPageIndex + 1);
+  }
+
   /**
    * Sort
    * @param event
@@ -445,7 +467,7 @@ export class RecruiterListComponent implements OnInit {
   }
 
   // approve initiate reject
-  
+
   onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
     if (recruiter.rec_stat !== 'Approved') {
       const dataToBeSentToSnackBar: ISnackBarData = {
@@ -520,14 +542,14 @@ export class RecruiterListComponent implements OnInit {
                     dataToBeSentToSnackBar.message = message;
 
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                   
+
                   } else {
                     //  alertify.success("Recruiter " + response.data + " successfully");
                     dataToBeSentToSnackBar.message = 'Status update failed';
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-failed'];
-                   
+
                   }
-                  
+
                   this.snackBarServ.openSnackBarFromComponent(
                     dataToBeSentToSnackBar
                   );

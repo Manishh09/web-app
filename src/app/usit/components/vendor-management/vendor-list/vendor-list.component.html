@@ -23,7 +23,7 @@
       <div class="search-vendor" >
         <!-- <mat-icon class="item-icon">person_search</mat-icon> -->
         <input matInput type="search"  class="search" placeholder="search vendor"
-        (keyup)="onFilter($event)" >
+        (keyup)="applyFilter($event)" >
       </div>
   </div>
   </div>
@@ -150,7 +150,7 @@
                 [ngClass]="'mat-warn'"> {{'Reject'}}
               </button>
 
-              <button  *ngIf="vendor.vms_stat === 'Rejected'" mat-raised-button class="approve-reject-buttons" 
+              <button  *ngIf="vendor.vms_stat === 'Rejected'" mat-raised-button class="approve-reject-buttons"
               [ngStyle]="{ color: 'white' }"
               style="width: 75px; height: 25px;"
               [ngClass]="'mat-warn'"> {{vendor.vms_stat}}

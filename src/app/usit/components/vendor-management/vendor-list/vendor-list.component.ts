@@ -209,6 +209,27 @@ export class VendorListComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value
     this.dataSource.filter = filterValue.trim();
   }
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    this.field = keyword;
+    if (keyword != '') {
+      return this.vendorServ.getAllVendorsByPagination(this.hasAcces, this.loginId, 1, this.pageSize, keyword).subscribe(
+        ((response: any) => {
+          this.datarr = response.data.content;
+          this.dataSource.data  = response.data.content;
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+           x.serialNum = this.generateSerialNumber(i);
+         });
+         this.totalItems = response.data.totalElements;
+        })
+      );
+    }
+    if (keyword == '') {
+      this.field = 'empty';
+    }
+    return this.getAllData(this.currentPageIndex + 1);
+  }
 
   /**
    * Sort
