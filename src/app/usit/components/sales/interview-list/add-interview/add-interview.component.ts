@@ -123,9 +123,6 @@ export class AddInterviewComponent implements OnInit {
     }
   }
 
-
-
-
   private initializeInterviewForm(interviewData: InterviewInfo) {
     console.log('Interview Data:', interviewData);
     this.interviewForm = this.formBuilder.group({
@@ -156,7 +153,6 @@ export class AddInterviewComponent implements OnInit {
     });
     console.log('Form Values:', this.interviewForm.value);
   }
-
 
   userid!: any;
   role!: any;

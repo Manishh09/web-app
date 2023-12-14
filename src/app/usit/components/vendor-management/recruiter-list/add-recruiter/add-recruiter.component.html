@@ -35,7 +35,7 @@
         <!-- Email -->
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email" (change)="emailDuplicate($event)" max-length="50"/>
+          <input matInput formControlName="email" (change)="emailDuplicate($event)" maxlength="50"/>
           <mat-error *ngIf="recruiterForm.get('email')!.hasError('required')">Email is required</mat-error>
           <mat-error *ngIf="recruiterForm.get('email')!.hasError('pattern')">Invalid Email Address</mat-error>
         </mat-form-field>
@@ -60,7 +60,7 @@
         <!-- website -->
         <mat-form-field appearance="fill">
           <mat-label>Extension</mat-label>
-          <input matInput formControlName="extension" />
+          <input matInput formControlName="extension" maxlength="4"/>
         </mat-form-field>
 
         <mat-form-field appearance="fill" *ngIf="data.actionName === 'edit-recruiter'">
