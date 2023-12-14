@@ -215,14 +215,22 @@ export class InterviewListComponent {
   }
 
   getRowStyles(row: any): any {
-    const subStatus = row.substatus;
+    const intStatus = row.interview_status;
     let backgroundColor = '';
     let color = '';
 
-    switch (subStatus) {
-      case 'Schedule':
+    switch (intStatus) {
+      case 'OnBoarded':
         backgroundColor = 'rgba(40, 160, 76, 0.945)';
         color = 'white';
+        break;
+      case 'Selected':
+        backgroundColor = 'rgba(243, 208, 9, 0.945)';
+        color = '';
+        break;
+      case 'Hold':
+        backgroundColor = 'rgba(243, 208, 9, 0.945)';
+        color = '';
         break;
       case 'Rejected':
         backgroundColor = '';
