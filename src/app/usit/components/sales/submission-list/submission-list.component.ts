@@ -163,7 +163,7 @@ export class SubmissionListComponent {
 
   onFilter(event: any) {
 
-  }
+  } 
   applyFilter(event: any) {
     const keyword = event.target.value;
     this.field=keyword;

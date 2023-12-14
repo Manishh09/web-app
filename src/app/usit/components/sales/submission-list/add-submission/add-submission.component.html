@@ -14,7 +14,7 @@
                 <div class="fg-div" formGroupName="requirement" *ngIf="flag === 'Recruiting'">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Requirement</mat-label>
-                        <mat-select formControlName="requirementid"  (change)="requirements($event)">
+                        <mat-select formControlName="requirementid"  (selectionChange)="requirements($event)">
                             <mat-option *ngFor="let obj of requirementdata" [value]="obj[0]">
                                       {{obj[3]}} - {{obj[1]}} ({{obj[2]}})
                             </mat-option>
@@ -24,6 +24,21 @@
                           </mat-error>
                     </mat-form-field>
                 </div>
+
+                <!-- <div class="fg-div" formGroupName="requirement" *ngIf="flag === 'Recruiting'">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Select Requirement</mat-label>
+                        <input type="text" matInput formControlName="requirementid" [matAutocomplete]="auto">
+                           <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let obj of filteredRequirements | async" [value]="obj[0]">
+                                {{obj[3]}} - {{obj[1]}} ({{obj[2]}})
+                            </mat-option>
+                           </mat-autocomplete>
+                        <mat-error *ngIf="submissionForm?.get('requirement.requirementid')?.hasError('required')">Requirement
+                            is Required
+                        </mat-error>
+                    </mat-form-field>
+                </div> -->
 
                 <div class="fg-div" formGroupName="consultant">
                     <mat-form-field appearance="fill">
@@ -42,6 +57,7 @@
                 <mat-form-field appearance="fill">
                     <mat-label>Position Title</mat-label>
                     <input matInput formControlName="position" maxlength="25">
+                    <mat-error *ngIf="submissionForm.get('position')!.hasError('required')"> Position Title is required</mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
@@ -60,7 +76,7 @@
 
                 <mat-form-field appearance="fill">
                     <mat-label>Submission Rate</mat-label>
-                    <input matInput  formControlName="submissionrate" maxlength="10">
+                    <input matInput  formControlName="submissionrate" maxlength="5">
                     <mat-error *ngIf="submissionForm.get('submissionrate')!.hasError('required')">Submission Rate is required</mat-error>
                 </mat-form-field>
             </div>
@@ -68,12 +84,12 @@
             <div class="form-column-right">
                 <mat-form-field appearance="fill">
                     <mat-label>End Client</mat-label>
-                    <input matInput formControlName="endclient"maxlength="25">
+                    <input matInput formControlName="endclient" maxlength="60">
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
                     <mat-label>Implementation Partner</mat-label>
-                    <input matInput formControlName="implpartner"maxlength="25">
+                    <input matInput formControlName="implpartner" maxlength="120">
                 </mat-form-field>
 
                 <div class="fg-div" formGroupName="vendor">
@@ -110,8 +126,7 @@
 
                 <mat-form-field appearance="fill">
                     <mat-label>Contact Number</mat-label>
-                    <input matInput formControlName="empcontact" max-length="50" />
-                    <mat-error *ngIf="submissionForm.get('empcontact')!.hasError('required')">Contact Number is Required</mat-error>
+                    <input matInput formControlName="empcontact" max-length="15" />
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">

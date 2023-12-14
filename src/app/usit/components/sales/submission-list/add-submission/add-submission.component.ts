@@ -37,6 +37,8 @@ import {
   of,
   Subject,
   takeUntil,
+  startWith,
+  map,
 } from 'rxjs';
 import {MatRadioChange, MatRadioModule} from '@angular/material/radio';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -106,6 +108,7 @@ export class AddSubmissionComponent implements OnInit{
   isRadSelected: any;
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
+  filteredRequirements!: Observable<any>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
@@ -132,6 +135,10 @@ export class AddSubmissionComponent implements OnInit{
     } else {
       this.initilizeSubmissionForm(new SubmissionInfo());
     }
+    this.filteredRequirements = this.submissionForm!.get('requirement.requirementid')!.valueChanges.pipe(
+      startWith(''),
+      map((value: any) => this.reqFilter(value)),
+    );
   }
 
   getFlag(type: string){
@@ -146,6 +153,16 @@ export class AddSubmissionComponent implements OnInit{
      else {
       this.flag = 'Domrecruiting';
     }
+  }
+
+  displayFn(subject: any) {
+    return subject ? subject : undefined;
+  }
+
+  private reqFilter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.requirementdata.filter((option: string) => option.toLowerCase().includes(filterValue));
   }
 
 
@@ -168,15 +185,15 @@ export class AddSubmissionComponent implements OnInit{
       position: [submissionData ? submissionData.position : '', [Validators.required]],
       ratetype: [submissionData ? submissionData.ratetype : '', [Validators.required]],
       submissionrate: [submissionData ? submissionData.submissionrate : '', [Validators.required]],
-      endclient: [submissionData ? submissionData.endclient : '', [Validators.required]],
-      implpartner: [submissionData ? submissionData.implpartner : '', [Validators.required]],
+      endclient: [submissionData ? submissionData.endclient : ''],
+      implpartner: [submissionData ? submissionData.implpartner : ''],
       vendor: this.formBuilder.group({
         vmsid: [submissionData ? submissionData.vendor.vmsid : '', [Validators.required]],
       }),
       recruiter: this.formBuilder.group({
         recid: [submissionData ? submissionData.recruiter.recid : '', [Validators.required]],
       }),
-      empcontact: [submissionData ? submissionData.empcontact : '', [Validators.required]],
+      empcontact: [submissionData ? submissionData.empcontact : ''],
       empmail: [
         submissionData ? submissionData.empmail : '',
         [
@@ -236,7 +253,8 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   requirements(event: any) {
-    const newVal = event.target.value;
+    console.log(event);
+    const newVal = event.value;
     this.submissionServ.getRequirementByIdDropdown(newVal).subscribe(
       (response: any) => {
         this.submissionForm.get("position").setValue(response.data.jobtitle);
@@ -318,7 +336,8 @@ export class AddSubmissionComponent implements OnInit{
   onSubmit() {
 
     if (this.submissionForm.invalid) {
-      this.displayFormErrors();
+      // this.displayFormErrors();
+      this.submissionForm.markAllAsTouched();
       this.isRadSelected = true;
       return;
     }
