@@ -73,7 +73,7 @@ import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox
 })
 export class AddRequirementComponent {
   requirementObj = new Requirements()
-  requirementForm!: FormGroup;
+  requirementForm:any =  FormGroup;
   private formBuilder = inject(FormBuilder);
   private requirementServ = inject(RequirementService);
   private snackBarServ = inject(SnackBarService);
@@ -121,6 +121,7 @@ export class AddRequirementComponent {
   rawData: any = [];
   isAllOptionsSelected = false;
   entity: any;
+  vmsID: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
@@ -140,7 +141,7 @@ export class AddRequirementComponent {
         (response: any) => {
           this.entity = response.data;
           console.log(response);
-          this.recruiterList(response.data.vendorimpl.vmsid);
+          this.recruiterList(response.data.vendorimpl);
           this.requirementObj = response.data;
           this.getEmployee();
           this.getAssignedEmployee();
@@ -210,24 +211,20 @@ export class AddRequirementComponent {
       jobskills: [requirementData ? requirementData.jobskills : ''],
       jobdescription: [requirementData ? requirementData.jobdescription : '', Validators.required],
       duration: [requirementData ? requirementData.duration :'', Validators.required],
-      technology: this.formBuilder.group({
-        id: [requirementData ? requirementData.technology?.id : ''],
-      }),
+      technology:[requirementData ? requirementData.technology : ''],
       empid: [requirementData ? requirementData.empid :'', Validators.required],
-      recruiter: this.formBuilder.group({
-        recid: [requirementData ? requirementData.recruiter.recid :'', [Validators.required]],
-      }),
+      recruiter: [requirementData ? requirementData.recruiter :'', [Validators.required]],
       pocphonenumber: [requirementData ? requirementData.pocphonenumber :''],
       pocemail: [requirementData ? requirementData.pocemail :''],
       pocposition: [requirementData ? requirementData.pocposition :''],
       salary: [requirementData ? requirementData.salary :''],
-      users: this.formBuilder.group({
-        userid: localStorage.getItem('userid'),
-      }),
-      vendorimpl: this.formBuilder.group({
-        vmsid: [requirementData ? requirementData.vendorimpl.company :'', [Validators.required]],
-      }),
+      users:localStorage.getItem('userid'),
+      vendorimpl: [requirementData ? requirementData.vendorimpl :'', [Validators.required]],
       requirementflg: this.data.flag.toLocaleLowerCase(),
+      maxnumber: [this.requirementForm.maxnumber],
+      dommaxno: [this.requirementForm.dommaxno],
+      requirementid: [this.requirementForm.requirementid],
+      flg: [this.requirementForm.flg],
     });
     if (this.data.actionName === 'edit-requirement') {
       this.requirementForm.addControl('status',this.formBuilder.control(requirementData ? requirementData.status : ''));
@@ -244,7 +241,7 @@ export class AddRequirementComponent {
   }
 
   companyAutoCompleteSearch() {
-    this.searchObs$ = this.requirementForm.get('vendorimpl.vmsid')!.valueChanges.pipe(
+    this.searchObs$ = this.requirementForm.get('vendorimpl')!.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       switchMap((term: any) => {
@@ -280,7 +277,7 @@ export class AddRequirementComponent {
   }
 
   techAutoCompleteSearch() {
-    this.techSearchObs$ = this.requirementForm.get('technology.id')!.valueChanges.pipe(
+    this.techSearchObs$ = this.requirementForm.get('technology')!.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       switchMap((term: any) => {
@@ -321,14 +318,19 @@ export class AddRequirementComponent {
   recruiterArr: any[] = [];
   recruiterList(option: any) {
     const newVal = option;
+    this.vmsID = option;
     this.requirementServ.getRecruiterOfTheVendor(newVal, 'Recruiter').subscribe(
       (response: any) => {
         this.recruiterArr = response.data;
         console.log(this.recruiterArr);
-        this.requirementForm.get("pocphonenumber")!.patchValue(response.data.recruiter.pocphonenumber);
-        this.requirementForm.get("pocemail")!.patchValue(response.data.recruiter.pocemail);
-        this.requirementForm.get("recruiter.recid")!.patchValue(response.data.recruiter.recid);
-        this.requirementForm.get("pocposition")!.patchValue(response.data.recruiter.pocposition);
+        // this.requirementForm.get("pocphonenumber")!.patchValue(response.data.recruiter.pocphonenumber);
+        // this.requirementForm.get("pocemail")!.patchValue(response.data.recruiter.pocemail);
+        // this.requirementForm.get("recruiter")!.patchValue(response.data.recruiter);
+        // this.requirementForm.get("pocposition")!.patchValue(response.data.recruiter.pocposition);
+        this.requirementForm.get("pocphonenumber")!.patchValue(response.data.usnumber);
+        this.requirementForm.get("pocemail")!.patchValue(response.data.email);
+        this.requirementForm.get("recruiter")!.patchValue(response.data.recruiter);
+        this.requirementForm.get("pocposition")!.patchValue(response.data.recruitertype);
       }
     );
   }
@@ -373,31 +375,31 @@ export class AddRequirementComponent {
     console.log(this.requirementForm.value)
     const saveReqObj = this.getSaveData();
     console.log('form.value  ===', saveReqObj);
-    // this.requirementServ
-    //   .addORUpdateRequirement(saveReqObj, this.data.actionName)
-    //   .pipe(takeUntil(this.destroyed$))
-    //   .subscribe({
-    //     next: (data: any) => {
-    //       if (data.status == 'success') {
-    //         dataToBeSentToSnackBar.message =
-    //           this.data.actionName === 'add-requirement'
-    //             ? 'Requirement added successfully'
-    //             : 'Requirement updated successfully';
-    //         this.dialogRef.close();
-    //       } else {
-    //         dataToBeSentToSnackBar.message = 'Requirement already Exists';
-    //       }
-    //       this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-    //     },
-    //     error: (err: any) => {
-    //       dataToBeSentToSnackBar.message =
-    //         this.data.actionName === 'add-requirement'
-    //           ? 'Requirement addition is failed'
-    //           : 'Requirement updation is failed';
-    //       dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-    //       this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-    //     },
-    //   });
+    this.requirementServ
+      .addORUpdateRequirement(saveReqObj, this.data.actionName)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (data: any) => {
+          if (data.status == 'success') {
+            dataToBeSentToSnackBar.message =
+              this.data.actionName === 'add-requirement'
+                ? 'Requirement added successfully'
+                : 'Requirement updated successfully';
+            this.dialogRef.close();
+          } else {
+            dataToBeSentToSnackBar.message = 'Requirement already Exists';
+          }
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+        error: (err: any) => {
+          dataToBeSentToSnackBar.message =
+            this.data.actionName === 'add-requirement'
+              ? 'Requirement addition is failed'
+              : 'Requirement updation is failed';
+          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+        },
+      });
   }
 
   onCancel() {

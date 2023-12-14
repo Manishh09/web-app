@@ -11,6 +11,10 @@
   <form [formGroup]="requirementForm" (ngSubmit)="onSubmit()" class="vendor-form" >
     <div class="form">
       <div class="form-column-left">
+        <input type="hidden"  name="maxnumber" formControlName="maxnumber">
+        <input type="hidden"  name="dommaxno" formControlName="dommaxno">
+        <input type="hidden" formControlName="requirementid" name="requirementid">
+        <input type="hidden" name="flg" formControlName="flg" >
         <!-- Req Number -->
         <mat-form-field appearance="fill">
           <mat-label>Req Number</mat-label>
@@ -24,17 +28,16 @@
         </mat-form-field>
 
         <!-- Select Vendor/Impl -->
-        <div formGroupName="vendorimpl" class="fg-div">
+        <div  class="fg-div">
           <mat-form-field appearance="fill">
           <mat-label>Select Vendor/Impl</mat-label>
-          <input matInput formControlName="vmsid" [matAutocomplete]="vendorAutoCmp" maxlength="50">
+          <input matInput formControlName="vendorimpl" [matAutocomplete]="vendorAutoCmp" maxlength="50">
           <mat-autocomplete #vendorAutoCmp="matAutocomplete">
             <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company" (onSelectionChange)="recruiterList(option.id)">{{ option.company.trim() }}</mat-option>
           </mat-autocomplete>
           <button type="button" matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
           <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found, click '+' to add vendor</mat-hint>
-          <mat-error *ngIf="controls['vendorimpl.vmsid']?.errors && controls['vendorimpl.vmsid']?.errors?.['required']"> Vendor Company is required</mat-error>
-
+          <mat-error *ngIf="controls['vendorimpl']?.errors && controls['vendorimpl']?.errors?.['required']"> Vendor Company is required</mat-error>
         </mat-form-field>
         </div>
 
@@ -52,10 +55,10 @@
         </mat-form-field>
 
         <!-- Select Technology -->
-        <div class="fg-div" formGroupName="technology">
+        <div class="fg-div" >
           <mat-form-field appearance="fill" class="form-technology">
             <mat-label>Select Technology</mat-label>
-            <mat-select formControlName="id">
+            <mat-select formControlName="technology">
               <mat-option *ngFor="let option of  techArr" [value]="option[0]" (onSelectionChange)="techSkills(option)">{{ option[1] }}</mat-option>
               
             </mat-select>
@@ -152,14 +155,14 @@
         
 
          <!-- Select POC -->
-         <div class="fg-div" formGroupName="recruiter">
+         <div class="fg-div" >
           <mat-form-field>
             <mat-label>Select POC</mat-label>
-            <mat-select formControlName="recid" (selectionChange)="recruiterContact($event)">
+            <mat-select formControlName="recruiter" (selectionChange)="recruiterContact($event)">
               <mat-option *ngFor="let obj of recruiterArr" [value]="obj.id">{{obj.recruiter}}</mat-option>
             </mat-select>
             <button type="button" matSuffix mat-icon-button (click)="goToRecruiterList()"><mat-icon>add</mat-icon></button>
-            <mat-error *ngIf="controls['recruiter.recid']?.errors && controls['recruiter.recid']?.errors?.['required']">Contact Person Name is required</mat-error>
+            <mat-error *ngIf="controls['recruiter']?.errors && controls['recruiter']?.errors?.['required']">Contact Person Name is required</mat-error>
           </mat-form-field>
          </div>
 
