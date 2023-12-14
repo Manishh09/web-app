@@ -1,7 +1,7 @@
 <div class="submission-container">
     <ul class="breadcrumb">
         <li><a href="#" routerLink="/dashboard">Home</a></li>
-        <li class="last">{{ flag }}</li>
+        <li class="last">{{ flag | titlecase }}</li>
         <li class="last">submissions</li>
     </ul>
     <div class="header-container mat-elevation-z1">
@@ -19,7 +19,7 @@
 
             <div class="search-submission">
                 <!-- <mat-icon class="item-icon">person_search</mat-icon> -->
-                <input matInput type="search" class="search" placeholder="search submissions" (keyup)="applyFilter($event)">
+                <input matInput type="text" class="search" placeholder="search submissions" (keyup)="applyFilter($event)">
             </div>
         </div>
     </div>
