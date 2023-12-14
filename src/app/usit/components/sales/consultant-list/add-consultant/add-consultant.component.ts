@@ -764,7 +764,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
    this.type = fileData.filename;
       var items = this.type.split(".");
       this.fileService
-        .downloadfile(fileData.docid)
+        .downloadConsultantfile(fileData.docid)
         .subscribe(blob => {
           if (items[1] == 'pdf' || items[1] == 'PDF') {
             var fileURL: any = URL.createObjectURL(blob);

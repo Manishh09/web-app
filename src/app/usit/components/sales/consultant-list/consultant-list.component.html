@@ -1,7 +1,7 @@
 <div class="consultant-container">
   <ul class="breadcrumb">
     <li class="breadcrumb-item" routerLink="/usit/dashboard">Home</li>
-    <li class="breadcrumb-item-inactive">{{flag}}</li>
+    <li class="breadcrumb-item-inactive">{{flag | titlecase}}</li>
     <li class="breadcrumb-item-active"  routerLinkActive>Consultants</li>
   </ul>
   <div class="header-container mat-elevation-z1">
@@ -19,7 +19,7 @@
 
       <div class="search-consultant">
         <!-- <mat-icon class="item-icon">person_search</mat-icon> -->
-        <input matInput type="search" class="search" placeholder="search consultant"
+        <input matInput type="text" class="search" placeholder="search consultant"
           (keyup)="applyFilter($event)">
       </div>
     </div>
