@@ -143,6 +143,16 @@ export class AddInterviewComponent implements OnInit {
       users: this.formBuilder.group({
         userid: localStorage.getItem('userid'),
       }),
+      visavalidity:['', Validators.required],
+      projectduration:['', Validators.required],
+      billratefromclient:['', Validators.required],
+      billingcycle:['', Validators.required],
+      projectenddate:['', Validators.required],
+      projectstartdate:['', Validators.required],
+      payratetovendor:['', Validators.required],
+      vendorarcontact:['', Validators.required],
+      paymentcycle:['', Validators.required],
+
     });
     console.log('Form Values:', this.interviewForm.value);
   }
@@ -163,6 +173,9 @@ export class AddInterviewComponent implements OnInit {
     this.submitted = true;
     if (this.interviewForm.invalid) {
       this.isRadSelected = true;
+      this.isModeRadSelected = true;
+      this.isStatusRadSelected = true;
+      this.interviewForm.markAllAsTouched();
       this.displayFormErrors();
       return;
     }
