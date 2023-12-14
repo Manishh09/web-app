@@ -209,7 +209,6 @@ export class AddSubmissionComponent implements OnInit{
     console.log('Consultant ID Value:', submissionData?.consultant?.consultantid);
     this.submissionForm.get('consultant.consultantid')?.setValue(submissionData?.consultant?.consultantid);
     console.log('Form Value After Setting Consultant ID:', this.submissionForm.value);
-    // this.submissionForm.patchValue(submissionData);
     this.validateControls();
   }
 

@@ -53,7 +53,8 @@ import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
     CommonModule,
   ],
   templateUrl: './requirement-list.component.html',
-  styleUrls: ['./requirement-list.component.scss']
+  styleUrls: ['./requirement-list.component.scss'],
+  providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 })
 export class RequirementListComponent implements OnInit {
 
@@ -128,7 +129,7 @@ export class RequirementListComponent implements OnInit {
     // }
   }
 
-  getAllData(currentPageIndex = 1) {
+  getAllData() {
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 1500,
@@ -283,7 +284,7 @@ export class RequirementListComponent implements OnInit {
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;
-      this.getAllData(event.pageIndex + 1)
+      this.getAllData();
     }
     return;
   }
