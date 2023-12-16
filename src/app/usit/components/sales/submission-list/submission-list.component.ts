@@ -137,11 +137,11 @@ export class SubmissionListComponent {
 
   getFlag(){
     const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSalesSubmission']) { 
+    if (routeData['isSalesSubmission']) {
       this.flag = "Sales";
     }else if (routeData['isRecSubmission']) { // recruiting consutlant
       this.flag = "Recruiting";
-    } else { 
+    } else {
       this.flag = "Domrecruiting";
     }
   }
@@ -151,7 +151,6 @@ export class SubmissionListComponent {
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data =  response.data.content;
-        console.log(this.dataSource.data);
         this.totalItems = response.data.totalElements;
         // for serial-num {}
         this.dataSource.data.map((x: any, i) => {
@@ -163,7 +162,7 @@ export class SubmissionListComponent {
 
   onFilter(event: any) {
 
-  } 
+  }
   applyFilter(event: any) {
     const keyword = event.target.value;
     this.field=keyword;
@@ -250,7 +249,6 @@ export class SubmissionListComponent {
     return serialNumber;
   }
   handlePageEvent(event: PageEvent) {
-   // console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;
@@ -306,7 +304,6 @@ export class SubmissionListComponent {
         //  this.consultant = response.data.content;
           this.entity = response.data.content;
           this.dataSource.data = response.data.content;
-        //  console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);

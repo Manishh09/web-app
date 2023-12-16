@@ -152,8 +152,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
           {
             next: (response: any) => {
               this.entity = response.data;
-              console.log(this.entity);
-
               this.cno = this.entity.consultantno;
               this.autoskills = response.data.skills;
               this.filesArr = response.data.fileupload;
@@ -433,7 +431,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     const saveObj = this.data.actionName === "edit-consultant" ? this.entity : this.consultantForm.value;
 
     const lenkedIn = this.consultantForm.get('linkedin')?.value;
-    console.log(JSON.stringify(this.consultantForm.value, null, 2) + " =============== ");
     if (this.flg == true) {
      // const saveReqObj = this.getSaveObjData()
       this.consultantServ.registerconsultant(saveObj)
@@ -563,7 +560,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       }
       //this.uploadedfiles.push(event.target.files[i]);
     }
-    // console.log(JSON.stringify(this.uploadedfiles) + "files")
   }
 
   @ViewChild('resume')
@@ -573,7 +569,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     this.resumeupload = event.target.files[0];
     const file = event.target.files[0];
     const fileSizeInKB = Math.round(file.size / 1024);
-    // console.log(file + " " + JSON.stringify(this.resumeupload))
     if (fileSizeInKB > 4300) {
       this.flg = false;
       this.resume.nativeElement.value = '';
@@ -620,7 +615,6 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
     //   this.dl.nativeElement.value = "";
     // }
 
-    ///console.log(file + " " + JSON.stringify(this.dlupload))
     if (fileSizeInKB > 4300) {
       //2200
       this.flg = false;

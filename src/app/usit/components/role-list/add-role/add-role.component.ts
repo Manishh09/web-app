@@ -45,7 +45,6 @@ import { RoleManagementService } from 'src/app/usit/services/role-management.ser
 export class AddRoleComponent {
   addRoleForm: any = FormGroup;
   private formBuilder = inject(FormBuilder);
-  private userManagementServ = inject(UserManagementService);
   private roleManagementServ = inject(RoleManagementService);
   private snackBarServ = inject(SnackBarService);
   tech!: Role;

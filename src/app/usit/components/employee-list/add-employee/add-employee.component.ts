@@ -145,7 +145,6 @@ export class AddEmployeeComponent {
   private destroyed$ = new Subject<void>();
 
   ngOnInit(): void {
-    //console.log('empdata, ', this.data);
     this.getRoles(); // common for add employee
     this.getManager();// common for add employee
     if (this.data.actionName === 'edit-employee') {
@@ -175,8 +174,6 @@ export class AddEmployeeComponent {
   }
 
   private initilizeAddEmployeeForm(employeeData: any) {
-    // console.log(employeeData);
-    // console.log(employeeData.fullname);
     this.employeeForm = this.formBuilder.group({
       fullname: [
         employeeData ? employeeData.fullname : '',
@@ -283,7 +280,6 @@ export class AddEmployeeComponent {
         this.employeeForm.controls.role.valueChanges.pipe(
           startWith(''),
           map((value: any) => {
-            //  console.log("value in map", value)
             const name = typeof value === 'string' ? value : value?.name;
             return name ? this._filter(value) : this.roleOptions.slice();
           }
@@ -296,7 +292,6 @@ export class AddEmployeeComponent {
         this.employeeForm.controls.manager.valueChanges.pipe(
           startWith(''),
           map((value: any) => {
-            //  console.log("value in map", value)
             const name = typeof value === 'string' ? value : value?.name;
             return name ? this._filter(value) : this.managerOptions.slice();
           }
@@ -315,7 +310,6 @@ export class AddEmployeeComponent {
         this.employeeForm.controls.teamlead.valueChanges.pipe(
           startWith(''),
           map((value: any) => {
-            ///console.log("value in map", value)
             const name = typeof value === 'string' ? value : value?.name;
             return name ? this._filter(value) : this.teamLeadOptions.slice();
           }
@@ -333,7 +327,6 @@ export class AddEmployeeComponent {
 
   private _filterOptions(value: string, options: string[]): string[] {
     const filterValue = value.toLowerCase();
-    //console.log("filtervalu", value)
     return options.filter((option) =>
       option.toLowerCase().includes(filterValue)
     );
@@ -404,7 +397,6 @@ export class AddEmployeeComponent {
         next: (response: any) => {
           this.tlarr = response.data;
           this.teamLeadOptions = response.data;
-          //  console.log(response.data)
           // TBD autocomplete:
           // this.optionsMethod("teamLead")
         },
@@ -461,11 +453,9 @@ export class AddEmployeeComponent {
       })
     }
     const saveObj = this.data.actionName === "edit-employee" ? this.empObj : this.employeeForm.value;
-    //console.log(this.data.actionName+"saveObject",saveObj);
     //this.uploadFileOnSubmit(1);
     this.empManagementServ.addOrUpdateEmployee(saveObj, this.data.actionName).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (data: any) => {
-        // console.log(data)
         if (data.status == 'success') {
           this.submit(data.data.userid);
           this.dataTobeSentToSnackBarService.panelClass = ['custom-snack-success'];

@@ -61,7 +61,6 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
       {
         next:(response: any) => {
           this.qualificationList = response.data;
-        //  console.log("qualifications",this.qualificationList);
           this.dataSource.data = response.data;
         },
         error: (err)=> console.log(err)
@@ -172,14 +171,14 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
   onSort(event: any) {
     const sortDirection = event.direction;
     const sortColumn = event.active;
-  
+
     if (sortDirection !== null && sortDirection !== undefined) {
       this.dataSource.data = this.sortData(this.dataSource.data, sortColumn, sortDirection);
     } else {
       this.dataSource.data = [...this.qualificationList];
     }
   }
-  
+
   private sortData(data: Qualification[], sortColumn: string, sortDirection: string): Qualification[] {
     return data.sort((a, b) => {
       switch (sortColumn) {
@@ -193,7 +192,7 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
           } else {
             return valueA.localeCompare(valueB);
           }
-  
+
         default:
           return 0;
       }

@@ -203,7 +203,6 @@ export class ConsultantListComponent
         next: (response: any) => {
           this.consultant = response.data.content;
           this.dataSource.data = response.data.content;
-          //  console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
@@ -246,13 +245,11 @@ export class ConsultantListComponent
         next: (response: any) => {
           this.consultant = response.data.content;
           this.dataSource.data = response.data.content;
-          console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
           });
           this.totalItems = response.data.totalElements;
-          //  this.length = response.data.totalElements;
         },
         error: (err: any) => {
           dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -416,7 +413,6 @@ export class ConsultantListComponent
       .consultant_DrillDown_report(drilldownReportObj)
       .subscribe((response: any) => {
         this.consultant_data = response.data;
-        ///  console.log(JSON.stringify(response.data))
       });
   }
 
@@ -447,7 +443,7 @@ export class ConsultantListComponent
 
     dialogRef.afterClosed().subscribe({
       next: () => {
-        if (dialogRef.componentInstance.allowAction) { 
+        if (dialogRef.componentInstance.allowAction) {
           this.consultantServ
             .moveToSales(
               consultant.consultantid,
@@ -674,7 +670,6 @@ export class ConsultantListComponent
    * @param endor
    */
   handlePageEvent(event: PageEvent) {
-    console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;

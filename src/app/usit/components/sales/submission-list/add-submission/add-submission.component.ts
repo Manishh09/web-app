@@ -145,7 +145,7 @@ export class AddSubmissionComponent implements OnInit{
     if (type === 'sales') {
       this.flag = 'sales';
       this.flgOpposite = "Recruiter";
-    } else if(type === 'recruiting') { 
+    } else if(type === 'recruiting') {
       this.flag = 'Recruiting';
       this.flgOpposite = "Bench Sales";
       this.getRequirements();
@@ -206,15 +206,12 @@ export class AddSubmissionComponent implements OnInit{
       projectlocation: [submissionData ? submissionData.projectlocation : '', [Validators.required]],
       submissionflg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
     });
-    console.log('Consultant ID Value:', submissionData?.consultant?.consultantid);
     this.submissionForm.get('consultant.consultantid')?.setValue(submissionData?.consultant?.consultantid);
-    console.log('Form Value After Setting Consultant ID:', this.submissionForm.value);
     this.validateControls();
   }
 
   private validateControls() {
     const requirement = this.submissionForm.get('requirement');
-    console.log(requirement);
     if (this.flag == 'Recruiting') {
       requirement.setValidators(Validators.required);
     }
@@ -252,7 +249,6 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   requirements(event: any) {
-    console.log(event);
     const newVal = event.value;
     this.submissionServ.getRequirementByIdDropdown(newVal).subscribe(
       (response: any) => {
@@ -275,7 +271,6 @@ export class AddSubmissionComponent implements OnInit{
   getConsultant(flg: string) {
     this.submissionServ.getConsultantDropdown(flg).subscribe(
       (response: any) => {
-        console.log(response.data);
         this.consultantdata = response.data;
       })
   }
@@ -352,7 +347,6 @@ export class AddSubmissionComponent implements OnInit{
 
 
     const saveReqObj = this.getSaveData();
-    console.log('form.value  ===', saveReqObj);
     this.submissionServ
       .registerSubmission(saveReqObj)
       .pipe(takeUntil(this.destroyed$))

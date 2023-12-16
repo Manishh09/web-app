@@ -62,7 +62,6 @@ export class CompaniesListComponent implements OnInit, AfterViewInit {
       {
         next:(response: any) => {
           this.companyList = response.data;
-          //console.log("companies",this.companyList);
           this.dataSource.data = response.data;
         },
         error: (err)=> console.log(err)
@@ -173,14 +172,14 @@ export class CompaniesListComponent implements OnInit, AfterViewInit {
   onSort(event: any) {
     const sortDirection = event.direction;
     const sortColumn = event.active;
-  
+
     if (sortDirection !== null && sortDirection !== undefined) {
       this.dataSource.data = this.sortData(this.dataSource.data, sortColumn, sortDirection);
     } else {
       this.dataSource.data = [...this.companyList];
     }
   }
-  
+
   private sortData(data: Company[], sortColumn: string, sortDirection: string): Company[] {
     return data.sort((a, b) => {
       switch (sortColumn) {
@@ -194,7 +193,7 @@ export class CompaniesListComponent implements OnInit, AfterViewInit {
           } else {
             return valueA.localeCompare(valueB);
           }
-  
+
         default:
           return 0;
       }

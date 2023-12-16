@@ -263,7 +263,6 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.rolearr = response.data;
-        //  console.log('rolearr.data', response.data);
         },
         error: (err) => {
           dataToBeSentToSnackBar.message = err.message;
@@ -312,15 +311,12 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       return;
     }
     const saveReqObj = this.getSaveData();
-    //this.vendorForm.controls.updatedby.setValue(localStorage.getItem('userid'));
-  //  console.log('form.value  ===', saveReqObj);
     this.vendorServ
       .addORUpdateVendor(saveReqObj, this.data.actionName)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
-        next: (data: any) => {
-       //   console.log(data)
-          if (data.status == 'success') {
+        next: (resp: any) => {
+          if (resp.status == 'success') {
             dataToBeSentToSnackBar.message =
               this.data.actionName === 'add-vendor'
                 ? 'Vendor added successfully'
@@ -392,7 +388,6 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       switchMap((term: any) => {
         if (term) {
-        //  console.log(term);
           return this.getFilteredValue(term);
         } else {
           this.companySearchData = [];
@@ -432,9 +427,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
    */
 
   handleAddressChange(address: any) {
-   // console.log('address', address.formatted_address);
     this.vendorForm.controls.headquerter.setValue(address.formatted_address);
-    // this.entity.headquerter = address.formatted_address;
   }
   /**
    * Cancel

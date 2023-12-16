@@ -151,13 +151,11 @@ export class RequirementListComponent implements OnInit {
         next: (response: any) => {
           this.requirement = response.data.content;
           this.dataSource.data = response.data.content;
-          console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
           });
           this.totalItems = response.data.totalElements;
-          console.log(this.totalItems);
         },
         error: (err: any) => {
           dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -271,7 +269,7 @@ export class RequirementListComponent implements OnInit {
   }
 
   onSort(event: any) {
-    
+
   }
 
   generateSerialNumber(index: number): number {
@@ -281,7 +279,6 @@ export class RequirementListComponent implements OnInit {
   }
 
   handlePageEvent(event: PageEvent) {
-    console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;

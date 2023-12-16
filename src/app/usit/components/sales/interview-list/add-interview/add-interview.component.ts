@@ -92,7 +92,6 @@ export class AddInterviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
     if (this.data && this.data.flag) {
       this.getFlag(this.data.flag.toLocaleLowerCase());
     }
@@ -102,8 +101,6 @@ export class AddInterviewComponent implements OnInit {
       this.interviewServ.getEntity(this.data.interviewData.intrid).subscribe(
         (response: any) => {
           this.entity = response.data;
-          console.log(this.entity);
-
           this.initializeInterviewForm(response.data);
         }
       );
@@ -116,7 +113,7 @@ export class AddInterviewComponent implements OnInit {
   getFlag(type: string){
     if (type === 'sales') {
       this.flag = 'sales';
-    } else if(type === 'recruiting') { 
+    } else if(type === 'recruiting') {
       this.flag = "Recruiting";
     } else {
       this.flag = 'Domrecruiting';
@@ -124,7 +121,6 @@ export class AddInterviewComponent implements OnInit {
   }
 
   private initializeInterviewForm(interviewData: InterviewInfo) {
-    console.log('Interview Data:', interviewData);
     this.interviewForm = this.formBuilder.group({
 
       submission: this.formBuilder.group({
@@ -151,7 +147,6 @@ export class AddInterviewComponent implements OnInit {
       paymentcycle:['', Validators.required],
 
     });
-    console.log('Form Values:', this.interviewForm.value);
   }
 
   userid!: any;
@@ -185,7 +180,6 @@ export class AddInterviewComponent implements OnInit {
     };
 
     const saveReqObj = this.getSaveData();
-    console.log('form.value  ===', saveReqObj);
     this.interviewServ
       .addORUpdateInterview(saveReqObj,this.data.actionName)
       .pipe(takeUntil(this.destroyed$))

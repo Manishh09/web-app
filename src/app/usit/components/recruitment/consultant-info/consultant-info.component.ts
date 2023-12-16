@@ -163,7 +163,6 @@ export class ConsultantInfoComponent implements OnInit{
     this.h1bupload = event.target.files[0];
     const file = event.target.files[0];
     const fileSizeInKB = Math.round(file.size / 1024);
-    //console.log(file + " " + JSON.stringify(this.h1bupload))
     if (fileSizeInKB > 10300) {
       this.flg = false;
       this.h1b.nativeElement.value = "";
@@ -226,11 +225,11 @@ export class ConsultantInfoComponent implements OnInit{
 //       this.consultantServ.removingfile(id, doctype).subscribe(
 //         (response: any) => {
 //           if (response.status === 'success') {
-            
+
 //             this.ngOnInit();
 //           }
 //           else {
-          
+
 //           }
 //         }
 //       )

@@ -106,14 +106,13 @@ export class InterviewListComponent {
 
   getFlag(){
     const routeData = this.activatedRoute.snapshot.data;
-    console.log(routeData);
-    if (routeData['isSalesInterview']) { 
+    if (routeData['isSalesInterview']) {
       this.flag = "Sales";
-     
+
     } else if (routeData['isRecInterview']) { // recruiting consutlant
       this.flag = "Recruiting";
     }
-    else { 
+    else {
       this.flag = "Domrecruiting";
     }
 
@@ -128,7 +127,6 @@ export class InterviewListComponent {
     this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, pagIdx, this.itemsPerPage, this.field).subscribe(
       (response: any) => {
         this.entity = response.data.content;
-       // console.log(response.data.totalElements)
         this.dataSource.data = response.data.content;
         this.totalItems = response.data.totalElements;
         // for serial-num {}
@@ -246,7 +244,6 @@ export class InterviewListComponent {
   }
 
   handlePageEvent(event: PageEvent) {
-    // console.log('page.event', event);
      if (event) {
        this.pageEvent = event;
        this.currentPageIndex = event.pageIndex;
