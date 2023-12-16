@@ -198,6 +198,7 @@
               {{ option }}
             </mat-option>
             </mat-select>
+            <mat-error *ngIf="requirementForm.get('status')!.hasError('required')"> Status is required</mat-error>
         </mat-form-field>
       </div>
     </div>

@@ -129,14 +129,12 @@ export class AddRequirementComponent {
   ) {}
 
   ngOnInit(): void {
-    console.log('Data:', this.data);
     this.getTech();
     //this.getEmployee();
     this.getFlag(this.data.flag.toLocaleLowerCase());
     this.requirementServ.getVendorCompanies('Recruiting').subscribe(
       (response: any) => {
         this.vendorCompanyArr = response.data;
-        console.log(this.vendorCompanyArr);
       }
     );
     if(this.data.actionName === "edit-requirement"){
@@ -144,7 +142,6 @@ export class AddRequirementComponent {
       this.requirementServ.getEntity(this.data.requirementData.requirementid).subscribe(
         (response: any) => {
           this.entity = response.data;
-          console.log(response);
           this.recruiterList( {value: response.data.vendorimpl});
           this.requirementObj = response.data;
           // this.getEmployee();
@@ -181,7 +178,6 @@ export class AddRequirementComponent {
     this.requirementServ.getAssignedRecruiter(this.data.requirementData.requirementid).subscribe(
       (response: any) => {
         this.employeedata = response.data; // saveed selected items from assign rec field
-        console.log(this.employeedata);
         this.getEmployee();
        // this.prepopulateSelectedEmployees();
       }
@@ -197,7 +193,6 @@ export class AddRequirementComponent {
   }
 
   private initializeRequirementForm(requirementData : any) {
-    console.log("requirement data", requirementData);
     this.requirementForm = this.formBuilder.group({
       reqnumber: [requirementData ? requirementData.reqnumber : '', Validators.required],
       postedon: [requirementData ? requirementData.postedon : '', Validators.required],
@@ -270,7 +265,6 @@ export class AddRequirementComponent {
     this.requirementServ.getTech().subscribe(
       (response: any) => {
         this.techArr = response.data;
-        console.log(this.techArr);
       }
     )
   }
@@ -317,14 +311,10 @@ export class AddRequirementComponent {
 
   recruiterArr: any[] = [];
   recruiterList(event: any) {
-
-    // const newVal = option.id;
     const newVal =  event.value;
-    console.log("vendor Id", newVal);
     this.requirementServ.getRecruiterOfTheVendor(newVal, 'Recruiter').subscribe(
       (response: any) => {
         this.recruiterArr = response.data;
-        console.log("Recruiters", this.recruiterArr);
         // this.requirementForm.get("pocphonenumber")!.patchValue('');
         // this.requirementForm.get("pocemail")!.patchValue('');
         // this.requirementForm.get("recruiter")!.patchValue(response.data[0].recruiter);
@@ -359,7 +349,6 @@ export class AddRequirementComponent {
     });
 
     employee.selected = !employee.selected;
-    console.log(employee.selected);
 
     if (employee.selected === true) {
       this.selectData.push(employee);
@@ -368,17 +357,9 @@ export class AddRequirementComponent {
       const i = this.selectData.findIndex((value: any) => value.fullname === employee.fullname);
       this.selectData.splice(i, 1);
     }
-    // const mappedData = this.selectData.map(mapToApiFormat);
-    // this.requirementForm.get('empid')!.setValue(mappedData);
-    //  // Log the value of mappedData after setting the form value
-    // console.log('Mapped Data:', mappedData);
-    console.log('Before setting form value:', this.requirementForm.value);
 
     const mappedData = this.selectData.map(mapToApiFormat);
     this.requirementForm.get('empid')!.setValue(mappedData);
-
-    console.log('After setting form value:', this.requirementForm.value);
-
   };
 
   onSubmit () {
@@ -401,22 +382,21 @@ export class AddRequirementComponent {
       this.requirementForm.markAllAsTouched();
       return;
     }
-    console.log(this.requirementForm.value)
     const saveReqObj = this.getSaveData();
-    console.log('form.value  ===', saveReqObj);
     this.requirementServ
       .addORUpdateRequirement(saveReqObj, this.data.actionName)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
-        next: (data: any) => {
-          if (data.status == 'success') {
+        next: (resp: any) => {
+          if (resp.status == 'success') {
             dataToBeSentToSnackBar.message =
               this.data.actionName === 'add-requirement'
                 ? 'Requirement added successfully'
                 : 'Requirement updated successfully';
             this.dialogRef.close();
           } else {
-            dataToBeSentToSnackBar.message = 'Requirement already Exists';
+            dataToBeSentToSnackBar.message = resp.message ? resp.message : 'Requirement already Exists';
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
           }
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         },
@@ -436,7 +416,6 @@ export class AddRequirementComponent {
   }
 
   handleAddressChange(address: any) {
-    console.log('address', address.formatted_address);
     this.requirementForm.controls['location'].setValue(address.formatted_address);
   }
 
@@ -458,7 +437,6 @@ export class AddRequirementComponent {
     this.recruiterArr.forEach(item => {
       if (newVal === item.id) {
         this.selectedItems.push(item);
-        console.log(this.selectedItems);
       }
     });
 
@@ -509,8 +487,6 @@ export class AddRequirementComponent {
     // Clear the existing employees array
     this.selectData = [];
     this.selectData = this.employeedata;
-    console.log("employee data",this.employeedata);
-    console.log('emparr', this.empArr)
 
     if (this.empArr.length && this.employeedata.length) {
       this.employeedata.forEach((x: any, listId: number) => {
@@ -561,7 +537,6 @@ export class AddRequirementComponent {
   getAllEmpOptions(): Observable<any> {
     if (this.empArr) {
       this.employeeSearchData = this.empArr;
-      console.log(this.employeeSearchData);
       return of(this.employeeSearchData);
     }
     return of([]);
