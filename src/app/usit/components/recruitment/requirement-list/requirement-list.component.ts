@@ -112,8 +112,8 @@ export class RequirementListComponent implements OnInit {
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
     this.dept = localStorage.getItem('department');
-    this.getAllData();
     this.getFlag();
+    this.getAllData();
   }
 
   getFlag(){
@@ -141,6 +141,7 @@ export class RequirementListComponent implements OnInit {
 
     return this.requirementServ
       .getAllRequirementData(
+        this.flag,
         this.userid,
         this.pageSize,
         this.field

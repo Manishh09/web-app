@@ -14,7 +14,7 @@
         <input type="hidden" name="maxnumber" formControlName="maxnumber">
         <input type="hidden" name="dommaxnumber" formControlName="dommaxnumber">
         <input type="hidden" formControlName="requirementid" name="requirementid">
-        <input type="hidden" formControlName="flg" name="flg">
+        <input type="hidden" formControlName="flag" name="flag">
                             
         <!-- Req Number -->
         <mat-form-field appearance="fill">
@@ -32,10 +32,14 @@
         <div class="fg-div">
           <mat-form-field appearance="fill">
           <mat-label>Select Vendor/Impl</mat-label>
-          <input matInput formControlName="vendorimpl" [matAutocomplete]="vendorAutoCmp" maxlength="50">
-          <mat-autocomplete #vendorAutoCmp="matAutocomplete">
-            <mat-option *ngFor="let option of (searchObs$ | async)" [value]="option.company" (onSelectionChange)="recruiterList(option.id)">{{ option.company.trim() }}</mat-option>
-          </mat-autocomplete>
+          <!-- <input matInput formControlName="vendorimpl"  maxlength="50"> -->
+          <!-- [matAutocomplete]="vendorAutoCmp" -->
+          <!-- <mat-autocomplete #vendorAutoCmp="matAutocomplete">
+            <mat-option *ngFor="let option of vendorCompanyArr" [value]="option.company" (onSelectionChange)="recruiterList(option.id)">{{ option.company.trim() }}</mat-option>
+          </mat-autocomplete> -->
+          <mat-select formControlName="vendorimpl" (selectionChange)="recruiterList($event)">
+            <mat-option *ngFor="let option of  vendorCompanyArr" [value]="option.id">{{ option.company.trim() }}</mat-option>
+          </mat-select>
           <button type="button" matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
           <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found, click '+' to add vendor</mat-hint>
           <mat-error *ngIf="requirementForm.get('vendorimpl')!.hasError('required')"> Vendor Company is required</mat-error>
@@ -138,13 +142,13 @@
                 </div>
               </mat-option>
             </mat-autocomplete>
-          <mat-error *ngIf="requirementForm.get('empid')!.hasError('required')">Select Recruiter</mat-error>
+          <mat-error *ngIf="requirementForm.get('empid')!.hasError('required') || requirementForm.get('empid')?.value ">Select Recruiter</mat-error>
         </mat-form-field>
 
          <!-- Select POC -->
          <div class="fg-div">
           <mat-form-field>
-            <mat-label>Select POC</mat-label>
+            <mat-label>Select POC </mat-label>
             <mat-select formControlName="recruiter" (selectionChange)="recruiterContact($event)">
               <mat-option *ngFor="let obj of recruiterArr" [value]="obj.id">{{obj.recruiter}}</mat-option>
             </mat-select>

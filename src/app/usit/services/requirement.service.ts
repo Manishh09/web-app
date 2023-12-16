@@ -19,27 +19,27 @@ export class RequirementService {
   }
 
   getVendorCompanies(flg:string) {
-    return this.apiServ.get("recruiter/venodorCompanies/" + flg);
+    return this.apiServ.get("requirement/venodorCompanies/" + flg);
   }
 
   getTech() {
-    return this.apiServ.get("technology/tech");
+    return this.apiServ.get("requirement/tech");
   }
 
   getSkillData(id: number) {
-    return this.apiServ.get("technology/getskillsbyid/" + id);
+    return this.apiServ.get("requirement/getskillsbyid/" + id);
   }
   
   getEmployee() {
-    return this.apiServ.get("users/recruiterlist");
+    return this.apiServ.get("requirement/recruiterlist");
   }
 
-  getAllRequirementData(userid: number,  size: any, field: any) {
-    return this.apiServ.get( "requirement/all/" + userid  + "/" + size + "/" + field);
+  getAllRequirementData(flg: string, userid: number,  size: any, field: any) {
+    return this.apiServ.get( "requirement/all/" + flg  + "/" + userid  + "/" + size + "/" + field);
   }
 
   getRecruiterOfTheVendor(id:number, flg:string) {
-    return this.apiServ.get("submission/getRecruiters/"+id+"/"+flg);
+    return this.apiServ.get("requirement/getRecruiters/"+id+"/"+flg);
   }
 
   deleteEntity(id: number) {
@@ -56,9 +56,9 @@ export class RequirementService {
   }
 
   getAssignedRecruiter(id: number) {
-    return this.apiServ.get("requirement/getempl/" + id);
+    return this.apiServ.get("requirement/getEmpsByReqId/" + id);
   }
-
+  
   //used for get one resource  // get single requirement
   getEntity(id: number) {
     return this.apiServ.get("requirement/getbyid/" + id);
