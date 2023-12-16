@@ -42,7 +42,7 @@ import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox
   selector: 'app-add-requirement',
   standalone: true,
   imports: [
-    
+
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -110,7 +110,7 @@ export class AddRequirementComponent {
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
   selectOptionObj = {
-    
+
     statusType: STATUS_TYPE,
   };
   selectAllChecked = false;
@@ -149,13 +149,13 @@ export class AddRequirementComponent {
           this.requirementObj = response.data;
           // this.getEmployee();
           this.getAssignedEmployee();
-          this.getEmployee();
+
           this.initializeRequirementForm(response.data);
-          
+
         }
       )
       //this.getAssignedEmployee();
-      
+
       //this.prepopulateSelectedEmployees();
     }else{
       this.getEmployee();
@@ -182,7 +182,8 @@ export class AddRequirementComponent {
       (response: any) => {
         this.employeedata = response.data; // saveed selected items from assign rec field
         console.log(this.employeedata);
-        this.prepopulateSelectedEmployees();
+        this.getEmployee();
+       // this.prepopulateSelectedEmployees();
       }
     );
   }
@@ -232,11 +233,11 @@ export class AddRequirementComponent {
     // this.techAutoCompleteSearch();
     // this.companyAutoCompleteSearch();
     // this.empAutoCompleteSearch()
-    
+
   }
 
   validateControls() {
-  
+
   }
 
   companyAutoCompleteSearch() {
@@ -264,7 +265,7 @@ export class AddRequirementComponent {
     }
     return of([])
   }
-  
+
   getTech() {
     this.requirementServ.getTech().subscribe(
       (response: any) => {
@@ -309,13 +310,14 @@ export class AddRequirementComponent {
       (response: any) => {
         this.empArr = response.data;
         this.empArr.map((x: any)=> x.selected = false);
+        this.prepopulateSelectedEmployees();
     }
     )
   }
 
   recruiterArr: any[] = [];
   recruiterList(event: any) {
-    
+
     // const newVal = option.id;
     const newVal =  event.value;
     console.log("vendor Id", newVal);
@@ -330,7 +332,7 @@ export class AddRequirementComponent {
       }
     );
   }
-  
+
   techSkills(option: any) {
     const newVal = option[0];
     if (newVal == '') {
@@ -447,12 +449,12 @@ export class AddRequirementComponent {
     this.dialogRef.close();
     this.router.navigate(['/usit/technology-tag']);
   }
-  
+
   pocPosition!: string;
   selectedItems: ConstactInfo[] = [];
   recruiterContact(event: any) {
     const newVal = event.value;
-    
+
     this.recruiterArr.forEach(item => {
       if (newVal === item.id) {
         this.selectedItems.push(item);
@@ -525,7 +527,7 @@ export class AddRequirementComponent {
     this.toggleSelection(employee);
   }
 
-  
+
 
   onSelectAll(event: MatCheckboxChange){
     this.isAllOptionsSelected = event.checked;
