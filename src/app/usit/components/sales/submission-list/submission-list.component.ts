@@ -240,7 +240,56 @@ export class SubmissionListComponent {
   }
 
   deleteSubmission(submission: any) {
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: submission,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = 'fit-content';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'delete-submission';
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
 
+    // call delete api after  clicked 'Yes' on dialog click
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: '',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+
+          this.submissionServ.deletesubmission(submission.submissionid).pipe(takeUntil(this.destroyed$))
+          .subscribe({next:(response: any) => {
+            if (response.status == 'Success') {
+              this.getAllData();
+              dataToBeSentToSnackBar.message = 'Submission Deleted successfully';
+            } else {
+              dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              dataToBeSentToSnackBar.message = 'Record Deletion failed';
+            }
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }, error: (err: any) => {
+            dataToBeSentToSnackBar.message = err.message;
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }});
+        }
+      },
+    });
   }
 
   generateSerialNumber(index: number): number {

@@ -128,14 +128,14 @@ export class AddSubmissionComponent implements OnInit{
       this.submissionServ.getsubdetailsbyid(this.data.submissionData.submissionid).subscribe(
         (response: any) => {
           this.entity = response.data;
-          this.recruiterList(response.data.vendor.vmsid);
+          this.recruiterList(response.data.vendor);
           this.initilizeSubmissionForm(response.data);
         }
       );
     } else {
       this.initilizeSubmissionForm(new SubmissionInfo());
     }
-    this.filteredRequirements = this.submissionForm!.get('requirement.requirementid')!.valueChanges.pipe(
+    this.filteredRequirements = this.submissionForm!.get('requirement')!.valueChanges.pipe(
       startWith(''),
       map((value: any) => this.reqFilter(value)),
     );
@@ -148,7 +148,7 @@ export class AddSubmissionComponent implements OnInit{
     } else if(type === 'recruiting') {
       this.flag = 'Recruiting';
       this.flgOpposite = "Bench Sales";
-      this.getRequirements();
+      this.getRequirements(this.flag);
     }
      else {
       this.flag = 'Domrecruiting';
@@ -170,29 +170,16 @@ export class AddSubmissionComponent implements OnInit{
 
     this.submissionForm = this.formBuilder.group({
 
-      // user: this.formBuilder.group({
-      //   userid: localStorage.getItem('userid'),
-      // }),
-
-      // flg: [],
-
-      requirement: this.formBuilder.group({
-        requirementid:  [submissionData ? submissionData?.requirement?.requirementid : '', [Validators.required]],
-      }),
-      consultant: this.formBuilder.group({
-        consultantid: [submissionData ? submissionData?.consultant?.consultantid : '', [Validators.required]],
-      }),
+      user: localStorage.getItem('userid'),
+      requirement: [submissionData ? submissionData?.requirement : '', [Validators.required]],
+      consultant: [submissionData ? submissionData?.consultant : '', [Validators.required]],
       position: [submissionData ? submissionData.position : '', [Validators.required]],
       ratetype: [submissionData ? submissionData.ratetype : '', [Validators.required]],
       submissionrate: [submissionData ? submissionData.submissionrate : '', [Validators.required]],
       endclient: [submissionData ? submissionData.endclient : ''],
       implpartner: [submissionData ? submissionData.implpartner : ''],
-      vendor: this.formBuilder.group({
-        vmsid: [submissionData ? submissionData.vendor.vmsid : '', [Validators.required]],
-      }),
-      recruiter: this.formBuilder.group({
-        recid: [submissionData ? submissionData.recruiter.recid : '', [Validators.required]],
-      }),
+      vendor: [submissionData ? submissionData.vendor : '', [Validators.required]],
+      recruiter: [submissionData ? submissionData.recruiter : '', [Validators.required]],
       empcontact: [submissionData ? submissionData.empcontact : ''],
       empmail: [
         submissionData ? submissionData.empmail : '',
@@ -204,9 +191,15 @@ export class AddSubmissionComponent implements OnInit{
       ],
       source: [submissionData ? submissionData.source : '', [Validators.required]],
       projectlocation: [submissionData ? submissionData.projectlocation : '', [Validators.required]],
-      submissionflg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
+      flg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
+      // user: [submissionData ? submissionData.user: ''],
+      submissionid: [submissionData ? submissionData.submissionid: ''],
+      updatedby: [this.data.actionName === "edit-submission" ?  submissionData.updatedby : '0'],
+      status: [this.data.actionName === "edit-submission" ?  submissionData.status : 'Active'],
+      remarks: [submissionData ? submissionData.remarks: ''],
+      substatus: [this.data.actionName === "edit-submission" ?  submissionData.substatus : 'Submitted'],
     });
-    this.submissionForm.get('consultant.consultantid')?.setValue(submissionData?.consultant?.consultantid);
+    this.submissionForm.get('consultant')?.setValue(submissionData?.consultant);
     this.validateControls();
   }
 
@@ -217,12 +210,12 @@ export class AddSubmissionComponent implements OnInit{
     }
     else {
       requirement.clearValidators();
-      this.submissionForm.get("requirement.requirementid").patchValue("null");
+      this.submissionForm.get("requirement").patchValue("null");
     }
     requirement.updateValueAndValidity();
     this.submissionForm.get('ratetype').valueChanges.subscribe((res: any) => {
-      const vendor = this.submissionForm.get('vendor.vmsid');
-      const recruiter = this.submissionForm.get("recruiter.recid");
+      const vendor = this.submissionForm.get('vendor');
+      const recruiter = this.submissionForm.get("recruiter");
       const empmail = this.submissionForm.get('empmail');;
       if (res == '1099' || res == 'W2' || res == 'Full Time') {
         vendor.clearValidators();
@@ -240,8 +233,8 @@ export class AddSubmissionComponent implements OnInit{
     });
   }
 
-  getRequirements() {
-    this.submissionServ.getRequirements().subscribe(
+  getRequirements(flg: string) {
+    this.submissionServ.getRequirements(flg).subscribe(
       (response: any) => {
         this.requirementdata = response.data;
       }
@@ -276,7 +269,7 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   handleAddressChange(address: any) {
-    this.submissionForm.controls['location'].setValue(address.formatted_address);
+    this.submissionForm.controls['projectlocation'].setValue(address.formatted_address);
   }
 
   get controls() {
@@ -293,6 +286,7 @@ export class AddSubmissionComponent implements OnInit{
     this.submissionServ.getCompanies(this.flg).subscribe(
       (response: any) => {
         this.vendordata = response.data;
+        console.log(this.vendordata);
       }
     )
   }
@@ -303,6 +297,9 @@ export class AddSubmissionComponent implements OnInit{
     this.submissionServ.getRecruiterOfTheVendor(newVal, this.flgOpposite).subscribe(
       (response: any) => {
         this.recruiterName = response.data;
+        // this.submissionForm.get("empcontact").patchValue('');
+        // this.submissionForm.get("empmail").patchValue('');
+        // this.submissionForm.get("recruiter").patchValue('');
       }
     );
   }
@@ -351,15 +348,16 @@ export class AddSubmissionComponent implements OnInit{
       .registerSubmission(saveReqObj)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
-        next: (data: any) => {
-          if (data.status == 'success') {
+        next: (resp: any) => {
+          if (resp.status == 'success') {
             dataToBeSentToSnackBar.message =
               this.data.actionName === 'add-submission'
                 ? 'Submission added successfully'
                 : 'Submission updated successfully';
             this.dialogRef.close();
           } else {
-            dataToBeSentToSnackBar.message = 'Submission already Exists';
+            dataToBeSentToSnackBar.message = resp.message ? resp.message : 'Submission already Exists';
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
           }
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         },
