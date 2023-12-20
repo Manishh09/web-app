@@ -34,8 +34,8 @@ export class RequirementService {
     return this.apiServ.get("requirement/recruiterlist");
   }
 
-  getAllRequirementData(flg: string, userid: number,  size: any, field: any) {
-    return this.apiServ.get( "requirement/all/" + flg  + "/" + userid  + "/" + size + "/" + field);
+  getAllRequirementData(flg: string, page: number,  size: any, field: any) {
+    return this.apiServ.get( "requirement/all/" + flg  + "/" + page  + "/" + size + "/" + field);
   }
 
   getRecruiterOfTheVendor(id:number, flg:string) {

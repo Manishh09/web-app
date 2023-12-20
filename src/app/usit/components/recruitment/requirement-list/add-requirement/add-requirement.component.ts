@@ -31,7 +31,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { formatDate } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -178,6 +178,7 @@ export class AddRequirementComponent {
     this.requirementServ.getAssignedRecruiter(this.data.requirementData.requirementid).subscribe(
       (response: any) => {
         this.employeedata = response.data; // saveed selected items from assign rec field
+        this.employeedata.map((x: any)=> x.selected = true);
         this.getEmployee();
        // this.prepopulateSelectedEmployees();
       }
@@ -323,8 +324,8 @@ export class AddRequirementComponent {
     );
   }
 
-  techSkills(option: any) {
-    const newVal = option[0];
+  techSkills(event: MatSelectChange) {
+    const newVal = event.value;
     if (newVal == '') {
       this.autoskills = '';
     }
@@ -342,22 +343,25 @@ export class AddRequirementComponent {
       }
     )
   }
+
+  
   toggleSelection(employee: any) {
     const mapToApiFormat = (emp: any) => ({
       userid: emp.userid,
       fullname: emp.fullname,
     });
+    
+      employee.selected = !employee.selected;
+  
+    if (employee.selected) {
 
-    employee.selected = !employee.selected;
-
-    if (employee.selected === true) {
       this.selectData.push(employee);
     }
-    else {
-      const i = this.selectData.findIndex((value: any) => value.fullname === employee.fullname);
-      this.selectData.splice(i, 1);
-    }
-
+    // else {
+    //   const i = this.selectData.findIndex((value: any) => value.fullname === employee.fullname);
+    //   this.selectData.splice(i, 1);
+    // }
+    this.isAllOptionsSelected = !this.empArr.some((x: any) => x.selected === false)
     const mappedData = this.selectData.map(mapToApiFormat);
     this.requirementForm.get('empid')!.setValue(mappedData);
   };
@@ -382,6 +386,11 @@ export class AddRequirementComponent {
       this.requirementForm.markAllAsTouched();
       return;
     }
+    this.selectData.forEach(function (obj: any) {
+        delete obj.selected
+        delete obj.pseudoname
+    });
+    this.requirementForm.get('empid')!.setValue(this.selectData);
     const saveReqObj = this.getSaveData();
     this.requirementServ
       .addORUpdateRequirement(saveReqObj, this.data.actionName)
@@ -468,25 +477,28 @@ export class AddRequirementComponent {
   }
 
   remove(employee: any): void {
-    const index = this.selectData.indexOf(employee);
 
+    const index = this.selectData.indexOf(employee);
     if (index >= 0) {
       this.selectData.splice(index, 1);
     }
-
-    this.toggleSelection(employee);
+    this.empArr.find((y: any) => y.userid === employee.userid).selected = false;
+    // this.toggleSelection(employee);
     this.controls['empid'].updateValueAndValidity();
 
-    const input = this.employeeInput;
-    if (input) {
-      console.log(input);
-    }
+    const mapToApiFormat = (emp: any) => ({
+      userid: emp.userid,
+      fullname: emp.fullname,
+    });
+    const mappedData = this.selectData.map(mapToApiFormat);
+    this.requirementForm.get('empid')!.setValue(mappedData);
   }
 
   prepopulateSelectedEmployees() {
     // Clear the existing employees array
     this.selectData = [];
     this.selectData = this.employeedata;
+    this.requirementForm.get('empid')?.patchValue(this.selectData);
 
     if (this.empArr.length && this.employeedata.length) {
       this.employeedata.forEach((x: any, listId: number) => {
@@ -516,6 +528,7 @@ export class AddRequirementComponent {
    else{
     this.selectData = []
    }
+  //  this.requirementForm.get('empid')?.setValue(this.selectData);
   }
 
   empAutoCompleteSearch() {
@@ -576,20 +589,6 @@ export class AddRequirementComponent {
   ngOnDestroy() {
     this.destroyed$.next();
     this.destroyed$.complete();
-  }
-
-  selectAllOptions() {
-    const empidControl = this.requirementForm.get('empid');
-
-    if (this.selectAllChecked) {
-      // Select all options
-      this.empArr.forEach((emp: any) => emp.selected = true);
-      empidControl!.setValue(this.empArr.map((emp: any) => emp.fullname));
-    } else {
-      // Deselect all options
-      this.empArr.forEach((emp: any) => emp.selected = false);
-      empidControl!.setValue([]);
-    }
   }
 
   onRadioChange(event: MatRadioChange){

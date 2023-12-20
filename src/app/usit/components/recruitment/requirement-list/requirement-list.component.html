@@ -134,28 +134,8 @@
           <td
             mat-cell
             *matCellDef="let requirement"
-            [ngStyle]="{
-              backGroundColor:
-                requirement.status === 'Active' ? 'green' : 'accent'
-            }"
           >
-            <!-- <span><button mat-raised-button (click)="onStatusUpdate(requirement)" > {{requirement.status}}</button> </span> -->
-            <ng-container
-              *ngIf="
-                requirement.status == 'Rejected' ||
-                  requirement.status == 'InActive';
-                then trueCondition;
-                else elseTemplate
-              "
-            ></ng-container>
-            <ng-template #trueCondition>
-              <button mat-raised-button (click)="editRequirement(requirement)">
-                {{ requirement.status }}
-              </button>
-            </ng-template>
-            <ng-template #elseTemplate>
-              <button mat-raised-button>{{ requirement.status }}</button>
-            </ng-template>
+          {{ requirement.status }}
           </td>
         </ng-container>
 

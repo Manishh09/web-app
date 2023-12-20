@@ -21,7 +21,7 @@ export class SubmissionService {
     return this.apiServ.get("submission/getRecruiters/"+id+"/"+flg);
   }
   getCompanies(flg:string) {
-    return this.apiServ.get("recruiter/venodorCompanies/"+flg);
+    return this.apiServ.get("submission/venodorCompanies/"+flg);
   }
 
   //used for create the resource
@@ -30,8 +30,8 @@ export class SubmissionService {
   }
 
   // supporting drop down apis
-  public getRequirements() {
-    return this.apiServ.get("requirement/getrequirements");
+  public getRequirements(flg: string) {
+    return this.apiServ.get("submission/getrequirements/"+ flg);
   }
 
   public getsubmissiondata(flg: string,access:string,userid:number) {

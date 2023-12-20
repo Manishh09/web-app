@@ -64,8 +64,8 @@
         <div class="fg-div">
           <mat-form-field appearance="fill" class="form-technology">
             <mat-label>Select Technology</mat-label>
-            <mat-select formControlName="technology">
-              <mat-option *ngFor="let option of  techArr" [value]="option[0]" (onSelectionChange)="techSkills(option)">{{ option[1] }}</mat-option>
+            <mat-select formControlName="technology" (selectionChange)="techSkills($event)">
+              <mat-option *ngFor="let option of  techArr" [value]="option[0]" >{{ option[1] }}</mat-option>
               
             </mat-select>
             <button type="button" matSuffix mat-icon-button (click)="goToTechnologyList()"><mat-icon>add</mat-icon></button>
@@ -117,7 +117,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Assign Recruiter</mat-label>
             <mat-chip-grid #chipGrid aria-label="Assign Recruiter" formControlName="empid">
-              <mat-chip-row *ngFor="let employee of selectData" (removed)="remove(employee)">
+              <mat-chip-row *ngFor="let employee of selectData" class="chip-style" (removed)="remove(employee)">
                 {{ employee.fullname }}
                 <button matChipRemove [attr.aria-label]="'remove ' + employee">
                   <mat-icon>cancel</mat-icon>
