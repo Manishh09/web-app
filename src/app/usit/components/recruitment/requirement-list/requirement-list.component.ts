@@ -123,13 +123,9 @@ export class RequirementListComponent implements OnInit {
     } else { // presales
       this.flag = "Domrecruiting";
     }
-
-    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
-    //   this.dataTableColumns.splice(15,0,"AddedBy")
-    // }
   }
 
-  getAllData() {
+  getAllData(currentPageIndex = 1) {
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 1500,
@@ -142,7 +138,7 @@ export class RequirementListComponent implements OnInit {
     return this.requirementServ
       .getAllRequirementData(
         this.flag,
-        this.userid,
+        currentPageIndex,
         this.pageSize,
         this.field
       )
@@ -183,7 +179,7 @@ export class RequirementListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
 
@@ -206,7 +202,7 @@ export class RequirementListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
@@ -247,7 +243,7 @@ export class RequirementListComponent implements OnInit {
           this.requirementServ.deleteEntity(requirement.requirementid).pipe(takeUntil(this.destroyed$))
           .subscribe({next:(response: any) => {
             if (response.status == 'success') {
-              this.getAllData();
+              this.getAllData(this.currentPageIndex + 1);
               dataToBeSentToSnackBar.message = 'Requirement Deleted successfully';
             } else {
               dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -282,7 +278,7 @@ export class RequirementListComponent implements OnInit {
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;
-      this.getAllData();
+      this.getAllData(event.pageIndex + 1);
     }
     return;
   }

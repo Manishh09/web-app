@@ -48,7 +48,7 @@ ul.breadcrumb li a:hover {
 }
 
 table {
-  width: max-content;
+  width: 100%;
 
 }
 
@@ -135,7 +135,7 @@ tbody {
 
 .requirement-table-style {
   padding: 0 2px;
-  width: 100%;
+  width: max-content;
   max-height: calc(100% - 2px);
   overflow: auto;
   display: block;

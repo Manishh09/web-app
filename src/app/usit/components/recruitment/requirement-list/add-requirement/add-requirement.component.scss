@@ -251,3 +251,13 @@
   .intl-input{
     opacity: 1;
   }
+
+.mat-mdc-chip.mat-mdc-standard-chip {
+  --mdc-chip-container-height: 28px;
+}
+
+:host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__cell--primary,
+:host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__action--primary,
+:host ::ng-deep .mat-mdc-standard-chip .mat-mdc-chip-action-label {
+    overflow: hidden;
+}
