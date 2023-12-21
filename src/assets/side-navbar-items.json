@@ -150,5 +150,10 @@
           "routerLink": "/usit/companies"
         }
       ]
+    },
+    {
+      "text": "Quiz",
+      "icon": "dashboard",
+      "routerLink": "/usit/quiz"
     }
   ]
