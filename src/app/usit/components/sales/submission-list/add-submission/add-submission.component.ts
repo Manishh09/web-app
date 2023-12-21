@@ -128,17 +128,25 @@ export class AddSubmissionComponent implements OnInit{
       this.submissionServ.getsubdetailsbyid(this.data.submissionData.submissionid).subscribe(
         (response: any) => {
           this.entity = response.data;
-          this.recruiterList(response.data.vendor);
+          if (this.entity.vendor == null) {
+            this.submissionForm.get('vendor').patchValue("");
+            this.submissionForm.get('recruiter').patchValue("");
+          }
+          else {
+            this.submissionForm.get('vendor').patchValue(this.entity.vendor);
+            this.submissionForm.get('recruiter').patchValue(this.entity.recruiter);
+            this.recruiterInfo(this.entity.vendor);
+          }
           this.initilizeSubmissionForm(response.data);
         }
       );
     } else {
       this.initilizeSubmissionForm(new SubmissionInfo());
     }
-    this.filteredRequirements = this.submissionForm!.get('requirement')!.valueChanges.pipe(
-      startWith(''),
-      map((value: any) => this.reqFilter(value)),
-    );
+    // this.filteredRequirements = this.submissionForm!.get('requirement')!.valueChanges.pipe(
+    //   startWith(''),
+    //   map((value: any) => this.reqFilter(value)),
+    // );
   }
 
   getFlag(type: string){
@@ -152,11 +160,8 @@ export class AddSubmissionComponent implements OnInit{
     }
      else {
       this.flag = 'Domrecruiting';
+      this.getRequirements(this.flag);
     }
-  }
-
-  displayFn(subject: any) {
-    return subject ? subject : undefined;
   }
 
   private reqFilter(value: string): string[] {
@@ -205,7 +210,7 @@ export class AddSubmissionComponent implements OnInit{
 
   private validateControls() {
     const requirement = this.submissionForm.get('requirement');
-    if (this.flag == 'Recruiting') {
+    if (this.flag == 'Recruiting' || this.flag == 'Domrecruiting') {
       requirement.setValidators(Validators.required);
     }
     else {
@@ -246,7 +251,8 @@ export class AddSubmissionComponent implements OnInit{
     this.submissionServ.getRequirementByIdDropdown(newVal).subscribe(
       (response: any) => {
         this.submissionForm.get("position").setValue(response.data.jobtitle);
-        this.address = response.data.location;
+        this.submissionForm.get("projectlocation").setValue(response.data.location);
+        // this.address = response.data.location;
         this.submissionForm.get("ratetype").setValue(response.data.employmenttype);
         this.submissionForm.get("endclient").setValue(response.data.client);
         this.submissionForm.get("implpartner").setValue(response.data.vendor);
@@ -254,7 +260,8 @@ export class AddSubmissionComponent implements OnInit{
     );
     if (newVal == '') {
       this.submissionForm.get("position").setValue('');
-      this.address = '';
+      this.submissionForm.get("projectlocation").setValue('');
+      // this.address = '';
       this.submissionForm.get("ratetype").setValue('');
       this.submissionForm.get("endclient").setValue('');
       this.submissionForm.get("implpartner").setValue('');
@@ -286,20 +293,29 @@ export class AddSubmissionComponent implements OnInit{
     this.submissionServ.getCompanies(this.flg).subscribe(
       (response: any) => {
         this.vendordata = response.data;
-        console.log(this.vendordata);
       }
     )
   }
 
+  idd!: any;
+  recruiterInfo(id: number) {
+    this.idd = this.entity.recruiter;
+    this.submissionServ.getRecruiterOfTheVendor(id, this.flgOpposite).subscribe(
+      (response: any) => {
+        this.recruiterName = response.data;
+      }
+    );
+  }
+
   recruiterName: any[] = [];
-  recruiterList(obj: any) {
-    const newVal = obj;
+  recruiterList(event: any) {
+    const newVal = event.value;
     this.submissionServ.getRecruiterOfTheVendor(newVal, this.flgOpposite).subscribe(
       (response: any) => {
         this.recruiterName = response.data;
-        // this.submissionForm.get("empcontact").patchValue('');
-        // this.submissionForm.get("empmail").patchValue('');
-        // this.submissionForm.get("recruiter").patchValue('');
+        this.submissionForm.get("empcontact").patchValue('');
+        this.submissionForm.get("empmail").patchValue('');
+        this.submissionForm.get("recruiter").patchValue('');
       }
     );
   }
