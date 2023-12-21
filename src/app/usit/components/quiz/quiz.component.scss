@@ -89,3 +89,18 @@ gap: 8px;
   justify-content: flex-end;
   gap: 4px;
 }
+.department-category-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  .left-section{
+    width: 50%;
+  }
+  .right-section{
+    width: 50%;
+  }
+}
+
+.category-field{
+  width: 75%;
+}

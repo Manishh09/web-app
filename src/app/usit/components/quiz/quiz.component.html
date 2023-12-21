@@ -9,13 +9,35 @@
      matTooltip="Add Question"
      matTooltipPosition="left"
     >
-    <mat-icon>add_circle</mat-icon>
+    <mat-icon class="item-icon">add_circle</mat-icon>
   </button>
 </mat-card-header>
   <mat-card-content class="card-content">
   <!-- form -->
   <div class="form-container">
     <form [formGroup]="quizForm" class="quiz-form" autocomplete="off" (ngSubmit)="onSubmit()">
+      <div  class="department-category-container">
+        <div class="left-section">
+          <mat-form-field appearance="fill" class="category-field">
+            <!-- <input matInput formControlName="department" placeholder="Enter Department"> -->
+            <mat-select name="department" formControlName="department" placeholder="Select Department">
+              <mat-option *ngFor="let option of deptOptions" [value]="option.id">
+                {{ option.name }}
+              </mat-option>
+            </mat-select>
+              <mat-error *ngIf="this.quizForm.get('department')?.errors?.required">Department is required</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="right-section">
+          <mat-form-field appearance="fill" class="category-field">
+            <input matInput formControlName="category" placeholder="Enter Category">
+              <mat-error *ngIf="this.quizForm.get('category')?.errors?.required">Category is required</mat-error>
+              <mat-error *ngIf="this.quizForm.get('category')?.errors?.maxlength">Maximum characters reached</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+
       <ng-container formArrayName="options" *ngFor="let ctrl of quizForm.controls?.options?.controls let i = index">
         <div [formGroupName]="i" class="fg">
 
@@ -34,7 +56,7 @@
               </mat-form-field>
 
               <!-- delete button -->
-              <button  matTooltip="Remove"
+              <button  matTooltip="Remove" [disabled]="quizForm.controls.options.controls.length === 1"
               matTooltipPosition="right" mat-icon-button (click)="removeQuestion(i)" id="{{ 'deleteBtn' + i }}">
                 <mat-icon>delete</mat-icon>
               </button>
@@ -49,11 +71,11 @@
             <div class="left-section">
               <div class="option-style">
                 <mat-radio-button [checked]="ctrl.get('answer')?.value === 'optionA'" [value]="'optionA'"
-                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event, ctrl, i, i)">
+                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event,  i)">
                 </mat-radio-button>
 
                   <mat-form-field appearance="fill" class="option-field">
-                    <input matInput type="text" class="option" formControlName="optionA" placeholder="Enter the answer" />
+                    <input matInput type="text" class="option" formControlName="optionA" placeholder="Enter option A" />
                     <mat-error *ngIf="ctrl.get('optionA')?.hasError('required')">
                       Option value is required
                     </mat-error>
@@ -68,13 +90,13 @@
               </div>
               <div class="option-style">
                 <mat-radio-button [checked]="ctrl.get('answer')?.value === 'optionC'" [value]="'optionC'"
-                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event, ctrl, i, i)">
+                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event,  i)">
                 </mat-radio-button>
 
                   <mat-form-field appearance="fill" class="option-field">
                     <input matInput type="text" class="form-control option"
 
-                      formControlName="optionC" placeholder="Enter the answer" />
+                      formControlName="optionC" placeholder="Enter option C" />
                       <mat-error *ngIf="ctrl.get('optionC')?.hasError('required')">
                         Option value is required
                       </mat-error>
@@ -90,11 +112,11 @@
             <div class="right-section">
               <div class="option-style">
                 <mat-radio-button [checked]="ctrl.get('answer')?.value === 'optionB'" [value]="'optionB'"
-                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event, ctrl, i, i)">
+                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event,  i)">
                 </mat-radio-button>
 
                   <mat-form-field appearance="fill" class="option-field">
-                    <input matInput type="text" class="option" formControlName="optionB" placeholder="Enter the answer" />
+                    <input matInput type="text" class="option" formControlName="optionB" placeholder="Enter option B" />
                     <mat-error *ngIf="ctrl.get('optionB')?.errors && ctrl.get('optionB')?.hasError('required')">
                       Option value is required
                     </mat-error>
@@ -107,12 +129,12 @@
               </div>
               <div class="option-style">
                 <mat-radio-button [checked]="ctrl.get('answer')?.value === 'optionD'" [value]="'optionD'"
-                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event, ctrl, i, i)">
+                  class="form-check-input" name="{{'radio'+i}}" (change)="selectAnswer($event,  i)">
                 </mat-radio-button>
 
                   <mat-form-field appearance="fill" class="option-field">
                     <input matInput type="text" class="option"
-                      formControlName="optionD" placeholder="Enter the answer"/>
+                      formControlName="optionD" placeholder="Enter option D"/>
                       <mat-error *ngIf="ctrl.get('optionD')?.hasError('required')">
                         Option value is required
                       </mat-error>
