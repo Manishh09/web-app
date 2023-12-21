@@ -14,7 +14,7 @@ export class SubmissionService {
 
   
   getRequirementByIdDropdown(id:number) {
-    return this.apiServ.get("requirement/getreqybyid/"+id);
+    return this.apiServ.get("submission/getreqbyid/"+id);
   }
 
   getRecruiterOfTheVendor(id:number, flg:string) {

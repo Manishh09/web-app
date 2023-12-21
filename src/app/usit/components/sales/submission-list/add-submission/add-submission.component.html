@@ -18,7 +18,7 @@
                 <input name="remarks" type="hidden" formControlName="remarks" >
                 <input name="substatus" type="hidden" formControlName="substatus" >
 
-                <div class="fg-div" *ngIf="flag === 'Recruiting' || 'Domrecruiting'">
+                <div class="fg-div" *ngIf="this.flag !== 'sales'">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Requirement</mat-label>
                         <mat-select formControlName="requirement"  (selectionChange)="requirements($event)">
@@ -102,9 +102,9 @@
                 <div class="fg-div">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Company</mat-label>
-                        <mat-select formControlName="vendor">
+                        <mat-select formControlName="vendor" (selectionChange)="recruiterList($event)">
                             <mat-option *ngFor="let obj of vendordata"
-                                      [value]="obj.id" (onSelectionChange)="recruiterList(obj.id)">
+                                      [value]="obj.id">
                                       {{ obj.company }}
                             </mat-option>
                         </mat-select>

@@ -77,7 +77,11 @@
                     </th>
                     <td mat-cell *matCellDef="let element">
                         <ng-container *ngIf="this.flag == 'Recruiting'; then trueCondition else elseTemplate"></ng-container>
+                        <ng-container *ngIf="this.flag === 'Domrecruiting'; then anotherCondition"></ng-container>
                         <ng-template #trueCondition>
+                            {{ element?.reqnumber }}
+                        </ng-template>
+                        <ng-template #anotherCondition>
                             {{ element?.reqnumber }}
                         </ng-template>
                         <ng-template #elseTemplate>
