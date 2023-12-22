@@ -9,7 +9,7 @@ export class SubmissionService {
   constructor(private apiServ: ApiService) { }
 
   getConsultantDropdown(flg: string) {
-    return this.apiServ.get("consultant/consultantinfo/" + flg);
+    return this.apiServ.get("submission/consultantinfo/" + flg);
   }
 
   

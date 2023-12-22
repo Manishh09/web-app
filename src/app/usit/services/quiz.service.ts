@@ -17,4 +17,9 @@ export class QuizService {
     return this.apiServ.post("kpt/save", entity);
   }
 
+  attemptQuiz(entity: any) {
+    return this.apiServ.post("kpt/writeTest", entity);
+  }
+
+
 }

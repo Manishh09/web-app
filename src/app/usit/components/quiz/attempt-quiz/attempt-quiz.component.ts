@@ -121,7 +121,7 @@ export class AttemptQuizComponent implements OnInit{
       this.displayFormErrors();
       return;
     }
-    this.quizServ.saveQuestionnaire(this.quizForm.value).subscribe({
+    this.quizServ.attemptQuiz(this.quizForm.value).subscribe({
       next:(resp: any) => {
 
         // if (resp.status == 'success') {
