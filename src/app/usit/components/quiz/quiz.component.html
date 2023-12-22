@@ -21,7 +21,7 @@
           <mat-form-field appearance="fill" class="category-field">
             <!-- <input matInput formControlName="department" placeholder="Enter Department"> -->
             <mat-select name="department" formControlName="department" placeholder="Select Department">
-              <mat-option *ngFor="let option of deptOptions" [value]="option.id">
+              <mat-option *ngFor="let option of deptOptions" [value]="option.name">
                 {{ option.name }}
               </mat-option>
             </mat-select>
@@ -30,9 +30,13 @@
         </div>
         <div class="right-section">
           <mat-form-field appearance="fill" class="category-field">
-            <input matInput formControlName="category" placeholder="Enter Category">
+            <!-- <input matInput formControlName="category" placeholder="Enter Category"> -->
+            <mat-select name="category" formControlName="category" placeholder="Select Category">
+              <mat-option *ngFor="let option of categoryOptions" [value]="option.name">
+                {{ option.name }}
+              </mat-option>
+            </mat-select>
               <mat-error *ngIf="this.quizForm.get('category')?.errors?.required">Category is required</mat-error>
-              <mat-error *ngIf="this.quizForm.get('category')?.errors?.maxlength">Maximum characters reached</mat-error>
           </mat-form-field>
         </div>
       </div>

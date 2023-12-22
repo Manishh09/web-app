@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, FormControl, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,6 +13,7 @@ import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.servi
 import { DialogService } from 'src/app/services/dialog.service';
 import { DEPARTMENT } from 'src/app/constants/department';
 import { MatSelectModule } from '@angular/material/select';
+import { CATEGORY } from 'src/app/constants/category';
 
 export interface Questionnaire {
   optionA: FormControl<string | null>;
@@ -21,6 +22,7 @@ export interface Questionnaire {
   optionD: FormControl<string | null>;
   question: FormControl<string | null>;
   answer: FormControl<string | null>;
+  userans?:FormControl<string | null>;
 }
 
 @Component({
@@ -33,6 +35,7 @@ export interface Questionnaire {
 export class QuizComponent implements OnInit{
   objectK = Object;
   deptOptions = DEPARTMENT;
+  categoryOptions = CATEGORY;
   // snack bar data
   dataTobeSentToSnackBarService: ISnackBarData = {
     message: '',
@@ -111,7 +114,7 @@ export class QuizComponent implements OnInit{
         optionC: [control.optionC, [Validators.required,Validators.maxLength(100)] ],
         optionD: [control.optionD, [Validators.required,Validators.maxLength(100)] ],
         question: [control.question, [Validators.required,Validators.maxLength(200)] ],
-        answer: [control.answer,[Validators.required,Validators.maxLength(1)] ],
+        answer: [control.answer],
       })
     );
   }
@@ -121,11 +124,11 @@ export class QuizComponent implements OnInit{
    * @param event selected answer
    * @param questId question index
    */
-  selectAnswer(event: any, questId: number) {
+  selectAnswer(event: MatRadioChange, questId: number) {
     if(event){
       const formArr = this.quizForm.controls.options;
       const control = formArr.controls[questId]?.get('answer');
-      control?.patchValue(event.target.value);
+      control?.patchValue(event.value);
     }
   }
 

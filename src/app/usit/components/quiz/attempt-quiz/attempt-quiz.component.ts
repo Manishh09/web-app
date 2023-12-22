@@ -1,30 +1,53 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DialogService } from 'src/app/services/dialog.service';
 import { DEPARTMENT } from 'src/app/constants/department';
-import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
+import {
+  ISnackBarData,
+  SnackBarService,
+} from 'src/app/services/snack-bar.service';
 import { QuizService } from 'src/app/usit/services/quiz.service';
 import { Questionnaire } from '../quiz.component';
+import { CATEGORY } from 'src/app/constants/category';
+import { Option, QuestionGroup } from 'src/app/usit/models/questionnnaire';
 
 @Component({
   selector: 'app-attempt-quiz',
   standalone: true,
-  imports: [CommonModule, MatSelectModule, ReactiveFormsModule,MatCardModule, MatFormFieldModule, MatIconModule, MatInputModule, MatRadioModule, MatButtonModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatRadioModule,
+    MatButtonModule,
+    MatTooltipModule,
+  ],
   templateUrl: './attempt-quiz.component.html',
-  styleUrls: ['./attempt-quiz.component.scss']
+  styleUrls: ['./attempt-quiz.component.scss'],
 })
-export class AttemptQuizComponent implements OnInit{
+export class AttemptQuizComponent implements OnInit {
   objectK = Object;
   deptOptions = DEPARTMENT;
+  categoryOptions = CATEGORY;
   // snack bar data
   dataTobeSentToSnackBarService: ISnackBarData = {
     message: '',
@@ -35,109 +58,176 @@ export class AttemptQuizComponent implements OnInit{
     panelClass: ['custom-snack-success'],
   };
   quizForm: any = FormGroup;
-  // formObj = [
-  //   {
-  //     question: '',
-  //     optionA: '',
-  //     optionB: '',
-  //     optionC: '',
-  //     optionD: '',
-  //     answer: '',
-  //   },
-  //   {
-  //     question: '',
-  //     optionA: '',
-  //     optionB: '',
-  //     optionC: '',
-  //     optionD: '',
-  //     answer: '',
-  //   },
-  // ];
-  formObj = MOCK_RESP.options;
-  isFormSubmitted = false;
-    // services
+  formObj!: QuestionGroup;
+  // services
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
-  private fb = inject(FormBuilder)
-  private quizServ = inject(QuizService)
-  ngOnInit(): void {
-    // this.getQuestionnaire();
-     this.initForm();
-   }
+  private fb = inject(FormBuilder);
+  private quizServ = inject(QuizService);
+  selectedDepartment: any;
+  selectedCategory: any;
 
-   /**
+  ngOnInit(): void {
+   // this.getQuestionnaire();
+   this.initForm([
+    {
+      department: '',
+      category: '',
+      question: '',
+      optionA: '',
+      optionB: '',
+      optionC: '',
+      optionD: '',
+      answer: '',
+      userans: ''
+    },
+  ]);
+  }
+
+  onSelect(event: MatSelectChange, type: 'dept'| 'cat'){
+
+    if(type === "dept"){
+      this.selectedDepartment = event.value;
+    }
+    if(type === "cat"){
+      this.selectedCategory = event.value;
+    }
+
+    if(this.selectedDepartment && this.selectedCategory){
+      this.getQuestionnaire();
+    }
+  }
+  /**
+   * fetch questionnaire
+   */
+  getQuestionnaire() {
+    this.initForm([
+      {
+        department: '',
+        category: '',
+        question: '',
+        optionA: '',
+        optionB: '',
+        optionC: '',
+        optionD: '',
+        answer: '',
+      },
+    ]);
+    this.quizServ.getQuestionnaire(this.selectedDepartment, this.selectedCategory).subscribe({
+      next: (resp: any) => {
+        if (resp.status === "success") {
+          this.formObj = resp.data;
+          if(resp.data){
+            this.initForm(this.formObj.options);
+          }
+          else{
+
+            this.dataTobeSentToSnackBarService.message = "No Questions Available under the selected category and department, Please select valid data";
+            this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"]
+            this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
+            this.initForm('')
+          }
+        }
+      },
+      error: err => {
+        this.dataTobeSentToSnackBarService.message = "Internal server error";
+        this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"]
+        this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
+      }
+    });
+  }
+
+  /**
    * initialize form
    */
-  initForm() {
+  initForm(data: any) {
     this.quizForm = this.fb.group({
-      department: ['', [ Validators.required]],
-      category: ['',[Validators.required,Validators.maxLength(100)]],
-      options: this.fb.array(this.initFormArrayElements()),
+      department: [this.selectedDepartment, [Validators.required]],
+      category: [this.selectedCategory, [Validators.required]],
+      options: this.fb.array(data ? this.initFormArrayElements(data): []),
     });
 
-    (this.quizForm.get('options') as FormArray).controls.map(x => x.disable())
   }
   /**
    *
    * @returns form array controls
    */
-  private initFormArrayElements(): FormGroup<Questionnaire>[] {
-    return this.formObj.map((control: any) =>
-      this.fb.group({
-        optionA: [control.optionA, [ Validators.required,Validators.maxLength(100)] ],
-        optionB: [control.optionB,[ Validators.required,Validators.maxLength(100)] ],
-        optionC: [control.optionC, [Validators.required,Validators.maxLength(100)] ],
-        optionD: [control.optionD, [Validators.required,Validators.maxLength(100)] ],
-        question: [control.question, [Validators.required,Validators.maxLength(200)] ],
-        answer: [control.answer,[Validators.required,Validators.maxLength(1)] ],
+  private initFormArrayElements(data: Option[]): FormGroup<any>[] {
+    return data.map((control: any) =>
+      // this.fb.group({
+      //   optionA: [control.optionA, [Validators.required]],
+      //   optionB: [control.optionB, [Validators.required]],
+      //   optionC: [control.optionC, [Validators.required]],
+      //   optionD: [control.optionD, [Validators.required]],
+      //   question: [control.question],
+      //   answer: [control.answer],
+      //   userans: [control.userans]
+      // })
 
-      }, )
+      this.fb.group({
+        optionA: [control.optionA, [Validators.required]],
+        optionB: [control.optionB, [Validators.required]],
+        optionC: [control.optionC, [Validators.required]],
+        optionD: [control.optionD, [Validators.required]],
+        question: [control.question],
+        answer: [control.answer],
+        userans: []
+      })
     );
   }
 
-
-   /**
+  /**
    *
    * @param event selected answer
    * @param questId question index
    */
-   selectAnswer(event: any, questId: number) {
-    if(event){
+  selectAnswer(event: MatRadioChange, questId: number) {
+    if (event) {
       const formArr = this.quizForm.controls.options;
-      const control = formArr.controls[questId]?.get('answer');
-      control?.patchValue(event.target.value);
+      const userAnsControl = formArr.controls[questId]?.get('userans');
+      const answerControl = formArr.controls[questId]?.get('answer');
+      answerControl?.patchValue(event.value);
+      userAnsControl?.patchValue(event.value);
     }
   }
 
-   /**
+  /**
    *
    * submit form
    */
-   onSubmit() {
-    this.isFormSubmitted = true;
+  onSubmit() {
     console.log('form.value for save:', JSON.stringify(this.quizForm.value));
     if (this.quizForm.invalid) {
       // show errors
       this.displayFormErrors();
       return;
     }
-    this.quizServ.attemptQuiz(this.quizForm.value).subscribe({
-      next:(resp: any) => {
-
-        // if (resp.status == 'success') {
-        //   this.dataTobeSentToSnackBarService.message = 'Question added Successfully';
-        // } else {
-        //   this.dataTobeSentToSnackBarService.message = 'Question addition failed';
-        //   this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
-        // }
-        // this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-      }, error: (err : any) =>{
+    const saveObj = {
+      ...this.quizForm.value,
+      userid: localStorage.getItem('userid'),
+      qid: this.formObj.qid,
+    };
+    this.quizServ.attemptQuiz(saveObj).subscribe({
+      next: (resp: any) => {
+        if (resp.status == 'success') {
+          this.dataTobeSentToSnackBarService.message = 'Quiz submitted successfully';
+        } else {
+          this.dataTobeSentToSnackBarService.message = 'Quiz submission failed';
+          this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
+        }
+        this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
+      },
+      error: (err: any) => {
         console.log(err.message);
         this.dataTobeSentToSnackBarService.message = err.message;
-        this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
-        this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-      }
-    })
+        this.dataTobeSentToSnackBarService.panelClass = [
+          'custom-snack-failure',
+        ];
+        this.snackBarServ.openSnackBarFromComponent(
+          this.dataTobeSentToSnackBarService
+        );
+      },
+    });
   }
 
   /** to display form validation messages */
@@ -157,7 +247,7 @@ export class AttemptQuizComponent implements OnInit{
   /**
    * cancels data entered
    */
-  onCancel(){
+  onCancel() {
     this.quizForm.reset();
   }
 }
