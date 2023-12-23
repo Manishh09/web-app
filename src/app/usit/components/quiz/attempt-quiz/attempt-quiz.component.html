@@ -4,7 +4,7 @@
 
   <mat-card-header class="card-header">
     <mat-card-title class="card-title">Questionnaire</mat-card-title>
-
+    <span class="card-title" *ngIf="selectedDepartment && selectedCategory">Time: {{clock}}</span>
 </mat-card-header>
   <mat-card-content class="card-content">
   <!-- form -->
@@ -101,7 +101,7 @@
  <!--bottom action button -->
  <div class="actions" *ngIf="formObj?.options?.length">
   <button mat-raised-button color="white" (click)="onCancel()">Reset</button>
-  <button type="submit" mat-raised-button color="primary" (click)="onSubmit()">Next</button>
+  <button type="submit" mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
 </div>
 </mat-card>
 </div>

@@ -25,6 +25,7 @@ import { QuizService } from 'src/app/usit/services/quiz.service';
 import { Questionnaire } from '../quiz.component';
 import { CATEGORY } from 'src/app/constants/category';
 import { Option, QuestionGroup } from 'src/app/usit/models/questionnnaire';
+import { pauseTimer, transform } from 'src/app/functions/timer';
 
 @Component({
   selector: 'app-attempt-quiz',
@@ -66,6 +67,7 @@ export class AttemptQuizComponent implements OnInit {
   private quizServ = inject(QuizService);
   selectedDepartment: any;
   selectedCategory: any;
+  clock: string = "";
 
   ngOnInit(): void {
    // this.getQuestionnaire();
@@ -95,6 +97,7 @@ export class AttemptQuizComponent implements OnInit {
 
     if(this.selectedDepartment && this.selectedCategory){
       this.getQuestionnaire();
+      this.onTimeout()
     }
   }
   /**
@@ -191,6 +194,22 @@ export class AttemptQuizComponent implements OnInit {
     }
   }
 
+  onTimeout(){
+    let timeVal = 30;
+    let interval = setInterval(() => {
+      if (timeVal === 0) {
+       this.pauseTimer(interval);
+      } else {
+        timeVal--;
+      }
+      this.clock = transform(timeVal);
+    }, 1000);
+  }
+
+  pauseTimer(interval: any){
+    clearInterval(interval);
+    this.onSubmit()
+  }
   /**
    *
    * submit form
@@ -249,6 +268,7 @@ export class AttemptQuizComponent implements OnInit {
    */
   onCancel() {
     this.quizForm.reset();
+    this.selectedCategory = this.selectedDepartment = '';
   }
 }
 export const MOCK_RESP = {
