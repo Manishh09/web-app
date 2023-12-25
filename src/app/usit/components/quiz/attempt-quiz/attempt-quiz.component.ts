@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormArray,
@@ -45,7 +45,8 @@ import { pauseTimer, transform } from 'src/app/functions/timer';
   templateUrl: './attempt-quiz.component.html',
   styleUrls: ['./attempt-quiz.component.scss'],
 })
-export class AttemptQuizComponent implements OnInit {
+export class AttemptQuizComponent implements OnInit , OnDestroy{
+
   objectK = Object;
   deptOptions = DEPARTMENT;
   categoryOptions = CATEGORY;
@@ -68,22 +69,11 @@ export class AttemptQuizComponent implements OnInit {
   selectedDepartment: any;
   selectedCategory: any;
   clock: string = "";
+  interval!: any;
 
   ngOnInit(): void {
    // this.getQuestionnaire();
-   this.initForm([
-    {
-      department: '',
-      category: '',
-      question: '',
-      optionA: '',
-      optionB: '',
-      optionC: '',
-      optionD: '',
-      answer: '',
-      userans: ''
-    },
-  ]);
+   this.initForm('');
   }
 
   onSelect(event: MatSelectChange, type: 'dept'| 'cat'){
@@ -104,18 +94,7 @@ export class AttemptQuizComponent implements OnInit {
    * fetch questionnaire
    */
   getQuestionnaire() {
-    this.initForm([
-      {
-        department: '',
-        category: '',
-        question: '',
-        optionA: '',
-        optionB: '',
-        optionC: '',
-        optionD: '',
-        answer: '',
-      },
-    ]);
+    this.initForm('');
     this.quizServ.getQuestionnaire(this.selectedDepartment, this.selectedCategory).subscribe({
       next: (resp: any) => {
         if (resp.status === "success") {
@@ -196,9 +175,9 @@ export class AttemptQuizComponent implements OnInit {
 
   onTimeout(){
     let timeVal = 30;
-    let interval = setInterval(() => {
+    this.interval = setInterval(() => {
       if (timeVal === 0) {
-       this.pauseTimer(interval);
+       this.pauseTimer();
       } else {
         timeVal--;
       }
@@ -206,8 +185,8 @@ export class AttemptQuizComponent implements OnInit {
     }, 1000);
   }
 
-  pauseTimer(interval: any){
-    clearInterval(interval);
+  pauseTimer(){
+    clearInterval(this.interval);
     this.onSubmit()
   }
   /**
@@ -270,11 +249,74 @@ export class AttemptQuizComponent implements OnInit {
     this.quizForm.reset();
     this.selectedCategory = this.selectedDepartment = '';
   }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval)
+  }
 }
-export const MOCK_RESP = {
-  userid: 56,
+export const MOCK_RESP = [{
+  userid: 1,
   department: 'IT',
-  category: 'Basic java Quations L1',
+  category: 'Basic',
+  qid: 1,
+  options: [
+    {
+      id: 6,
+      optionA: '6',
+      optionB: '7',
+      optionC: '8',
+      optionD: '9',
+      question: 'Number of primitive data types in Java are?',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 7,
+      optionA: '32 and 64',
+      optionB: '32 and 32',
+      optionC: '64 and 32',
+      optionD: '64 and 64',
+      question: 'What is the size of float and double in java?',
+      userans: 'A',
+      answer: 'optionA',
+    },
+    {
+      id: 8,
+      optionA: 'short to int ',
+      optionB: 'long to int',
+      optionC: 'byte to int',
+      optionD: 'int to long',
+      question:
+        'Automatic type conversion is possible in which of the possible cases?',
+      userans: 'B',
+      answer: 'optionD',
+    },
+    {
+      id: 9,
+      optionA: 'char[] ch = new char()',
+      optionB: 'char[] ch = new char(5)',
+      optionC: 'char[] ch = new char[5]',
+      optionD: 'char[] ch = new char()',
+      question: 'Select the valid statement',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 10,
+      optionA: 'int []a=(1,2,3)',
+      optionB: 'int []a={}',
+      optionC: 'int [][]a={1,2,3}',
+      optionD: 'int []a={1,2,3}',
+      question: 'Select the valid statement to declare and initialize an array',
+      userans: 'D',
+      answer: 'optionD',
+    },
+  ],
+},
+{
+  userid: 1,
+  department: 'IT',
+  category: 'Basic',
   qid: 2,
   options: [
     {
@@ -329,4 +371,181 @@ export const MOCK_RESP = {
       answer: 'optionD',
     },
   ],
-};
+},
+{
+  userid: 1,
+  department: 'IT',
+  category: 'Intermediate',
+  qid: 3,
+  options: [
+    {
+      id: 6,
+      optionA: '6',
+      optionB: '7',
+      optionC: '8',
+      optionD: '9',
+      question: 'Number of primitive data types in Java are?',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 7,
+      optionA: '32 and 64',
+      optionB: '32 and 32',
+      optionC: '64 and 32',
+      optionD: '64 and 64',
+      question: 'What is the size of float and double in java?',
+      userans: 'A',
+      answer: 'optionA',
+    },
+    {
+      id: 8,
+      optionA: 'short to int ',
+      optionB: 'long to int',
+      optionC: 'byte to int',
+      optionD: 'int to long',
+      question:
+        'Automatic type conversion is possible in which of the possible cases?',
+      userans: 'B',
+      answer: 'optionD',
+    },
+    {
+      id: 9,
+      optionA: 'char[] ch = new char()',
+      optionB: 'char[] ch = new char(5)',
+      optionC: 'char[] ch = new char[5]',
+      optionD: 'char[] ch = new char()',
+      question: 'Select the valid statement',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 10,
+      optionA: 'int []a=(1,2,3)',
+      optionB: 'int []a={}',
+      optionC: 'int [][]a={1,2,3}',
+      optionD: 'int []a={1,2,3}',
+      question: 'Select the valid statement to declare and initialize an array',
+      userans: 'D',
+      answer: 'optionD',
+    },
+  ],
+},
+{
+  userid: 1,
+  department: 'IT',
+  category: 'Advanced',
+  qid: 4,
+  options: [
+    {
+      id: 6,
+      optionA: '6',
+      optionB: '7',
+      optionC: '8',
+      optionD: '9',
+      question: 'Number of primitive data types in Java are?',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 7,
+      optionA: '32 and 64',
+      optionB: '32 and 32',
+      optionC: '64 and 32',
+      optionD: '64 and 64',
+      question: 'What is the size of float and double in java?',
+      userans: 'A',
+      answer: 'optionA',
+    },
+    {
+      id: 8,
+      optionA: 'short to int ',
+      optionB: 'long to int',
+      optionC: 'byte to int',
+      optionD: 'int to long',
+      question:
+        'Automatic type conversion is possible in which of the possible cases?',
+      userans: 'B',
+      answer: 'optionD',
+    },
+    {
+      id: 9,
+      optionA: 'char[] ch = new char()',
+      optionB: 'char[] ch = new char(5)',
+      optionC: 'char[] ch = new char[5]',
+      optionD: 'char[] ch = new char()',
+      question: 'Select the valid statement',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 10,
+      optionA: 'int []a=(1,2,3)',
+      optionB: 'int []a={}',
+      optionC: 'int [][]a={1,2,3}',
+      optionD: 'int []a={1,2,3}',
+      question: 'Select the valid statement to declare and initialize an array',
+      userans: 'D',
+      answer: 'optionD',
+    },
+  ],
+},
+{
+  userid: 1,
+  department: 'IT',
+  category: 'Basic',
+  qid: 5,
+  options: [
+    {
+      id: 6,
+      optionA: '6',
+      optionB: '7',
+      optionC: '8',
+      optionD: '9',
+      question: 'Number of primitive data types in Java are?',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 7,
+      optionA: '32 and 64',
+      optionB: '32 and 32',
+      optionC: '64 and 32',
+      optionD: '64 and 64',
+      question: 'What is the size of float and double in java?',
+      userans: 'A',
+      answer: 'optionA',
+    },
+    {
+      id: 8,
+      optionA: 'short to int ',
+      optionB: 'long to int',
+      optionC: 'byte to int',
+      optionD: 'int to long',
+      question:
+        'Automatic type conversion is possible in which of the possible cases?',
+      userans: 'B',
+      answer: 'optionD',
+    },
+    {
+      id: 9,
+      optionA: 'char[] ch = new char()',
+      optionB: 'char[] ch = new char(5)',
+      optionC: 'char[] ch = new char[5]',
+      optionD: 'char[] ch = new char()',
+      question: 'Select the valid statement',
+      userans: 'C',
+      answer: 'optionC',
+    },
+    {
+      id: 10,
+      optionA: 'int []a=(1,2,3)',
+      optionB: 'int []a={}',
+      optionC: 'int [][]a={1,2,3}',
+      optionD: 'int []a={1,2,3}',
+      question: 'Select the valid statement to declare and initialize an array',
+      userans: 'D',
+      answer: 'optionD',
+    },
+  ],
+}];

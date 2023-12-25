@@ -14,6 +14,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { DEPARTMENT } from 'src/app/constants/department';
 import { MatSelectModule } from '@angular/material/select';
 import { CATEGORY } from 'src/app/constants/category';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface Questionnaire {
   optionA: FormControl<string | null>;
@@ -69,23 +70,30 @@ export class QuizComponent implements OnInit{
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private fb = inject(FormBuilder)
-  private quizServ = inject(QuizService)
-
+  private quizServ = inject(QuizService);
+  data = inject(MAT_DIALOG_DATA);
+  private dialogRef = inject(MatDialogRef<QuizComponent>);
   ngOnInit(): void {
-   // this.getQuestionnaire();
+    if(this.data.actionName === 'edit-quiz'){
+      this.initForm('');
+    this.getQuestionnaire();
+    }
+   else{
     this.initForm();
+   }
+
   }
   /**
    * fetch questionnaire
    */
   getQuestionnaire(){
-    const department = "IT";
-    const category = "Basic java Quations L1";
+    const department = this.data.quizData.department;
+    const category = this.data.quizData.category;
     this.quizServ.getQuestionnaire(department,category).subscribe({
       next: (resp: any) => {
         if(resp.data){
           this.formObj = resp.data;
-         // this.initForm(this.formObj);
+          this.initForm(this.formObj);
         }
       }
     });
@@ -94,11 +102,11 @@ export class QuizComponent implements OnInit{
   /**
    * initialize form
    */
-  initForm() {
+  initForm(data?: any) {
     this.quizForm = this.fb.group({
       department: ['', [ Validators.required]],
-      category: ['',[Validators.required,Validators.maxLength(100)] ],
-      options: this.fb.array(this.initFormArrayElements()),
+      category: ['',[Validators.required] ],
+      options: this.fb.array(this.initFormArrayElements(data)),
     });
   }
 
@@ -106,8 +114,9 @@ export class QuizComponent implements OnInit{
    *
    * @returns form array controls
    */
-  private initFormArrayElements(): FormGroup<Questionnaire>[] {
-    return this.formObj.map((control: any) =>
+  private initFormArrayElements(data?: any): FormGroup<Questionnaire>[] {
+    const response = data ? data.options : this.formObj;
+    return response.map((control: any) =>
       this.fb.group({
         optionA: [control.optionA,[ Validators.required,Validators.maxLength(100)] ],
         optionB: [control.optionB,[ Validators.required,Validators.maxLength(100)] ],
@@ -178,6 +187,7 @@ export class QuizComponent implements OnInit{
           this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
         }
         this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
+        this.dialogRef.close();
       }, error: (err : any) =>{
         console.log(err.message);
         this.dataTobeSentToSnackBarService.message = err.message;
@@ -204,7 +214,12 @@ export class QuizComponent implements OnInit{
   /**
    * cancels data entered
    */
-  onCancel(){
-    this.quizForm.reset();
+  onAction(actionName : string){
+    if(actionName === "CANCEL"){
+      this.quizForm.reset();
+    }
+    this.dialogRef.close()
+
+
   }
 }

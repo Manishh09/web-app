@@ -1,4 +1,12 @@
+<div class="header">
+  <span mat-dialog-title class="title_text">{{'KPT'}}</span>
+  <hr>
+  <button mat-icon-button (click)="onAction('SAFE_CLOSE')">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 <div class="main-container" *ngIf="quizForm.controls.options.controls.length">
+
   <mat-card class="mat-elevation-z8 card">
     <!-- title -->
 
@@ -16,7 +24,7 @@
   <!-- form -->
   <div class="form-container">
     <form [formGroup]="quizForm" class="quiz-form" autocomplete="off" (ngSubmit)="onSubmit()">
-      <div  class="department-category-container">
+      <div  class="department-category-container" *ngIf="data.actionName === 'add-quiz'">
         <div class="left-section">
           <mat-form-field appearance="fill" class="category-field">
             <!-- <input matInput formControlName="department" placeholder="Enter Department"> -->
@@ -25,7 +33,7 @@
                 {{ option.name }}
               </mat-option>
             </mat-select>
-              <mat-error *ngIf="this.quizForm.get('department')?.errors?.required">Department is required</mat-error>
+              <mat-error *ngIf="quizForm.get('department')?.errors?.required">Department is required</mat-error>
           </mat-form-field>
         </div>
         <div class="right-section">
@@ -36,7 +44,7 @@
                 {{ option.name }}
               </mat-option>
             </mat-select>
-              <mat-error *ngIf="this.quizForm.get('category')?.errors?.required">Category is required</mat-error>
+              <mat-error *ngIf="quizForm.get('category')?.errors?.required">Category is required</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -162,7 +170,7 @@
 </mat-card-content>
  <!--bottom action button -->
  <div class="actions">
-  <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="white" (click)="onAction('CANCEL')">Cancel</button>
   <button type="submit" mat-raised-button color="primary" (click)="onSubmit()">Save</button>
 </div>
 </mat-card>
