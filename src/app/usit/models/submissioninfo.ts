@@ -29,5 +29,5 @@ export class SubmissionInfo {
     substatus!: string;
     updatedby = new Employee();
     user = new Employee();
-    vendor = new Vms()
+    vendor!: number;
 }

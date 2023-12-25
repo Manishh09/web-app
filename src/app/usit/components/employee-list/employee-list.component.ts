@@ -128,7 +128,6 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   getAllEmployees() {
     return this.empManagementServ.getAllEmployees().pipe(takeUntil(this.destroyed$)).subscribe({
       next: (response: any) => {
-       // console.log('employee.data', response.data);
         if (response.data) {
           this.dataSource.data = response.data;
           this.dataSource.data.map((x: any, i) => {
@@ -145,13 +144,11 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   onSort(event: Sort) {
-   // console.log(event);
     const sortDirection = event.direction ;
     const activeSortHeader = event.active;
 
     if (sortDirection === '') {
        this.dataSource.data = this.dataSource.data;
-      // console.log(this.dataSource.data);
       return;
     }
 

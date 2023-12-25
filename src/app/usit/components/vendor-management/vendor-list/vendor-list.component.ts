@@ -141,14 +141,11 @@ export class VendorListComponent implements OnInit {
         next: (response: any) => {
           this.datarr = response.data.content;
           this.dataSource.data = response.data.content;
-          //console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
           });
           this.totalItems = response.data.totalElements;
-
-          //  this.length = response.data.totalElements;
         },
         error: (err) => {
           dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -183,7 +180,6 @@ export class VendorListComponent implements OnInit {
   getAllVendors() {
     return this.vendorServ.getAll().pipe(takeUntil(this.destroyed$))
     .subscribe({next:(response: any) => {
-     // console.log('vendor.data', response.data);
       if (response.data) {
         this.dataSource.data = response.data;
       }
@@ -208,6 +204,27 @@ export class VendorListComponent implements OnInit {
   onFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value
     this.dataSource.filter = filterValue.trim();
+  }
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    this.field = keyword;
+    if (keyword != '') {
+      return this.vendorServ.getAllVendorsByPagination(this.hasAcces, this.loginId, 1, this.pageSize, keyword).subscribe(
+        ((response: any) => {
+          this.datarr = response.data.content;
+          this.dataSource.data  = response.data.content;
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+           x.serialNum = this.generateSerialNumber(i);
+         });
+         this.totalItems = response.data.totalElements;
+        })
+      );
+    }
+    if (keyword == '') {
+      this.field = 'empty';
+    }
+    return this.getAllData(this.currentPageIndex + 1);
   }
 
   /**
@@ -527,14 +544,11 @@ export class VendorListComponent implements OnInit {
             .pipe(takeUntil(this.destroyed$))
             .subscribe({
               next: (response: any) => {
-                // console.log(JSON.stringify(response));
                   if (response.status == 'success') {
-                    // dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
                     const message = response.message.includes("Change") ? 'Vendor Approved sucssessfully' : response.message;
                     dataToBeSentToSnackBar.message = message;
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
                   } else {
-                    //  alertify.success("Recruiter " + response.data + " successfully");
                     dataToBeSentToSnackBar.message = 'Status update failed';
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-failed'];
                   }
@@ -567,7 +581,6 @@ export class VendorListComponent implements OnInit {
    * @param endor
    */
   handlePageEvent(event: PageEvent) {
-    //console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;
@@ -579,8 +592,6 @@ export class VendorListComponent implements OnInit {
 
   getVendorRowClass(row: any) {
     const companytype = row.companytype;
-    // console.log('rowwwwwwwww', recruitertype);
-
     if (companytype === 'Recruiting') {
       return 'recruiting-companies';
     } else if (companytype === 'Bench Sales') {

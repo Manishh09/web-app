@@ -150,5 +150,21 @@
           "routerLink": "/usit/companies"
         }
       ]
+    },
+    {
+      "text": "KPT",
+      "icon": "quiz",
+      "children": [
+        {
+          "text": "Save KPT",
+          "icon": "quiz",
+          "routerLink": "/usit/quiz"
+        },
+        {
+          "text": "Write KPT",
+          "icon": "edit_square",
+          "routerLink": "/usit/attempt-quiz"
+        }
+      ]
     }
   ]

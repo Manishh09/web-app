@@ -2,10 +2,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #e1e3ef;
+  height: 52px;
+  margin-bottom: 32px;
 }
 .content{
   height: 80px;
   font-weight: 800;
+  margin-bottom: 8px;
 }
 .actions{
   display: flex;

@@ -78,48 +78,20 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
     this.hasAcces = localStorage.getItem('role');
     this.loginId = localStorage.getItem('userid');
     this.department = localStorage.getItem('department');
-    
+
     this.getAllTechnologies()
-    // this.getAllData()
   }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
   }
 
-  // getAllData(currentPageIndex = 1) {
-  //   const dataToBeSentToSnackBar: ISnackBarData = {
-  //     message: '',
-  //     duration: 1500,
-  //     verticalPosition: 'top',
-  //     horizontalPosition: 'center',
-  //     direction: 'above',
-  //     panelClass: ['custom-snack-success'],
-  //   };
-  //   return this.techTagServ
-  //     .getTechnologiesByPagination(currentPageIndex)
-  //     .pipe(takeUntil(this.destroyed$))
-  //     .subscribe({
-  //       next: (response: any) => {
-  //         this.datarr = response.data.content;
-  //         this.dataSource.data = response.data.content;
-  //         this.totalItems = response.data.totalElements;
-  //         console.log(this.totalItems)
-  //       },
-  //       error: (err: any) => {
-  //         dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-  //         dataToBeSentToSnackBar.message = err.message;
-  //         this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-  //       },
-  //     });
-  // }
 
   getAllTechnologies() {
     return this.techTagServ.getAllTechnologies().subscribe(
       {
         next: (response: any) => {
           this.technologyTagList = response.data;
-          console.log("technologies",this.technologyTagList);
           this.dataSource.data = response.data;
           this.totalItems = response.data.totalElements;
         },
@@ -232,16 +204,14 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
   }
 
   onSort(event: any) {
-   
+
   }
 
   handlePageEvent(event: PageEvent) {
-    console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;
       this.currentPageIndex = currentPageIndex;
-      console.log(currentPageIndex);
     }
     return;
   }

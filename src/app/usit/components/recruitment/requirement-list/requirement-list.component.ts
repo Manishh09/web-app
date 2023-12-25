@@ -53,7 +53,8 @@ import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
     CommonModule,
   ],
   templateUrl: './requirement-list.component.html',
-  styleUrls: ['./requirement-list.component.scss']
+  styleUrls: ['./requirement-list.component.scss'],
+  providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 })
 export class RequirementListComponent implements OnInit {
 
@@ -111,8 +112,8 @@ export class RequirementListComponent implements OnInit {
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
     this.dept = localStorage.getItem('department');
-    this.getAllData();
     this.getFlag();
+    this.getAllData();
   }
 
   getFlag(){
@@ -122,10 +123,6 @@ export class RequirementListComponent implements OnInit {
     } else { // presales
       this.flag = "Domrecruiting";
     }
-
-    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
-    //   this.dataTableColumns.splice(15,0,"AddedBy")
-    // }
   }
 
   getAllData(currentPageIndex = 1) {
@@ -140,7 +137,8 @@ export class RequirementListComponent implements OnInit {
 
     return this.requirementServ
       .getAllRequirementData(
-        this.userid,
+        this.flag,
+        currentPageIndex,
         this.pageSize,
         this.field
       )
@@ -149,13 +147,11 @@ export class RequirementListComponent implements OnInit {
         next: (response: any) => {
           this.requirement = response.data.content;
           this.dataSource.data = response.data.content;
-          console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);
           });
           this.totalItems = response.data.totalElements;
-          console.log(this.totalItems);
         },
         error: (err: any) => {
           dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -183,7 +179,7 @@ export class RequirementListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
 
@@ -206,7 +202,7 @@ export class RequirementListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
-        this.getAllData();
+        this.getAllData(this.currentPageIndex + 1);
       }
     })
   }
@@ -247,7 +243,7 @@ export class RequirementListComponent implements OnInit {
           this.requirementServ.deleteEntity(requirement.requirementid).pipe(takeUntil(this.destroyed$))
           .subscribe({next:(response: any) => {
             if (response.status == 'success') {
-              this.getAllData();
+              this.getAllData(this.currentPageIndex + 1);
               dataToBeSentToSnackBar.message = 'Requirement Deleted successfully';
             } else {
               dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
@@ -269,7 +265,7 @@ export class RequirementListComponent implements OnInit {
   }
 
   onSort(event: any) {
-    
+
   }
 
   generateSerialNumber(index: number): number {
@@ -279,11 +275,10 @@ export class RequirementListComponent implements OnInit {
   }
 
   handlePageEvent(event: PageEvent) {
-    console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;
-      this.getAllData(event.pageIndex + 1)
+      this.getAllData(event.pageIndex + 1);
     }
     return;
   }

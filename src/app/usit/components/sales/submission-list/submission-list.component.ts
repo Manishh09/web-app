@@ -137,11 +137,11 @@ export class SubmissionListComponent {
 
   getFlag(){
     const routeData = this.activatedRoute.snapshot.data;
-    if (routeData['isSalesSubmission']) { 
+    if (routeData['isSalesSubmission']) {
       this.flag = "Sales";
     }else if (routeData['isRecSubmission']) { // recruiting consutlant
       this.flag = "Recruiting";
-    } else { 
+    } else {
       this.flag = "Domrecruiting";
     }
   }
@@ -151,7 +151,6 @@ export class SubmissionListComponent {
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data =  response.data.content;
-        console.log(this.dataSource.data);
         this.totalItems = response.data.totalElements;
         // for serial-num {}
         this.dataSource.data.map((x: any, i) => {
@@ -241,7 +240,56 @@ export class SubmissionListComponent {
   }
 
   deleteSubmission(submission: any) {
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: submission,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = 'fit-content';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'delete-submission';
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
 
+    // call delete api after  clicked 'Yes' on dialog click
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: '',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+
+          this.submissionServ.deletesubmission(submission.submissionid).pipe(takeUntil(this.destroyed$))
+          .subscribe({next:(response: any) => {
+            if (response.status == 'Success') {
+              this.getAllData();
+              dataToBeSentToSnackBar.message = 'Submission Deleted successfully';
+            } else {
+              dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              dataToBeSentToSnackBar.message = 'Record Deletion failed';
+            }
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }, error: (err: any) => {
+            dataToBeSentToSnackBar.message = err.message;
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }});
+        }
+      },
+    });
   }
 
   generateSerialNumber(index: number): number {
@@ -250,7 +298,6 @@ export class SubmissionListComponent {
     return serialNumber;
   }
   handlePageEvent(event: PageEvent) {
-   // console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       this.currentPageIndex = event.pageIndex;
@@ -306,7 +353,6 @@ export class SubmissionListComponent {
         //  this.consultant = response.data.content;
           this.entity = response.data.content;
           this.dataSource.data = response.data.content;
-        //  console.log(this.dataSource.data);
           // for serial-num {}
           this.dataSource.data.map((x: any, i) => {
             x.serialNum = this.generateSerialNumber(i);

@@ -15,7 +15,7 @@ export class InterviewService {
 
   //register vms
   public updateEntity(entity: any) {
-    return this.apiServ.put("users/update", entity);
+    return this.apiServ.post("interview/save", entity);
   }
 
   //used for get the resource
@@ -45,5 +45,13 @@ export class InterviewService {
 
   addORUpdateInterview(entity: any, action: 'edit-interview' | 'add-interview'){
     return action === 'edit-interview' ? this.updateEntity(entity): this.registerEntity(entity);
+  }
+
+  addClosure(entity: any) {
+    console.log(entity);
+    return this.apiServ.post("billpay/saveClosure", entity);
+  }
+  getClosureByIntId(id: number) {
+    return this.apiServ.get("billpay/getByInterviewId/" + id);
   }
 }

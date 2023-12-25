@@ -37,6 +37,8 @@ import {
   of,
   Subject,
   takeUntil,
+  startWith,
+  map,
 } from 'rxjs';
 import {MatRadioChange, MatRadioModule} from '@angular/material/radio';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -106,6 +108,7 @@ export class AddSubmissionComponent implements OnInit{
   isRadSelected: any;
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
+  filteredRequirements!: Observable<any>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
@@ -125,27 +128,46 @@ export class AddSubmissionComponent implements OnInit{
       this.submissionServ.getsubdetailsbyid(this.data.submissionData.submissionid).subscribe(
         (response: any) => {
           this.entity = response.data;
-          this.recruiterList(response.data.vendor.vmsid);
+          if (this.entity.vendor == null) {
+            this.submissionForm.get('vendor').patchValue("");
+            this.submissionForm.get('recruiter').patchValue("");
+          }
+          else {
+            this.submissionForm.get('vendor').patchValue(this.entity.vendor);
+            this.submissionForm.get('recruiter').patchValue(this.entity.recruiter);
+            this.recruiterInfo(this.entity.vendor);
+          }
           this.initilizeSubmissionForm(response.data);
         }
       );
     } else {
       this.initilizeSubmissionForm(new SubmissionInfo());
     }
+    // this.filteredRequirements = this.submissionForm!.get('requirement')!.valueChanges.pipe(
+    //   startWith(''),
+    //   map((value: any) => this.reqFilter(value)),
+    // );
   }
 
   getFlag(type: string){
     if (type === 'sales') {
       this.flag = 'sales';
       this.flgOpposite = "Recruiter";
-    } else if(type === 'recruiting') { 
+    } else if(type === 'recruiting') {
       this.flag = 'Recruiting';
       this.flgOpposite = "Bench Sales";
-      this.getRequirements();
+      this.getRequirements(this.flag);
     }
      else {
       this.flag = 'Domrecruiting';
+      this.getRequirements(this.flag);
     }
+  }
+
+  private reqFilter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.requirementdata.filter((option: string) => option.toLowerCase().includes(filterValue));
   }
 
 
@@ -153,30 +175,17 @@ export class AddSubmissionComponent implements OnInit{
 
     this.submissionForm = this.formBuilder.group({
 
-      // user: this.formBuilder.group({
-      //   userid: localStorage.getItem('userid'),
-      // }),
-
-      // flg: [],
-
-      requirement: this.formBuilder.group({
-        requirementid:  [submissionData ? submissionData?.requirement?.requirementid : '', [Validators.required]],
-      }),
-      consultant: this.formBuilder.group({
-        consultantid: [submissionData ? submissionData?.consultant?.consultantid : '', [Validators.required]],
-      }),
+      user: localStorage.getItem('userid'),
+      requirement: [submissionData ? submissionData?.requirement : '', [Validators.required]],
+      consultant: [submissionData ? submissionData?.consultant : '', [Validators.required]],
       position: [submissionData ? submissionData.position : '', [Validators.required]],
       ratetype: [submissionData ? submissionData.ratetype : '', [Validators.required]],
       submissionrate: [submissionData ? submissionData.submissionrate : '', [Validators.required]],
-      endclient: [submissionData ? submissionData.endclient : '', [Validators.required]],
-      implpartner: [submissionData ? submissionData.implpartner : '', [Validators.required]],
-      vendor: this.formBuilder.group({
-        vmsid: [submissionData ? submissionData.vendor.vmsid : '', [Validators.required]],
-      }),
-      recruiter: this.formBuilder.group({
-        recid: [submissionData ? submissionData.recruiter.recid : '', [Validators.required]],
-      }),
-      empcontact: [submissionData ? submissionData.empcontact : '', [Validators.required]],
+      endclient: [submissionData ? submissionData.endclient : ''],
+      implpartner: [submissionData ? submissionData.implpartner : ''],
+      vendor: [submissionData ? submissionData.vendor : '', [Validators.required]],
+      recruiter: [submissionData ? submissionData.recruiter : '', [Validators.required]],
+      empcontact: [submissionData ? submissionData.empcontact : ''],
       empmail: [
         submissionData ? submissionData.empmail : '',
         [
@@ -187,29 +196,31 @@ export class AddSubmissionComponent implements OnInit{
       ],
       source: [submissionData ? submissionData.source : '', [Validators.required]],
       projectlocation: [submissionData ? submissionData.projectlocation : '', [Validators.required]],
-      submissionflg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
+      flg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
+      // user: [submissionData ? submissionData.user: ''],
+      submissionid: [submissionData ? submissionData.submissionid: ''],
+      updatedby: [this.data.actionName === "edit-submission" ?  submissionData.updatedby : '0'],
+      status: [this.data.actionName === "edit-submission" ?  submissionData.status : 'Active'],
+      remarks: [submissionData ? submissionData.remarks: ''],
+      substatus: [this.data.actionName === "edit-submission" ?  submissionData.substatus : 'Submitted'],
     });
-    console.log('Consultant ID Value:', submissionData?.consultant?.consultantid);
-    this.submissionForm.get('consultant.consultantid')?.setValue(submissionData?.consultant?.consultantid);
-    console.log('Form Value After Setting Consultant ID:', this.submissionForm.value);
-    // this.submissionForm.patchValue(submissionData);
+    this.submissionForm.get('consultant')?.setValue(submissionData?.consultant);
     this.validateControls();
   }
 
   private validateControls() {
     const requirement = this.submissionForm.get('requirement');
-    console.log(requirement);
-    if (this.flag == 'Recruiting') {
+    if (this.flag == 'Recruiting' || this.flag == 'Domrecruiting') {
       requirement.setValidators(Validators.required);
     }
     else {
       requirement.clearValidators();
-      this.submissionForm.get("requirement.requirementid").patchValue("null");
+      this.submissionForm.get("requirement").patchValue("null");
     }
     requirement.updateValueAndValidity();
     this.submissionForm.get('ratetype').valueChanges.subscribe((res: any) => {
-      const vendor = this.submissionForm.get('vendor.vmsid');
-      const recruiter = this.submissionForm.get("recruiter.recid");
+      const vendor = this.submissionForm.get('vendor');
+      const recruiter = this.submissionForm.get("recruiter");
       const empmail = this.submissionForm.get('empmail');;
       if (res == '1099' || res == 'W2' || res == 'Full Time') {
         vendor.clearValidators();
@@ -227,8 +238,8 @@ export class AddSubmissionComponent implements OnInit{
     });
   }
 
-  getRequirements() {
-    this.submissionServ.getRequirements().subscribe(
+  getRequirements(flg: string) {
+    this.submissionServ.getRequirements(flg).subscribe(
       (response: any) => {
         this.requirementdata = response.data;
       }
@@ -236,11 +247,12 @@ export class AddSubmissionComponent implements OnInit{
   }
 
   requirements(event: any) {
-    const newVal = event.target.value;
+    const newVal = event.value;
     this.submissionServ.getRequirementByIdDropdown(newVal).subscribe(
       (response: any) => {
         this.submissionForm.get("position").setValue(response.data.jobtitle);
-        this.address = response.data.location;
+        this.submissionForm.get("projectlocation").setValue(response.data.location);
+        // this.address = response.data.location;
         this.submissionForm.get("ratetype").setValue(response.data.employmenttype);
         this.submissionForm.get("endclient").setValue(response.data.client);
         this.submissionForm.get("implpartner").setValue(response.data.vendor);
@@ -248,7 +260,8 @@ export class AddSubmissionComponent implements OnInit{
     );
     if (newVal == '') {
       this.submissionForm.get("position").setValue('');
-      this.address = '';
+      this.submissionForm.get("projectlocation").setValue('');
+      // this.address = '';
       this.submissionForm.get("ratetype").setValue('');
       this.submissionForm.get("endclient").setValue('');
       this.submissionForm.get("implpartner").setValue('');
@@ -258,13 +271,12 @@ export class AddSubmissionComponent implements OnInit{
   getConsultant(flg: string) {
     this.submissionServ.getConsultantDropdown(flg).subscribe(
       (response: any) => {
-        console.log(response.data);
         this.consultantdata = response.data;
       })
   }
 
   handleAddressChange(address: any) {
-    this.submissionForm.controls['location'].setValue(address.formatted_address);
+    this.submissionForm.controls['projectlocation'].setValue(address.formatted_address);
   }
 
   get controls() {
@@ -285,12 +297,25 @@ export class AddSubmissionComponent implements OnInit{
     )
   }
 
+  idd!: any;
+  recruiterInfo(id: number) {
+    this.idd = this.entity.recruiter;
+    this.submissionServ.getRecruiterOfTheVendor(id, this.flgOpposite).subscribe(
+      (response: any) => {
+        this.recruiterName = response.data;
+      }
+    );
+  }
+
   recruiterName: any[] = [];
-  recruiterList(obj: any) {
-    const newVal = obj;
+  recruiterList(event: any) {
+    const newVal = event.value;
     this.submissionServ.getRecruiterOfTheVendor(newVal, this.flgOpposite).subscribe(
       (response: any) => {
         this.recruiterName = response.data;
+        this.submissionForm.get("empcontact").patchValue('');
+        this.submissionForm.get("empmail").patchValue('');
+        this.submissionForm.get("recruiter").patchValue('');
       }
     );
   }
@@ -318,7 +343,8 @@ export class AddSubmissionComponent implements OnInit{
   onSubmit() {
 
     if (this.submissionForm.invalid) {
-      this.displayFormErrors();
+      // this.displayFormErrors();
+      this.submissionForm.markAllAsTouched();
       this.isRadSelected = true;
       return;
     }
@@ -334,20 +360,20 @@ export class AddSubmissionComponent implements OnInit{
 
 
     const saveReqObj = this.getSaveData();
-    console.log('form.value  ===', saveReqObj);
     this.submissionServ
       .registerSubmission(saveReqObj)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
-        next: (data: any) => {
-          if (data.status == 'success') {
+        next: (resp: any) => {
+          if (resp.status == 'success') {
             dataToBeSentToSnackBar.message =
               this.data.actionName === 'add-submission'
                 ? 'Submission added successfully'
                 : 'Submission updated successfully';
             this.dialogRef.close();
           } else {
-            dataToBeSentToSnackBar.message = 'Submission already Exists';
+            dataToBeSentToSnackBar.message = resp.message ? resp.message : 'Submission already Exists';
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
           }
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         },

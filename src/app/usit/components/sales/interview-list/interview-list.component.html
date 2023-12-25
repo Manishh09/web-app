@@ -10,16 +10,12 @@
         </span>
 
         <div class="submission-actions">
-            <!-- <button mat-icon-button class="add-user" (click)="uploadVendor()">
-          <mat-icon class="item-icon">upload</mat-icon>
-        </button> -->
             <button  matTooltip="Add" matTooltipPosition="left" mat-icon-button class="add-submission" (click)="addInterview()">
                 <mat-icon class="item-icon">add_circle</mat-icon>
             </button>
 
             <div class="search-submission">
-                <!-- <mat-icon class="item-icon">person_search</mat-icon> -->
-                <input matInput type="search" class="search" placeholder="search interviews" (keyup)="applyFilter($event)">
+                <input matInput type="text" class="search" placeholder="search interviews" (keyup)="applyFilter($event)">
             </div>
         </div>
     </div>
@@ -125,10 +121,6 @@
                         <button mat-icon-button (click)="editInterview(interview)" class="action-button-ed">
                             <mat-icon class="edit-icon">edit</mat-icon>
                         </button>
-
-                        <!-- <button mat-icon-button (click)="deleteConsultant(consultant)" class="action-button-ed">
-                            <mat-icon class="delete-icon">delete</mat-icon>
-                        </button> -->
                     </td>
                 </ng-container>
 

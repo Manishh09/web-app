@@ -13,12 +13,22 @@ import { QualificationListComponent } from './components/masters/qualification-l
 import { CompaniesListComponent } from './components/masters/companies-list/companies-list.component';
 import { TechnologyTagListComponent } from './components/technology-tag-list/technology-tag-list.component';
 import { RequirementListComponent } from './components/recruitment/requirement-list/requirement-list.component';
+import { QuizComponent } from './components/quiz/quiz.component';
+import { AttemptQuizComponent } from './components/quiz/attempt-quiz/attempt-quiz.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
   {
     path: 'dashboard',
     component: DashboardComponent
+  },
+  {
+    path: 'quiz',
+    component: QuizComponent
+  },
+  {
+    path: 'attempt-quiz',
+    component: AttemptQuizComponent
   },
   { path: 'employees', component: EmployeeListComponent },
   { path: 'vendors', component: VendorListComponent },

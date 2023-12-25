@@ -60,7 +60,6 @@ dataSource = new MatTableDataSource<any>([]);
     .subscribe((response: any) => {
       this.consultant_track = response.data;
       if(response.data){
-        console.log( response.data);
         this.dataSource.data = response.data;
       }
     });

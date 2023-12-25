@@ -491,7 +491,7 @@
           <th>Delete</th>
         </tr>
         <tr>
-          <td *ngIf="entity.resume !==null "><a class="ab" style="cursor:pointer"
+          <td *ngIf="entity.resume !==null "><a  class="download-file"
               (click)="downloadfile(entity.consultantid,entity.resume,'resume')">{{entity.resume}}</a>
           </td>
           <td *ngIf="entity.resume !==null ">
@@ -501,28 +501,28 @@
           </td>
         </tr>
         <tr>
-          <td *ngIf="entity.h1bcopy !==null "><a class="ab" style="cursor:pointer"
-              (click)="downloadfile(entity.consultantid,entity.h1bcopy,'h1bcopy')">{{entity.h1bcopy}}</a>
+          <td *ngIf="entity.h1bcopy !==null "><a  class="download-file"
+              (click)="downloadfile(entity.consultantid,entity.h1bcopy,'h1b')">{{entity.h1bcopy}}</a>
           </td>
           <td *ngIf="entity.h1bcopy !==null ">
-            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'h1bcopy')">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'h1b')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
         </tr>
 
         <tr>
-          <td *ngIf="entity.dlcopy !==null "><a class="ab" style="cursor:pointer"
-              (click)="downloadfile(entity.consultantid,entity.dlcopy,'dlcopy')">{{entity.dlcopy}}</a>
+          <td *ngIf="entity.dlcopy !==null "><a  class="download-file"
+              (click)="downloadfile(entity.consultantid,entity.dlcopy,'dl')">{{entity.dlcopy}}</a>
           </td>
           <td *ngIf="entity.dlcopy !==null ">
-            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'dlcopy')">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'dl')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
         </tr>
         <tr *ngFor="let data of filesArr">
-          <td><a class="ab" style="cursor:pointer" (click)="filedetails(data)">{{data.filename}}</a></td>
+          <td><a  class="download-file"  (click)="filedetails(data)">{{data.filename}}</a></td>
           <td width="6%">
             <button mat-icon-button type="button" class="action-button-ed" (click)="deletemultiple(data.docid)">
               <mat-icon>delete</mat-icon>

@@ -1,20 +1,24 @@
+import { Closure } from "./closure";
 import { Employee } from "./employee";
 import { SubmissionInfo } from "./submissioninfo";
 
 export class InterviewInfo {
-    closure!: any;
+    closure = new Closure();
     feedback!: string;
-    interviewflg!:string;
+    flg!:string;
     interviewdate!: string;
     interviewno!: string;
     interviewstatus!: string;
     intrid!: number;
     mode!: string;
-    recmaxno!: number;
+    recmaxno!: string;
     round!: string;
-    salesmaxno!: number;
+    salesmaxno!: string;
     submission= new SubmissionInfo();
     timezone!: string;
-    updatedby = new Employee();
+    updatedby = localStorage.getItem('userid');
     users = new Employee();
+    createddate!:string;
+	updateddate!:string;
+    status!:string;
 }

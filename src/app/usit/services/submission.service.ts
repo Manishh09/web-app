@@ -9,19 +9,19 @@ export class SubmissionService {
   constructor(private apiServ: ApiService) { }
 
   getConsultantDropdown(flg: string) {
-    return this.apiServ.get("consultant/consultantinfo/" + flg);
+    return this.apiServ.get("submission/consultantinfo/" + flg);
   }
 
   
   getRequirementByIdDropdown(id:number) {
-    return this.apiServ.get("requirement/getreqybyid/"+id);
+    return this.apiServ.get("submission/getreqbyid/"+id);
   }
 
   getRecruiterOfTheVendor(id:number, flg:string) {
     return this.apiServ.get("submission/getRecruiters/"+id+"/"+flg);
   }
   getCompanies(flg:string) {
-    return this.apiServ.get("recruiter/venodorCompanies/"+flg);
+    return this.apiServ.get("submission/venodorCompanies/"+flg);
   }
 
   //used for create the resource
@@ -30,8 +30,8 @@ export class SubmissionService {
   }
 
   // supporting drop down apis
-  public getRequirements() {
-    return this.apiServ.get("requirement/getrequirements");
+  public getRequirements(flg: string) {
+    return this.apiServ.get("submission/getrequirements/"+ flg);
   }
 
   public getsubmissiondata(flg: string,access:string,userid:number) {

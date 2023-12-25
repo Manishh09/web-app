@@ -42,10 +42,8 @@ standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class RolesListComponent implements OnInit , AfterViewInit{
-  private userManagementServ = inject(UserManagementService);
   private roleManagementServ = inject(RoleManagementService);
   form: any = FormGroup;
-  private formBuilder = inject(FormBuilder);
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   displayedColumns: string[] = ['RoleName', 'Actions'];
@@ -64,7 +62,6 @@ export class RolesListComponent implements OnInit , AfterViewInit{
       {
         next:(response: any) => {
           this.roleList = response.data;
-        //  console.log("roles",this.roleList);
           this.dataSource.data = response.data;
         },
         error: (err)=> console.log(err)

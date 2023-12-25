@@ -10,30 +10,52 @@
     <form [formGroup]="submissionForm" (ngSubmit)="onSubmit()" class="vendor-form">
         <div class="form">
             <div class="form-column-left">
+                <input id="flg" name="flg"  type="hidden" formControlName="flg">
+                <input type="hidden" formControlName="user">
+                <input name="submissionid" type="hidden" formControlName="submissionid">
+                <input name="updatedby" type="hidden" formControlName="updatedby">
+                <input name="status" type="hidden" formControlName="status" >
+                <input name="remarks" type="hidden" formControlName="remarks" >
+                <input name="substatus" type="hidden" formControlName="substatus" >
 
-                <div class="fg-div" formGroupName="requirement" *ngIf="flag === 'Recruiting'">
+                <div class="fg-div" *ngIf="this.flag !== 'sales'">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Requirement</mat-label>
-                        <mat-select formControlName="requirementid"  (change)="requirements($event)">
+                        <mat-select formControlName="requirement"  (selectionChange)="requirements($event)">
                             <mat-option *ngFor="let obj of requirementdata" [value]="obj[0]">
                                       {{obj[3]}} - {{obj[1]}} ({{obj[2]}})
                             </mat-option>
                         </mat-select>
-                        <mat-error *ngIf="submissionForm?.get('requirement.requirementid')?.hasError('required')">Requirement
+                        <mat-error *ngIf="submissionForm?.get('requirement')?.hasError('required')">Requirement
                             is Required
                           </mat-error>
                     </mat-form-field>
                 </div>
 
-                <div class="fg-div" formGroupName="consultant">
+                <!-- <div class="fg-div" formGroupName="requirement" *ngIf="flag === 'Recruiting'">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Select Requirement</mat-label>
+                        <input type="text" matInput formControlName="requirementid" [matAutocomplete]="auto">
+                           <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let obj of filteredRequirements | async" [value]="obj[0]">
+                                {{obj[3]}} - {{obj[1]}} ({{obj[2]}})
+                            </mat-option>
+                           </mat-autocomplete>
+                        <mat-error *ngIf="submissionForm?.get('requirement.requirementid')?.hasError('required')">Requirement
+                            is Required
+                        </mat-error>
+                    </mat-form-field>
+                </div> -->
+
+                <div class="fg-div">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Consultant</mat-label>
-                        <mat-select formControlName="consultantid">
+                        <mat-select formControlName="consultant">
                             <mat-option *ngFor="let obj of consultantdata" [value]="obj[0]">
                                 {{obj[1]}} ({{obj[2]}} with {{obj[3]}})
                             </mat-option>
                         </mat-select>
-                        <mat-error *ngIf="submissionForm.get('consultant.consultantid')!.hasError('required')">Consultant
+                        <mat-error *ngIf="submissionForm.get('consultant')!.hasError('required')">Consultant
                             is Required
                         </mat-error>
                     </mat-form-field>
@@ -42,6 +64,7 @@
                 <mat-form-field appearance="fill">
                     <mat-label>Position Title</mat-label>
                     <input matInput formControlName="position" maxlength="25">
+                    <mat-error *ngIf="submissionForm.get('position')!.hasError('required')"> Position Title is required</mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
@@ -60,7 +83,7 @@
 
                 <mat-form-field appearance="fill">
                     <mat-label>Submission Rate</mat-label>
-                    <input matInput  formControlName="submissionrate" maxlength="10">
+                    <input matInput  formControlName="submissionrate" maxlength="5">
                     <mat-error *ngIf="submissionForm.get('submissionrate')!.hasError('required')">Submission Rate is required</mat-error>
                 </mat-form-field>
             </div>
@@ -68,41 +91,41 @@
             <div class="form-column-right">
                 <mat-form-field appearance="fill">
                     <mat-label>End Client</mat-label>
-                    <input matInput formControlName="endclient"maxlength="25">
+                    <input matInput formControlName="endclient" maxlength="60">
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
                     <mat-label>Implementation Partner</mat-label>
-                    <input matInput formControlName="implpartner"maxlength="25">
+                    <input matInput formControlName="implpartner" maxlength="120">
                 </mat-form-field>
 
-                <div class="fg-div" formGroupName="vendor">
+                <div class="fg-div">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Company</mat-label>
-                        <mat-select formControlName="vmsid">
+                        <mat-select formControlName="vendor" (selectionChange)="recruiterList($event)">
                             <mat-option *ngFor="let obj of vendordata"
-                                      [value]="obj.id" (onSelectionChange)="recruiterList(obj.id)">
+                                      [value]="obj.id">
                                       {{ obj.company }}
                             </mat-option>
                         </mat-select>
                         <button type="button" matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
-                        <mat-error *ngIf="submissionForm.get('vendor.vmsid')!.hasError('required')">Vendor Company
+                        <mat-error *ngIf="submissionForm.get('vendor')!.hasError('required')">Vendor Company
                             is Required
                         </mat-error>
                     </mat-form-field>
                 </div>
 
-                <div class="fg-div" formGroupName="recruiter">
+                <div class="fg-div">
                     <mat-form-field appearance="fill">
                         <mat-label>Select Recruiter</mat-label>
-                        <mat-select formControlName="recid"  (selectionChange)="recruiterContact($event)">
+                        <mat-select formControlName="recruiter"  (selectionChange)="recruiterContact($event)">
                             <mat-option *ngFor="let obj of recruiterName"
                                       [value]="obj.id">
                                       {{obj.recruiter}}
                             </mat-option>
                         </mat-select>
                         <button type="button" matSuffix mat-icon-button (click)="goToVendorList()"><mat-icon>add</mat-icon></button>
-                        <mat-error *ngIf="submissionForm.get('recruiter.recid')!.hasError('required')">Contact Person Name
+                        <mat-error *ngIf="submissionForm.get('recruiter')!.hasError('required')">Contact Person Name
                             is Required
                         </mat-error>
                     </mat-form-field>
@@ -110,8 +133,7 @@
 
                 <mat-form-field appearance="fill">
                     <mat-label>Contact Number</mat-label>
-                    <input matInput formControlName="empcontact" max-length="50" />
-                    <mat-error *ngIf="submissionForm.get('empcontact')!.hasError('required')">Contact Number is Required</mat-error>
+                    <input matInput formControlName="empcontact" max-length="15" />
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">

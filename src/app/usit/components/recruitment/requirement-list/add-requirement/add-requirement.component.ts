@@ -30,8 +30,8 @@ import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { Loader } from '@googlemaps/js-api-loader';
 import { formatDate } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -42,7 +42,7 @@ import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox
   selector: 'app-add-requirement',
   standalone: true,
   imports: [
-    
+
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -73,7 +73,7 @@ import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox
 })
 export class AddRequirementComponent {
   requirementObj = new Requirements()
-  requirementForm:any =  FormGroup;
+  requirementForm! : FormGroup;
   private formBuilder = inject(FormBuilder);
   private requirementServ = inject(RequirementService);
   private snackBarServ = inject(SnackBarService);
@@ -91,7 +91,7 @@ export class AddRequirementComponent {
   options = {
     componentRestrictions: { country: ['IN', 'US'] },
   };
-  vendorCompanyArr: { company: string }[] = [];
+  vendorCompanyArr: any[] = [];
   techArr: any = [];
   companySearchData: any[] = [];
   techSearchData: any[] = [];
@@ -110,7 +110,7 @@ export class AddRequirementComponent {
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
   selectOptionObj = {
-    
+
     statusType: STATUS_TYPE,
   };
   selectAllChecked = false;
@@ -121,7 +121,7 @@ export class AddRequirementComponent {
   rawData: any = [];
   isAllOptionsSelected = false;
   entity: any;
-  vmsID: any;
+  isRadSelected: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
@@ -132,25 +132,27 @@ export class AddRequirementComponent {
     this.getTech();
     //this.getEmployee();
     this.getFlag(this.data.flag.toLocaleLowerCase());
-    // this.selectData.forEach((employee: any) => {
-    //   this.rawData.push({ employee, selected: false });
-    // });
+    this.requirementServ.getVendorCompanies('Recruiting').subscribe(
+      (response: any) => {
+        this.vendorCompanyArr = response.data;
+      }
+    );
     if(this.data.actionName === "edit-requirement"){
       this.initializeRequirementForm(new Requirements());
       this.requirementServ.getEntity(this.data.requirementData.requirementid).subscribe(
         (response: any) => {
           this.entity = response.data;
-          console.log(response);
-          this.recruiterList(response.data.vendorimpl);
+          this.recruiterList( {value: response.data.vendorimpl});
           this.requirementObj = response.data;
-          this.getEmployee();
+          // this.getEmployee();
           this.getAssignedEmployee();
+
           this.initializeRequirementForm(response.data);
-          
+
         }
       )
       //this.getAssignedEmployee();
-      
+
       //this.prepopulateSelectedEmployees();
     }else{
       this.getEmployee();
@@ -168,30 +170,23 @@ export class AddRequirementComponent {
           this.requirementForm.get('reqnumber')?.setValue(this.reqnumber);
           this.requirementForm.get('postedon')?.setValue(this.todayDate);
         })
-        
-        
         this.initializeRequirementForm(null);
     }
-    this.requirementServ.getVendorCompanies('Recruiting').subscribe(
-      (response: any) => {
-        this.vendorCompanyArr = response.data;
-        console.log(this.vendorCompanyArr);
-      }
-    );
   }
 
   private getAssignedEmployee() {
     this.requirementServ.getAssignedRecruiter(this.data.requirementData.requirementid).subscribe(
       (response: any) => {
         this.employeedata = response.data; // saveed selected items from assign rec field
-        console.log(this.employeedata);
-        this.prepopulateSelectedEmployees();
+        this.employeedata.map((x: any)=> x.selected = true);
+        this.getEmployee();
+       // this.prepopulateSelectedEmployees();
       }
     );
   }
 
   getFlag(type: string){
-    if (type === 'sales') {
+    if (type === 'recruiting') {
       this.flag = 'Recruiting';
     } else {
       this.flag = 'Domrecruiting';
@@ -218,26 +213,27 @@ export class AddRequirementComponent {
       pocemail: [requirementData ? requirementData.pocemail :''],
       pocposition: [requirementData ? requirementData.pocposition :''],
       salary: [requirementData ? requirementData.salary :''],
-      users:localStorage.getItem('userid'),
-      vendorimpl: [requirementData ? requirementData.vendorimpl :'', [Validators.required]],
-      requirementflg: this.data.flag.toLocaleLowerCase(),
-      maxnumber: [this.requirementForm.maxnumber],
-      dommaxno: [this.requirementForm.dommaxno],
-      requirementid: [this.requirementForm.requirementid],
-      flg: [this.requirementForm.flg],
+      users: localStorage.getItem('userid'),
+      vendorimpl:[requirementData ? requirementData.vendorimpl :'', [Validators.required]],
+      // requirementflg: this.data.flag.toLocaleLowerCase(),
+      flag:  this.data.flag,
+      maxnumber: [requirementData ? requirementData.maxnumber : ''],
+      dommaxnumber: [requirementData ? requirementData.dommaxnumber : ''],
+      // requirementid: [this.requirementForm.requirementid],
+      requirementid: [requirementData ? requirementData.requirementid : '']
     });
     if (this.data.actionName === 'edit-requirement') {
       this.requirementForm.addControl('status',this.formBuilder.control(requirementData ? requirementData.status : ''));
     }
     this.validateControls()
-    this.techAutoCompleteSearch();
-    this.companyAutoCompleteSearch();
-    this.empAutoCompleteSearch()
-    
+    // this.techAutoCompleteSearch();
+    // this.companyAutoCompleteSearch();
+    // this.empAutoCompleteSearch()
+
   }
 
   validateControls() {
-  
+
   }
 
   companyAutoCompleteSearch() {
@@ -266,12 +262,10 @@ export class AddRequirementComponent {
     return of([])
   }
 
-  
   getTech() {
     this.requirementServ.getTech().subscribe(
       (response: any) => {
         this.techArr = response.data;
-        console.log(this.techArr);
       }
     )
   }
@@ -311,32 +305,27 @@ export class AddRequirementComponent {
       (response: any) => {
         this.empArr = response.data;
         this.empArr.map((x: any)=> x.selected = false);
+        this.prepopulateSelectedEmployees();
     }
     )
   }
 
   recruiterArr: any[] = [];
-  recruiterList(option: any) {
-    const newVal = option;
-    this.vmsID = option;
+  recruiterList(event: any) {
+    const newVal =  event.value;
     this.requirementServ.getRecruiterOfTheVendor(newVal, 'Recruiter').subscribe(
       (response: any) => {
         this.recruiterArr = response.data;
-        console.log(this.recruiterArr);
-        // this.requirementForm.get("pocphonenumber")!.patchValue(response.data.recruiter.pocphonenumber);
-        // this.requirementForm.get("pocemail")!.patchValue(response.data.recruiter.pocemail);
-        // this.requirementForm.get("recruiter")!.patchValue(response.data.recruiter);
-        // this.requirementForm.get("pocposition")!.patchValue(response.data.recruiter.pocposition);
-        this.requirementForm.get("pocphonenumber")!.patchValue(response.data.usnumber);
-        this.requirementForm.get("pocemail")!.patchValue(response.data.email);
-        this.requirementForm.get("recruiter")!.patchValue(response.data.recruiter);
-        this.requirementForm.get("pocposition")!.patchValue(response.data.recruitertype);
+        // this.requirementForm.get("pocphonenumber")!.patchValue('');
+        // this.requirementForm.get("pocemail")!.patchValue('');
+        // this.requirementForm.get("recruiter")!.patchValue(response.data[0].recruiter);
+        // this.requirementForm.get("pocposition")!.patchValue('');
       }
     );
   }
-  
-  techSkills(option: any) {
-    const newVal = option[0];
+
+  techSkills(event: MatSelectChange) {
+    const newVal = event.value;
     if (newVal == '') {
       this.autoskills = '';
     }
@@ -356,6 +345,26 @@ export class AddRequirementComponent {
   }
 
   
+  toggleSelection(employee: any) {
+    const mapToApiFormat = (emp: any) => ({
+      userid: emp.userid,
+      fullname: emp.fullname,
+    });
+    
+      employee.selected = !employee.selected;
+  
+    if (employee.selected) {
+
+      this.selectData.push(employee);
+    }
+    // else {
+    //   const i = this.selectData.findIndex((value: any) => value.fullname === employee.fullname);
+    //   this.selectData.splice(i, 1);
+    // }
+    this.isAllOptionsSelected = !this.empArr.some((x: any) => x.selected === false)
+    const mappedData = this.selectData.map(mapToApiFormat);
+    this.requirementForm.get('empid')!.setValue(mappedData);
+  };
 
   onSubmit () {
     this.submitted = true;
@@ -367,27 +376,36 @@ export class AddRequirementComponent {
       direction: 'above',
       panelClass: ['custom-snack-success'],
     };
+    if(this.employeedata.length){
+      this.requirementForm.get('empid')?.setErrors(null);
+    }
 
     if (this.requirementForm.invalid) {
       this.displayFormErrors();
+      this.isRadSelected = true;
+      this.requirementForm.markAllAsTouched();
       return;
     }
-    console.log(this.requirementForm.value)
+    this.selectData.forEach(function (obj: any) {
+        delete obj.selected
+        delete obj.pseudoname
+    });
+    this.requirementForm.get('empid')!.setValue(this.selectData);
     const saveReqObj = this.getSaveData();
-    console.log('form.value  ===', saveReqObj);
     this.requirementServ
       .addORUpdateRequirement(saveReqObj, this.data.actionName)
       .pipe(takeUntil(this.destroyed$))
       .subscribe({
-        next: (data: any) => {
-          if (data.status == 'success') {
+        next: (resp: any) => {
+          if (resp.status == 'success') {
             dataToBeSentToSnackBar.message =
               this.data.actionName === 'add-requirement'
                 ? 'Requirement added successfully'
                 : 'Requirement updated successfully';
             this.dialogRef.close();
           } else {
-            dataToBeSentToSnackBar.message = 'Requirement already Exists';
+            dataToBeSentToSnackBar.message = resp.message ? resp.message : 'Requirement already Exists';
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
           }
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         },
@@ -407,7 +425,6 @@ export class AddRequirementComponent {
   }
 
   handleAddressChange(address: any) {
-    console.log('address', address.formatted_address);
     this.requirementForm.controls['location'].setValue(address.formatted_address);
   }
 
@@ -420,16 +437,15 @@ export class AddRequirementComponent {
     this.dialogRef.close();
     this.router.navigate(['/usit/technology-tag']);
   }
-  
+
   pocPosition!: string;
   selectedItems: ConstactInfo[] = [];
   recruiterContact(event: any) {
     const newVal = event.value;
-    
+
     this.recruiterArr.forEach(item => {
       if (newVal === item.id) {
         this.selectedItems.push(item);
-        console.log(this.selectedItems);
       }
     });
 
@@ -461,29 +477,34 @@ export class AddRequirementComponent {
   }
 
   remove(employee: any): void {
-    const index = this.selectData.indexOf(employee);
 
+    const index = this.selectData.indexOf(employee);
     if (index >= 0) {
       this.selectData.splice(index, 1);
     }
-
-    this.toggleSelection(employee);
+    this.empArr.find((y: any) => y.userid === employee.userid).selected = false;
+    // this.toggleSelection(employee);
     this.controls['empid'].updateValueAndValidity();
 
-    const input = this.employeeInput;
-    if (input) {
-      console.log(input);
-    }
+    const mapToApiFormat = (emp: any) => ({
+      userid: emp.userid,
+      fullname: emp.fullname,
+    });
+    const mappedData = this.selectData.map(mapToApiFormat);
+    this.requirementForm.get('empid')!.setValue(mappedData);
   }
 
   prepopulateSelectedEmployees() {
     // Clear the existing employees array
     this.selectData = [];
     this.selectData = this.employeedata;
+    this.requirementForm.get('empid')?.patchValue(this.selectData);
 
-    this.employeedata.forEach((x: any, listId: number) => {
-      this.empArr.find((y: any) => y.userid === x.userid).selected = true;
-    })
+    if (this.empArr.length && this.employeedata.length) {
+      this.employeedata.forEach((x: any, listId: number) => {
+        this.empArr.find((y: any) => y.userid === x.userid).selected = true;
+      })
+    }
 
     this.isAllOptionsSelected = this.empArr.every((x: any) => x.selected === true)
 
@@ -494,21 +515,7 @@ export class AddRequirementComponent {
     this.toggleSelection(employee);
   }
 
-  toggleSelection(employee: any) {
-    employee.selected = !employee.selected;
-    console.log(employee.selected);
-  ​
-    if (employee.selected === true) {
-      this.selectData.push(employee);
-    } 
-    else {
-      const i = this.selectData.findIndex((value: any) => value.fullname === employee.fullname);
-      this.selectData.splice(i, 1);
-    }
-    console.log(this.selectData);
-  ​
-    this.requirementForm.get('empid')!.setValue(this.selectData);
-  };
+
 
   onSelectAll(event: MatCheckboxChange){
     this.isAllOptionsSelected = event.checked;
@@ -521,6 +528,7 @@ export class AddRequirementComponent {
    else{
     this.selectData = []
    }
+  //  this.requirementForm.get('empid')?.setValue(this.selectData);
   }
 
   empAutoCompleteSearch() {
@@ -542,7 +550,6 @@ export class AddRequirementComponent {
   getAllEmpOptions(): Observable<any> {
     if (this.empArr) {
       this.employeeSearchData = this.empArr;
-      console.log(this.employeeSearchData);
       return of(this.employeeSearchData);
     }
     return of([]);
@@ -572,32 +579,8 @@ export class AddRequirementComponent {
     });
   }
 
-  // getSaveData() {
-  //   if(this.data.actionName === "edit-requirement"){
-  //     [this.requirementForm.value].forEach( (formVal, idx) => {
-  //       this.requirementObj.reqnumber = formVal.reqnumber;
-  //       this.requirementObj.postedon = formVal.postedon;
-  //       this.requirementObj.location = formVal.location;
-  //       this.requirementObj.client =  formVal.client;
-  //       this.requirementObj.jobexperience =  formVal.jobexperience;
-  //       this.requirementObj.employmenttype =  formVal.employmenttype;
-  //       this.requirementObj.status =  formVal.status;
-  //       this.requirementObj.jobtitle =  formVal.jobtitle;
-  //       this.requirementObj.jobskills = formVal.jobskills;
-  //       this.requirementObj.jobdescription =  formVal.jobdescription;
-  //       this.requirementObj.duration = formVal.duration;
-  //       this.requirementObj.pocphonenumber = formVal.pocphonenumber;
-  //       this.requirementObj.pocemail = formVal.pocemail;
-  //       this.requirementObj.pocposition =  formVal.pocposition;
-  //       this.requirementObj.salary = formVal.salary;
-  //     })
-  //     return this.requirementObj
-  //   }
-  //   return this.requirementForm.value;
-  // }
-
   getSaveData() {
-    if(this.data.actionName === 'edit-interview'){
+    if(this.data.actionName === 'edit-requirement'){
       return {...this.entity, ...this.requirementForm.value}
     }
     return this.requirementForm.value;
@@ -608,21 +591,10 @@ export class AddRequirementComponent {
     this.destroyed$.complete();
   }
 
-  selectAllOptions() {
-    const empidControl = this.requirementForm.get('empid');
-
-    if (this.selectAllChecked) {
-      // Select all options
-      this.empArr.forEach((emp: any) => emp.selected = true);
-      empidControl!.setValue(this.empArr.map((emp: any) => emp.fullname));
-    } else {
-      // Deselect all options
-      this.empArr.forEach((emp: any) => emp.selected = false);
-      empidControl!.setValue([]);
-    }
+  onRadioChange(event: MatRadioChange){
+    this.isRadSelected =  event.value
   }
 }
-
 
 export const STATUS_TYPE = ['Active', 'on hold', 'closed', 'In Active'] as const;
 

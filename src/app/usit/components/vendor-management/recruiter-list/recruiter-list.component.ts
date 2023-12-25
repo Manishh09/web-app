@@ -110,15 +110,7 @@ export class RecruiterListComponent implements OnInit {
     this.loginId = localStorage.getItem('userid');
     this.department = localStorage.getItem('department');
     this.AssignedPageNum = localStorage.getItem('rnum');
-    //this.getall();
-   // if (this.AssignedPageNum == null) {
-      this.getAllRecruiters();
-   // }
-  //  else {
-   //   this.gty(this.AssignedPageNum);
-  //    this.page = this.AssignedPageNum;
-   // }
-    //this.getAllData();
+    this.getAllRecruiters();
   }
 
   ngAfterViewInit() {
@@ -130,20 +122,6 @@ export class RecruiterListComponent implements OnInit {
    * get all recruiter data
    * @returns recruiter data
    */
-  // getAllRecruiters() {
-  //   return this.recruiterServ
-  //     .getAllRecruiters(this.hasAcces, this.loginId)
-  //     .subscribe((response: any) => {
-  //       console.log('recruiter.data', response.data);
-  //       if (response.data) {
-  //         this.dataSource.data.map((x: any, i) => {
-  //           x.serialNum = this.generateSerialNumber(i);
-  //         });
-  //         this.totalItems = response.data.totalElements;
-  //       }
-  //     });
-  // }
-
   getAllRecruiters(pageNumber = 1) {
     return this.recruiterServ
       .getAllRecruitersPagination(
@@ -156,13 +134,11 @@ export class RecruiterListComponent implements OnInit {
       .subscribe((response: any) => {
         this.datarr = response.data.content;
         this.dataSource.data = response.data.content;
-       // console.log(this.dataSource.data);
         // for serial-num {}
         this.dataSource.data.map((x: any, i) => {
           x.serialNum = this.generateSerialNumber(i);
         });
         this.totalItems = response.data.totalElements;
-        //this.getRecruiterRowClass();
       });
   }
   gty(page: any) {
@@ -190,6 +166,28 @@ export class RecruiterListComponent implements OnInit {
    */
   onFilter(event: any) {
     this.dataSource.filter = event.target.value;
+  }
+
+  applyFilter(event: any) {
+    const keyword = event.target.value;
+    this.field = keyword;
+    if (keyword != '') {
+      return this.recruiterServ.getAllRecruitersPagination(this.hasAcces, this.loginId, 1, this.pageSize, keyword).subscribe(
+        ((response: any) => {
+          this.datarr = response.data.content;
+          this.dataSource.data  = response.data.content;
+          // for serial-num {}
+          this.dataSource.data.map((x: any, i) => {
+           x.serialNum = this.generateSerialNumber(i);
+         });
+         this.totalItems = response.data.totalElements;
+        })
+      );
+    }
+    if (keyword == '') {
+      this.field = 'empty';
+    }
+    return this.getAllRecruiters(this.currentPageIndex + 1);
   }
 
   /**
@@ -292,13 +290,7 @@ export class RecruiterListComponent implements OnInit {
     dialogConfig.panelClass = 'add-recruiter';
     dialogConfig.data = actionData;
 
-    // this.dialogServ.openDialogWithComponent(
-    //   AddRecruiterComponent,
-    //   dialogConfig
-    // );
-
     const dialogRef = this.dialogServ.openDialogWithComponent(AddRecruiterComponent, dialogConfig);
-
     dialogRef.afterClosed().subscribe(() => {
       if(dialogRef.componentInstance.submitted){
         this.getAllRecruiters(this.currentPageIndex + 1);
@@ -320,10 +312,7 @@ export class RecruiterListComponent implements OnInit {
     //dialogConfig.height = '100vh';
     dialogConfig.panelClass = 'edit-recruiter';
     dialogConfig.data = actionData;
-    // this.dialogServ.openDialogWithComponent(
-    //   AddRecruiterComponent,
-    //   dialogConfig
-    // );
+
     const dialogRef = this.dialogServ.openDialogWithComponent(AddRecruiterComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
@@ -445,7 +434,7 @@ export class RecruiterListComponent implements OnInit {
   }
 
   // approve initiate reject
-  
+
   onApproveOrRejectRecruiter(recruiter: any, rejectRecruiter = false) {
     if (recruiter.rec_stat !== 'Approved') {
       const dataToBeSentToSnackBar: ISnackBarData = {
@@ -511,28 +500,20 @@ export class RecruiterListComponent implements OnInit {
             .pipe(takeUntil(this.destroyed$))
             .subscribe({
               next: (response: any) => {
-                // console.log(JSON.stringify(response));
-             //   console.log("rec-stat", response.status)
-
                   if (response.status == 'success') {
                     // dataToBeSentToSnackBar.message = `Recruiter ${response.data} successfully`;
                     const message = response.message.includes("Change") ? 'Recruiter Approved sucssessfully' : response.message;
                     dataToBeSentToSnackBar.message = message;
-
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-success'];
-                   
+
                   } else {
                     //  alertify.success("Recruiter " + response.data + " successfully");
                     dataToBeSentToSnackBar.message = 'Status update failed';
                     dataToBeSentToSnackBar.panelClass = ['custom-snack-failed'];
-                   
                   }
-                  
                   this.snackBarServ.openSnackBarFromComponent(
                     dataToBeSentToSnackBar
                   );
-
-                // this.gty(this.page);
                 this.getAllRecruiters(this.currentPageIndex + 1);
               },
               error: (err) => {
@@ -551,21 +532,9 @@ export class RecruiterListComponent implements OnInit {
     return;
   }
 
-  // /**
-  //  * handle page event - pagination
-  //  * @param recruiter
-  //  */
-  // handlePageEvent(e: PageEvent) {
-  //   this.pageEvent = e;
-  //   this.length = e.length;
-  //   this.pageSize = e.pageSize;
-  //   this.pageIndex = e.pageIndex;
-  // }
 
   getRecruiterRowClass(row : any){
     const recruitertype = row.recruitertype;
-    // console.log('rowwwwwwwww', recruitertype);
-
     if (recruitertype === 'Recruiter') {
         return 'technical-recruiter';
     } else if (recruitertype === 'Bench Sales Recruiter') {
@@ -600,7 +569,6 @@ export class RecruiterListComponent implements OnInit {
    * @param event
    */
    handlePageEvent(event: PageEvent) {
-    //console.log('page.event', event);
     if (event) {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;
