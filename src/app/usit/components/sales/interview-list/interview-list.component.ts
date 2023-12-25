@@ -116,9 +116,6 @@ export class InterviewListComponent {
       this.flag = "Domrecruiting";
     }
 
-    // if((this.flag.toLocaleLowerCase() === 'presales' || this.flag.toLocaleLowerCase() === 'recruiting')){
-    //   this.dataTableColumns.splice(15,0,"AddedBy")
-    // }
   }
 
 
