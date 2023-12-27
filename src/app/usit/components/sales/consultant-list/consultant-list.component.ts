@@ -689,6 +689,10 @@ export class ConsultantListComponent
     this.destroyed$.next();
     this.destroyed$.complete();
   }
+
+  navigateToDashboard() {
+    this.router.navigateByUrl('/usit/dashboard');
+  }
 }
 
 export interface ReportVo {

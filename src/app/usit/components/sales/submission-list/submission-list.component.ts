@@ -34,7 +34,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { SubmissionService } from 'src/app/usit/services/submission.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AddSubmissionComponent } from './add-submission/add-submission.component';
 
 @Component({
@@ -101,6 +101,7 @@ export class SubmissionListComponent {
   private snackBarServ = inject(SnackBarService);
   private submissionServ = inject(SubmissionService);
   private  activatedRoute= inject(ActivatedRoute);
+  private router = inject(Router);
 
 
   // to clear subscriptions
@@ -366,5 +367,9 @@ export class SubmissionListComponent {
           this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
         },
       });
+  }
+  
+  navigateToDashboard() {
+    this.router.navigateByUrl('/usit/dashboard');
   }
 }

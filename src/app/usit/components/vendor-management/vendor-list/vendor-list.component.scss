@@ -28,6 +28,7 @@ ul.breadcrumb li+li:before {
 ul.breadcrumb li a {
   color: #0275d8;
   text-decoration: none;
+  cursor: pointer;
 }
 
 ul.breadcrumb li a:hover {

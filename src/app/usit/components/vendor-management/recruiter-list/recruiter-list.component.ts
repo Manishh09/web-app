@@ -34,6 +34,7 @@ import { RecruiterService } from 'src/app/usit/services/recruiter.service';
 import { Subject, takeUntil } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recruiter-list',
@@ -85,6 +86,7 @@ export class RecruiterListComponent implements OnInit {
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private recruiterServ = inject(RecruiterService);
+  private router = inject(Router);
   hasAcces!: any;
   loginId!: any;
   department!: any;
@@ -576,5 +578,9 @@ export class RecruiterListComponent implements OnInit {
         this.getAllRecruiters(event.pageIndex + 1);
     }
     return;
+  }
+
+  navigateToDashboard() {
+    this.router.navigateByUrl('/usit/dashboard');
   }
 }

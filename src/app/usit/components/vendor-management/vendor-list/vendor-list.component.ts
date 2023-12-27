@@ -35,6 +35,7 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { Subject, takeUntil } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-vendor-list',
@@ -87,6 +88,7 @@ export class VendorListComponent implements OnInit {
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private vendorServ = inject(VendorService);
+  private router = inject(Router);
   hasAcces!: any;
   loginId!: any;
   department!: any;
@@ -624,4 +626,7 @@ export class VendorListComponent implements OnInit {
     this.destroyed$.complete();
   }
 
+  navigateToDashboard() {
+    this.router.navigateByUrl('/usit/dashboard');
+  }
 }

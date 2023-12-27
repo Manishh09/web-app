@@ -353,6 +353,9 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
     this.destroyed$.complete();
   }
 
+  navigateToDashboard() {
+    this.router.navigateByUrl('/usit/dashboard');
+  }
 }
 
 

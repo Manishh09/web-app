@@ -33,7 +33,7 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { Subject, takeUntil } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InterviewService } from 'src/app/usit/services/interview.service';
 import { AddInterviewComponent } from './add-interview/add-interview.component';
 
@@ -96,6 +96,7 @@ export class InterviewListComponent {
   private activatedRoute = inject(ActivatedRoute);
   private interviewServ = inject(InterviewService);
   private dialogServ = inject(DialogService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
@@ -249,4 +250,7 @@ export class InterviewListComponent {
      return;
    }
 
+  navigateToDashboard() {
+    this.router.navigateByUrl('/usit/dashboard');
+  }
 }

@@ -133,10 +133,10 @@
               (matChipInputTokenEnd)="add($event)"
             />
             <mat-autocomplete #auto="matAutocomplete" formControlName="empid">
-              <mat-checkbox [checked]="isAllOptionsSelected" (change)="onSelectAll($event)">{{ isAllOptionsSelected ? 'UnSelect All': 'Select All'}}</mat-checkbox>
+              <mat-checkbox [checked]="isAllOptionsSelected" color="primary" (change)="onSelectAll($event)">{{ isAllOptionsSelected ? 'UnSelect All': 'Select All'}}</mat-checkbox>
               <mat-option *ngFor="let employee of empArr">
                 <div (click)="optionClicked($event, employee)">
-                  <mat-checkbox [checked]="employee.selected" (change)="toggleSelection(employee)" (click)="$event.stopPropagation()">
+                  <mat-checkbox [checked]="employee.selected" color="primary" (change)="toggleSelection(employee)" (click)="$event.stopPropagation()">
                     {{ employee.fullname }}
                   </mat-checkbox>
                 </div>

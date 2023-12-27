@@ -1,8 +1,8 @@
 <div class="consultant-container">
   <ul class="breadcrumb">
-    <li class="breadcrumb-item" routerLink="/usit/dashboard">Home</li>
-    <li class="breadcrumb-item-inactive">{{flag | titlecase}}</li>
-    <li class="breadcrumb-item-active"  routerLinkActive>Consultants</li>
+    <li><a (click)="navigateToDashboard()">Home</a></li>
+    <li class="last">{{flag | titlecase}}</li>
+    <li class="last">Consultants</li>
   </ul>
   <div class="header-container mat-elevation-z1">
     <span class="header-text">
