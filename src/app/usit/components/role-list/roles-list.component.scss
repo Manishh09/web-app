@@ -99,11 +99,11 @@ thead {
 }
 
 .mat-mdc-header-row {
-  height: 30px !important; 
+  height: 30px !important;
 }
 
 .mat-mdc-row {
-  height: 30px !important; 
+  height: 30px !important;
 }
 
 ul{
@@ -135,4 +135,8 @@ ul.breadcrumb li a {
 ul.breadcrumb li a:hover {
   color: #01447e;
   text-decoration: underline;
+}
+
+.privileges{
+  cursor: pointer !important;
 }

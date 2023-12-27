@@ -17,7 +17,7 @@ export class RoleService {
   // }
   /// previllages //
 
-  //register vms
+  //register priviliges
   public registerprevilage(entity: any) {
     return this.http.post(this.baseUrl + "priviliges/savePrevileges", entity);
   }

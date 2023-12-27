@@ -16,12 +16,17 @@ import { RequirementListComponent } from './components/recruitment/requirement-l
 import { QuizComponent } from './components/quiz/quiz.component';
 import { AttemptQuizComponent } from './components/quiz/attempt-quiz/attempt-quiz.component';
 import { QuizListComponent } from './components/quiz/quiz-list/quiz-list.component';
+import { PrivilegeListComponent } from './components/privilege-list/privilege-list.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
   {
     path: 'dashboard',
     component: DashboardComponent
+  },
+  {
+    path: 'privileges/:id',
+    component: PrivilegeListComponent
   },
   {
     path: 'quiz-list',
