@@ -15,6 +15,8 @@ import { TechnologyTagListComponent } from './components/technology-tag-list/tec
 import { RequirementListComponent } from './components/recruitment/requirement-list/requirement-list.component';
 import { QuizComponent } from './components/quiz/quiz.component';
 import { AttemptQuizComponent } from './components/quiz/attempt-quiz/attempt-quiz.component';
+import { QuizListComponent } from './components/quiz/quiz-list/quiz-list.component';
+import { PrivilegeListComponent } from './components/privilege-list/privilege-list.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
@@ -23,7 +25,15 @@ const routes: Routes = [
     component: DashboardComponent
   },
   {
-    path: 'quiz',
+    path: 'privileges/:id',
+    component: PrivilegeListComponent
+  },
+  {
+    path: 'quiz-list',
+    component: QuizListComponent
+  },
+  {
+    path: 'save-quiz',
     component: QuizComponent
   },
   {

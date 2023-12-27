@@ -22,6 +22,7 @@ import { RoleManagementService } from '../../services/role-management.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { ManagePrivilegeComponent } from '../privilege-list/manage-privilege/manage-privilege.component';
 @Component({
   selector: 'app-roles-list',
   templateUrl: './roles-list.component.html',
@@ -213,6 +214,36 @@ export class RolesListComponent implements OnInit , AfterViewInit{
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
   }
+  // add
+  addPrivilege(){
+    const actionData = {
+      title: 'Add Privilege',
+      buttonCancelText: 'Cancel',
+      buttonSubmitText: 'Submit',
+      actionName: 'add-privilege'
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "450px";
+    dialogConfig.height = "auto";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = "add-privilege";
+    dialogConfig.data = actionData;
+    const dialogRef = this.dialogServ.openDialogWithComponent(ManagePrivilegeComponent, dialogConfig);
+    // dialogRef.afterClosed().subscribe(() => {
+    //   if(dialogRef.componentInstance.alloAction){
+    //     this.getAllRoles();
+    //   }
+    // })
+  }
+
+  /**
+   * Go to privelges screen
+   */
+
+  goToPrivilegeScreen(role: Role){
+this.router.navigate(['/usit/privileges', role.roleid])
+  }
+
   }
 
   export interface IRoleData {

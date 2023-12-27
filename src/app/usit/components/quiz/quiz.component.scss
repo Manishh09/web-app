@@ -10,9 +10,24 @@ body{
   padding: 20px;
   font-family: "Open Sans",sans-serif;
   //max-width: 700px;
-  height: 100dvh;
+  height: 81dvh;
 
 }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  span {
+    margin-left: 14px;
+    padding: 14px;
+    font-size: large;
+    font-weight: 600;
+  }
+}
+
+
+
 .main-container > p{
   font-size: 32px;
 }
@@ -51,8 +66,8 @@ body{
 display: flex !important;
 flex-direction: row !important;
 align-items: center;
-gap: 16px;
-
+//gap: 16px;
+justify-content: space-between;
 margin-left: 10px;
 
 }
@@ -79,7 +94,7 @@ gap: 8px;
 
 
 .question-field{
-  width: 70%;
+  width: 90%;
 }
 .option-field{
 
