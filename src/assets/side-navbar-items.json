@@ -125,11 +125,7 @@
       "icon": "assignment_ind",
       "routerLink": "/usit/roles"
     },
-    {
-      "text": "Register Privilage",
-      "icon": "vpn_key",
-      "routerLink": "/usit/reg-previlage"
-    },
+
     {
       "text": "Masters",
       "icon": "extension",

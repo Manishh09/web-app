@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PrivilegesService } from 'src/app/services/privileges.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 @Component({
   selector: 'app-privilege-list',
   standalone: true,
@@ -47,7 +48,17 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
   s_submission: any[] = [];
   s_interviews: any[] = [];
   privilegResp: any[] = [];
-  // services
+   // snackbar
+   dataToBeSentToSnackBar: ISnackBarData = {
+    message: '',
+    duration: 1500,
+    verticalPosition: 'top',
+    horizontalPosition: 'center',
+    direction: 'above',
+    panelClass: ['custom-snack-success'],
+  };
+ // services
+ private snackBarServ = inject(SnackBarService);
   private activatedRoute = inject(ActivatedRoute);
   private privilegServ = inject(PrivilegesService);
   private router = inject(Router);
@@ -83,16 +94,6 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
         this.s_sales = response.data.s_sales;
         this.s_submission = response.data.s_submission;
         this.s_interviews = response.data.s_interview;
-        // let arr = [];
-
-        // for (const prop in response.data) {
-        //   if (response.data.hasOwnProperty(prop)) {
-        //       let innerObj: any= {};
-        //       innerObj[prop] = response.data[prop];
-        //       arr.push(innerObj)
-        //   }
-
-        // }
         this.selecedPrivileges();
         this.mapResponseData();
       });
@@ -339,51 +340,6 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // selectAllTechnology_tag(event: any) {
-  //   this.commonFunction(this.technology_tags, event);
-  // }
-
-  // selectAllTechAndSupport(event: any) {
-  //   this.commonFunction(this.tech_support, event);
-  // }
-
-  // selectAllRecruiter(event: any) {
-  //   this.commonFunction(this.recruiter, event);
-  // }
-
-  // selectAllImmigration(event: any) {
-  //   this.commonFunction(this.immigration, event);
-  // }
-
-  // selectAllPresales(event: any) {
-  //   this.commonFunction(this.pre_sales, event);
-  // }
-
-  // selectAllInterview(event: any) {
-  //   this.commonFunction(this.s_interviews, event);
-  // }
-
-  // selectAllConsultant(event: any) {
-  //   this.commonFunction(this.s_sales, event);
-  // }
-
-  // selectAllVisa(event: any) {
-  //   this.commonFunction(this.visa, event);
-  // }
-
-  // selectAllSubmission(event: any) {
-  //   this.commonFunction(this.s_submission, event);
-  // }
-
-  // selectAllQuali(event: any) {
-  //   this.commonFunction(this.qualification, event);
-  // }
-
-  // selectAllVendor(event: any) {
-
-  //   this.commonFunction(this.vendor, event);
-  // }
-
   /**
    * form privilge ids based on selected type
    * @param data
@@ -420,11 +376,6 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
       this.entity.privilegeIds.push(privileges[privId].id);
     } else {
       privileges[privId].selected = event.checked;
-      // privileges.forEach((ele:any, index: number) => {
-      //   if (event.checked == ele.selected) {
-      //     this.entity.privilegeIds.splice(index, 1);
-      //   }
-      // });
       if (privId >= 0) {
         this.entity.privilegeIds.splice(privId, 1);
       }
@@ -439,20 +390,22 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
    */
   savePrivileges() {
     console.log("Save Privileges Object", this.entity)
-    // this.privilegServ.addPrevilegeToRole(this.entity).subscribe(
-    //   (result) => {
-    //     //this.router.navigate(['/list-roles']);
-    //    alert("privilege's added Successfully ");
-    //   }, (error: any) => {
-    //     if (error.status == 401) {
-    //     //  this.message = "privilege's not added Successfully";
-    //     //  alertify.error("invalid credentials");
-    //     }
-    //     else {
-    //     //  this.message = "privilege's not added Successfully";
-    //     //  alertify.error("privilege's added Successfully");
-    //     }
-    //   });
+    this.privilegServ.addPrevilegeToRole(this.entity).subscribe(
+      (result) => {
+        this.dataToBeSentToSnackBar.message =  'Previleges added successfully!';
+        this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
+        this.router.navigate(['/usit/roles']);
+
+      }, (error: any) => {
+        if (error.status == 401) {
+        this.dataToBeSentToSnackBar.message =  'Previleges addition is failed!';
+        this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
+        }
+        else {
+          this.dataToBeSentToSnackBar.message =  'Previleges addition is failed!';
+          this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
+        }
+      });
   }
 
   onCancel() {
