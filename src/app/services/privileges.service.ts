@@ -19,19 +19,19 @@ export class PrivilegesService {
 
   // for registering privilages
   public registerprevilage(entity: any) {
-    return this.apiServ.post("priviliges/savePrevileges", entity);
+    return this.apiServ.post("auth/priviliges/savePrevileges", entity);
   }
 
   getAllPrivileges() {
-    return this.apiServ.get("priviliges/getPrivileges/");
+    return this.apiServ.get("auth/priviliges/getPrivileges/");
   }
 
   getPrivilegesById(roleId: number) {
-    return this.apiServ.get("priviliges/getPrivilegesById/" + roleId);
+    return this.apiServ.get("auth/priviliges/getPrivilegesById/" + roleId);
   }
 
   addPrevilegeToRole(entity: any) {
-    return this.apiServ.post("priviliges/addprevtorole", entity);
+    return this.apiServ.post("auth/priviliges/addprevtorole", entity);
   }
 
 }

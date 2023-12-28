@@ -4,14 +4,20 @@
     <li class="breadcrumb-item-active"  routerLinkActive>Privileges</li>
   </ul>
     <mat-card class="mat-elevation-z8 main-card">
+      <section class="main-header">
       <mat-card-header class="main-card-header">
         {{'Privileges'}}
       </mat-card-header>
+      <button mat-icon-button class="add-privilege" (click)="addPrivilege()" matTooltip="Add Privilege" matTooltipPosition="above">
+        <mat-icon class="item-icon">enhanced_encryption</mat-icon>
+      </button>
+      </section>
       <mat-card-content class="main-card-content">
       <mat-card class="card" *ngFor="let card of privilegResp;let cardId=index">
         <mat-card-header class="card-header">
           {{card.title}}
         </mat-card-header>
+
         <mat-card-content class="card-content" *ngIf="card.privileges?.length">
           <mat-checkbox color="primary" [checked]="card.isSelected" (change)="selectAllAccess(card, $event)" >GRANT ALL ACCESS</mat-checkbox>
           <ng-container *ngFor="let priv of card.privileges; let privId=index">

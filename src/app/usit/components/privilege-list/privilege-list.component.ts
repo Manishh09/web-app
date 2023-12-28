@@ -11,6 +11,10 @@ import { PrivilegesService } from 'src/app/services/privileges.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
+import { ManagePrivilegeComponent } from './manage-privilege/manage-privilege.component';
+import { MatDialogConfig } from '@angular/material/dialog';
+import { DialogService } from 'src/app/services/dialog.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 @Component({
   selector: 'app-privilege-list',
   standalone: true,
@@ -20,6 +24,7 @@ import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.servi
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
+    MatTooltipModule
   ],
   templateUrl: './privilege-list.component.html',
   styleUrls: ['./privilege-list.component.scss'],
@@ -62,12 +67,13 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private privilegServ = inject(PrivilegesService);
   private router = inject(Router);
+  private dialogServ = inject(DialogService);
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
 
   ngOnInit(): void {
     this.id = this.activatedRoute.snapshot.params['id'];
-    //this.entity.roleId = +this.id;
+    this.entity.roleId = +this.id;
     this.getAll();
   }
 
@@ -322,8 +328,13 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * To provide / revoke all the accesses
+   * @param card
+   * @param event
+   */
   selectAllAccess(card: any, event: MatCheckboxChange) {
-    card.privileges.forEach((ele: any) => {
+    card.privileges?.forEach((ele: any) => {
       if (event.checked) {
         ele.selected = true;
         this.entity.privilegeIds.push(ele.id);
@@ -331,12 +342,14 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
       } else {
         ele.selected = false;
         card.isSelected = false;
-        this.entity.privilegeIds.forEach((id, index) => {
-          if (card.privileges[index].id === id) {
-            this.entity.privilegeIds?.splice(index, 1);
-          }
-        });
+        this.entity.privilegeIds = []
+        // this.entity.privilegeIds.forEach((id, index) => {
+        //   if (ele.id === id) {
+        //     this.entity.privilegeIds?.splice(index, 1);
+        //   }
+        // });
       }
+      this.entity.privilegeIds = [...new Set(this.entity.privilegeIds)]
     });
   }
 
@@ -374,15 +387,41 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
     if (event.checked) {
       privileges[privId].selected = event.checked;
       this.entity.privilegeIds.push(privileges[privId].id);
+      this.entity.privilegeIds = [...new Set(this.entity.privilegeIds)]
     } else {
+      this.entity.privilegeIds = [...new Set(this.entity.privilegeIds)]
       privileges[privId].selected = event.checked;
-      if (privId >= 0) {
-        this.entity.privilegeIds.splice(privId, 1);
+      const uncheckedPrivId = privileges[privId].id;
+      const uncheckedPrivIdIndex = this.entity.privilegeIds.indexOf(uncheckedPrivId)
+      if (uncheckedPrivIdIndex >= 0) {
+        this.entity.privilegeIds.splice(uncheckedPrivIdIndex, 1);
       }
     }
     this.privilegResp[cardId].isSelected = privileges.every(
       (priv: any) => priv.selected === true
     );
+  }
+
+  /**
+   * Add privilege
+   */
+
+   // add
+   addPrivilege(){
+    const actionData = {
+      title: 'Add Privilege',
+      buttonCancelText: 'Cancel',
+      buttonSubmitText: 'Submit',
+      actionName: 'add-privilege'
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "480px";
+    dialogConfig.height = "300px";
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = "add-privilege";
+    dialogConfig.data = actionData;
+    this.dialogServ.openDialogWithComponent(ManagePrivilegeComponent, dialogConfig);
+
   }
 
   /**

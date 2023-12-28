@@ -44,11 +44,22 @@ ul.breadcrumb li:nth-child(2) {
   color: black;
   pointer-events: none;
 }
+.main-header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: whitesmoke;
+
+}
+.add-privilege{
+  margin-right: 20px;
+}
 .main-card-header{
   padding: 8px 8px 0 !important;
   font-size: large;
   font-weight: 600;
-  background-color: whitesmoke;
+
   height: 32px;
 }
 .main-card-content{
