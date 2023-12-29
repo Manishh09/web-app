@@ -354,6 +354,28 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * manage side nav-item's visibility
+   */
+  private getSideNavData() {
+    // this.apiServ.getJson('assets/side-navbar-items.json').subscribe({
+    //   next: (data: any[]) => {
+    //     this.menuList = data;
+    //     let indexOfSideNavItem: number = 0;
+    //     if(!this.permissionServ.hasPrivilege('LIST_EMPLOYEE')){
+    //       indexOfSideNavItem = data.indexOf((item:any) => item.text === "Employees")
+    //     }
+    //     else if(!this.permissionServ.hasPrivilege('LIST_ROLES')){
+    //       indexOfSideNavItem = data.indexOf((item:any) => item.text.includes("Roles"));
+    //     }
+
+    //     if(indexOfSideNavItem >=0){
+    //        this.menuList.splice(indexOfSideNavItem, 1)
+    //     }
+    //   },
+    // });
+  }
+
+  /**
    * form privilge ids based on selected type
    * @param data
    * @param event

@@ -5,7 +5,7 @@ import { ApiService } from '../core/services/api.service';
   providedIn: 'root'
 })
 export class PrivilegesService {
-
+  menuList: any[] = []
   private apiServ = inject(ApiService);
   private privileges: string[] = [];
 
@@ -32,6 +32,15 @@ export class PrivilegesService {
 
   addPrevilegeToRole(entity: any) {
     return this.apiServ.post("auth/priviliges/addprevtorole", entity);
+  }
+
+  hasPrivilege(priv: string): boolean {
+    let privilagesArr: string[] = [];
+    const arr = localStorage.getItem('privileges');
+    if (arr && arr.length) {
+       privilagesArr = arr.split(',');
+    }
+    return privilagesArr.includes(priv);
   }
 
 }
