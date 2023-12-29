@@ -293,3 +293,7 @@ mat-mdc-menu-content {
 ::ng-deep .country-list-button {
   padding: 0px 4px !important;
 }
+
+.mat-mdc-option {
+  min-height: 36px !important;
+}
