@@ -9,7 +9,7 @@ export class VendorService {
   private apiServ = inject(ApiService);
 
   getCompanies() {
-    return this.apiServ.get("vms/vendor/venodorCompanies");
+    return this.apiServ.get("vms/recruiter/venodorCompanies/all");
   }
 
   //register vms

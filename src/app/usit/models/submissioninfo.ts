@@ -1,12 +1,6 @@
-import { Consultantinfo } from "./consultantinfo";
-import { Employee } from "./employee";
-import { Recruiter } from "./recruiter";
-import { Requirements } from "./requirements";
-import { Vms } from "./vms";
 
 export class SubmissionInfo {
-
-    consultant = new Consultantinfo()
+    consultant !: number;
     empcontact!: string;
     empmail!: string;
     endclient!: string;
@@ -16,10 +10,10 @@ export class SubmissionInfo {
     projectlocation!: string;
     ratetype!: string;
     recmaxno!: number;
-    recruiter = new Recruiter();
+    recruiter !: number;
     relocationassistance!: string;
     remarks!: string;
-    requirements = new Requirements();
+    requirements  !: number;
     salesmaxno!: number;
     source!: string;
     status!: string;
@@ -27,7 +21,7 @@ export class SubmissionInfo {
     submissionrate!: string;
     subno!: string;
     substatus!: string;
-    updatedby = new Employee();
-    user = new Employee();
+    updatedby  !: number;
+    user !: number;
     vendor!: number;
 }

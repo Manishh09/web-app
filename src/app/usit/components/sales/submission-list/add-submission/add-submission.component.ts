@@ -133,6 +133,7 @@ export class AddSubmissionComponent implements OnInit{
             this.submissionForm.get('recruiter').patchValue("");
           }
           else {
+            
             this.submissionForm.get('vendor').patchValue(this.entity.vendor);
             this.submissionForm.get('recruiter').patchValue(this.entity.recruiter);
             this.recruiterInfo(this.entity.vendor);
@@ -179,21 +180,14 @@ export class AddSubmissionComponent implements OnInit{
       requirement: [submissionData ? submissionData?.requirement : '', [Validators.required]],
       consultant: [submissionData ? submissionData?.consultant : '', [Validators.required]],
       position: [submissionData ? submissionData.position : '', [Validators.required]],
-      ratetype: [submissionData ? submissionData.ratetype : '', [Validators.required]],
+      ratetype: [submissionData ? submissionData.ratetype : ''],
       submissionrate: [submissionData ? submissionData.submissionrate : '', [Validators.required]],
       endclient: [submissionData ? submissionData.endclient : ''],
       implpartner: [submissionData ? submissionData.implpartner : ''],
-      vendor: [submissionData ? submissionData.vendor : '', [Validators.required]],
-      recruiter: [submissionData ? submissionData.recruiter : '', [Validators.required]],
+      vendor: [submissionData ? submissionData.vendor : ''],
+      recruiter: [submissionData ? submissionData.recruiter : ''],
       empcontact: [submissionData ? submissionData.empcontact : ''],
-      empmail: [
-        submissionData ? submissionData.empmail : '',
-        [
-          Validators.required,
-          Validators.email,
-          Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'),
-        ],
-      ],
+      empmail: [submissionData ? submissionData.empmail : ''],
       source: [submissionData ? submissionData.source : '', [Validators.required]],
       projectlocation: [submissionData ? submissionData.projectlocation : '', [Validators.required]],
       flg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
@@ -203,6 +197,7 @@ export class AddSubmissionComponent implements OnInit{
       status: [this.data.actionName === "edit-submission" ?  submissionData.status : 'Active'],
       remarks: [submissionData ? submissionData.remarks: ''],
       substatus: [this.data.actionName === "edit-submission" ?  submissionData.substatus : 'Submitted'],
+      dommaxno: [ submissionData ? submissionData.dommaxno : ''],
     });
     this.submissionForm.get('consultant')?.setValue(submissionData?.consultant);
     this.validateControls();
@@ -287,7 +282,7 @@ export class AddSubmissionComponent implements OnInit{
   getCompany() {
     this.flg = localStorage.getItem('department');
     const role = localStorage.getItem('role');
-    if (role == 'Super Admin' || role == 'Admin' || role == 'Manager') {
+    if (role == 'Super Administrator' || role == 'Administrator' || role == 'Sales Manager'  || role == 'Recruiting Manager' ) {
       this.flg = "all";
     }
     this.submissionServ.getCompanies(this.flg).subscribe(

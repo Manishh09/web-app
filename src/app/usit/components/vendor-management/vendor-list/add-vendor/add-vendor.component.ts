@@ -249,26 +249,11 @@ export class AddVendorComponent implements OnInit, OnDestroy {
    * getVendor Company Details
    */
   getvendorcompanydetails() {
-    const dataToBeSentToSnackBar: ISnackBarData = {
-      message: '',
-      duration: 2500,
-      verticalPosition: 'top',
-      horizontalPosition: 'center',
-      direction: 'above',
-      panelClass: ['custom-snack-success'],
-    };
-    this.vendorServ
-      .getCompanies()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe({
-        next: (response: any) => {
+
+    
+    this.vendorServ.getCompanies() .subscribe((response: any) => {
           this.rolearr = response.data;
-        },
-        error: (err) => {
-          dataToBeSentToSnackBar.message = err.message;
-          dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
-          this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
-        },
+          console.log(this.rolearr)
       });
   }
 

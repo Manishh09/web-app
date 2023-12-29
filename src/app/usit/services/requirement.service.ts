@@ -14,8 +14,8 @@ export class RequirementService {
   }
 
   // get max require number 
-  getReqNumber() {
-    return this.apiServ.get("requirement/getmaxnumber");
+  getReqNumber(flg:string) {
+    return this.apiServ.get("requirement/getmaxnumber/" + flg);
   }
 
   getVendorCompanies(flg:string) {

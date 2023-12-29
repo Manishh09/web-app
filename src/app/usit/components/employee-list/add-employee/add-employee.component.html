@@ -400,7 +400,7 @@
           <td *ngIf="empObj.aadhar !==null "><a class="ab" style="cursor:pointer"
               (click)="downloadfile(empObj.userid,empObj.aadhar,'aadhar')">{{empObj.aadhar}}</a>
           </td>
-          <td *ngIf="empObj.pan !==null ">
+          <td *ngIf="empObj.aadhar !==null ">
             <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'aadhar')">
               <mat-icon>delete</mat-icon>
             </button>

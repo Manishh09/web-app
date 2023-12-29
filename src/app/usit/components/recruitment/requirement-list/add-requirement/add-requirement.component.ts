@@ -156,7 +156,7 @@ export class AddRequirementComponent {
       //this.prepopulateSelectedEmployees();
     }else{
       this.getEmployee();
-      this.requirementServ.getReqNumber().subscribe(
+      this.requirementServ.getReqNumber(this.flag).subscribe(
         (response: any) => {
           if (response.data == null) {
             this.reqnumber = 101;
