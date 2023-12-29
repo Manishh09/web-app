@@ -290,3 +290,11 @@ ul.breadcrumb li:last-child {
   margin-bottom: 2px;
   color: #0275d8;
 }
+
+.dom-submission-table-style {
+  padding: 0 2px;
+  width: max-content;
+  max-height: calc(100% - 2px);
+  overflow: auto;
+  display: block;
+}

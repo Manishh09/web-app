@@ -20,7 +20,7 @@
         </div>
     </div>
     <div id="table-container" class="table-wrapper">
-        <section class="submission-table-style mat-elevation-z8">
+        <section class="mat-elevation-z8" [ngClass]="{'dom-interview-table-style': flag === 'Domrecruiting', 'interview-table-style': flag !== 'Domrecruiting'}">
             <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSort($event)" oncopy="return false">
 
                 <!--- Note that these columns can be defined in any order.

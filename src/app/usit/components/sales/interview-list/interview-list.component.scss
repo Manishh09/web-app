@@ -126,7 +126,7 @@
     }
   }
   
-  .submission-table-style {
+  .interview-table-style {
     padding: 0 2px;
     width: max-content;
     max-height: calc(100% - 2px);
@@ -262,4 +262,12 @@
   .consultant-name, .employeer-name {
     cursor: pointer;
     color: #0275d8;
+  }
+
+  .dom-interview-table-style{
+    padding: 0 2px;
+    width: max-content;
+    max-height: calc(100% - 2px);
+    overflow: auto;
+    display: block;
   }
