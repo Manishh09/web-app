@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChildren, QueryList, AfterViewInit, inject } fro
 import { HttpClient } from '@angular/common/http';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { ApiService } from 'src/app/core/services/api.service';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 
 @Component({
   selector: 'app-side-navbar',
@@ -13,7 +14,7 @@ export class SideNavbarComponent implements OnInit, AfterViewInit {
   @ViewChildren(MatExpansionPanel)
   childMenus!: QueryList<MatExpansionPanel>;
   private apiServ = inject(ApiService);
-
+  protected privilegeServ = inject(PrivilegesService);
 
   ngOnInit(): void {
     this.getSideNavData()
@@ -21,8 +22,19 @@ export class SideNavbarComponent implements OnInit, AfterViewInit {
 
   private getSideNavData() {
     this.apiServ.getJson('assets/side-navbar-items.json').subscribe({
-      next: (data) => {
-        this.menuList = data;
+      next: (data: any[]) => {
+       this.privilegeServ.menuList = data;
+        // let indexOfSideNavItem: number = 0;
+        // if(!this.privilegeServ.hasPrivilege('LIST_EMPLOYEE')){
+        //   indexOfSideNavItem = data.indexOf((item:any) => item.text === "Employees")
+        // }
+        // else if(!this.privilegeServ.hasPrivilege('LIST_ROLES')){
+        //   indexOfSideNavItem = data.indexOf((item:any) => item.text.includes("Roles"));
+        // }
+
+        // if(indexOfSideNavItem >=0){
+        //   this.privilegeServ.menuList.splice(indexOfSideNavItem, 1)
+        // }
       },
     });
   }

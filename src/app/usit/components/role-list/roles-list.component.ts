@@ -23,6 +23,7 @@ import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.servi
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ManagePrivilegeComponent } from '../privilege-list/manage-privilege/manage-privilege.component';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 @Component({
   selector: 'app-roles-list',
   templateUrl: './roles-list.component.html',
@@ -48,6 +49,7 @@ export class RolesListComponent implements OnInit , AfterViewInit{
   form: any = FormGroup;
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
+  protected privilegeServ = inject(PrivilegesService);
   private router = inject(Router);
   displayedColumns: string[] = ['RoleName', 'Actions'];
   dataSource = new MatTableDataSource([]);

@@ -39,6 +39,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRippleModule } from '@angular/material/core';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -110,6 +111,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
   private snackBarServ = inject(SnackBarService);
   private empManagementServ = inject(EmployeeManagementService);
   private router = inject(Router);
+  protected privilegeServ = inject(PrivilegesService);
   // for subscrition clean up
   private destroyed$ = new Subject<void>();
   ngOnInit(): void {
