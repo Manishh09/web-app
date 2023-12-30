@@ -28,15 +28,36 @@ export class QuizService {
   attemptQuiz(entity: any) {
     return this.apiServ.post("kpt/writeTest", entity);
   }
+  // get quiz by id
+
+  getQuizById(quizId: number){
+    return this.apiServ.get(`kpt/getbyid/${quizId}`);
+  }
 
   // delete quiz
-  deleteQuiz(entity: any) {
-    return this.apiServ.post("kpt/deleteTest", entity);
+  deleteQuiz(quizId: number) {
+    return this.apiServ.delete(`kpt/deleteQuiz/${quizId}`);
   }
 
-
-  getMockQuiz(){
-   return this.apiServ.getJson('assets/mock-quiz-data.json')
+  // get all quiz
+  getAllQuiz(){
+    return this.apiServ.get('kpt/all')
   }
+
+  // update quiz
+  updateQuiz(entity: any){
+    return this.apiServ.put("kpt/update", entity);
+  }
+
+  // add - edit
+  addOrEdit(entity: any, actionName: 'edit-quiz' | 'add-quiz'){
+    return actionName === 'edit-quiz' ? this.updateQuiz(entity) : this.saveQuestionnaire(entity)
+  }
+
+  // quiz result
+  getQuizResults(){
+    return this.apiServ.get('kpt/testResult')
+  }
+
 
 }

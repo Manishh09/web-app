@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -13,13 +13,13 @@ import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 import { QuizService } from 'src/app/usit/services/quiz.service';
-import { MOCK_RESP } from '../attempt-quiz/attempt-quiz.component';
 import { QuestionGroup } from 'src/app/usit/models/questionnnaire';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { QuizComponent } from '../quiz.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-quiz-list',
@@ -38,9 +38,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./quiz-list.component.scss'],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 })
-export class QuizListComponent implements OnInit{
+export class QuizListComponent implements OnInit, OnDestroy{
 
-  displayedColumns: string[] = ['Id', 'Department', 'Category','Status', 'Action'];
+
+  displayedColumns: string[] = ['Id', 'Department', 'Category', 'Action'];
   dataSource = new MatTableDataSource<any>([]);
   quizList: QuestionGroup[] = [];
   // paginator
@@ -67,7 +68,8 @@ export class QuizListComponent implements OnInit{
   private snackBarServ = inject(SnackBarService);
   private quizServ = inject(QuizService);
   private router = inject(Router);
-
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
   ngOnInit(): void {
     this.getQuizList();
   }
@@ -76,7 +78,7 @@ export class QuizListComponent implements OnInit{
    * fetches all the quizes
    */
   private getQuizList() {
-    this.quizServ.getMockQuiz().subscribe({
+    this.quizServ.getAllQuiz().pipe(takeUntil(this.destroyed$)).subscribe({
       next: (resp: any) => {
         if (resp.status === "success") {
 
@@ -86,7 +88,7 @@ export class QuizListComponent implements OnInit{
             this.totalItems = this.quizList.length;
           }
           else {
-            this.dataTobeSentToSnackBarService.message = "No Questions Available under the selected category and department, Please select valid data";
+            this.dataTobeSentToSnackBarService.message = "No quizes available";
             this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
             this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
           }
@@ -118,7 +120,7 @@ export class QuizListComponent implements OnInit{
     dialogConfig.data = actionData;
     const dialogRef = this.dialogServ.openDialogWithComponent(QuizComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(() => {
-      if(dialogRef.componentInstance.allowAction){
+      if(dialogRef.componentInstance.isFormSubmitted){
         this.getQuizList();
       }
     })
@@ -175,61 +177,29 @@ export class QuizListComponent implements OnInit{
       next: () =>{
         if (dialogRef.componentInstance.allowAction) {
 
-          // this.quizServ.deleteQuiz(quiz.qid).subscribe
-          //   ({
-          //     next: (resp: any) => {
-          //       if (resp.status == 'success') {
-          //         this.dataTobeSentToSnackBarService.message =
-          //           'Quiz Deleted successfully';
-          //         this.snackBarServ.openSnackBarFromComponent(
-          //           this.dataTobeSentToSnackBarService
-          //         );
-          //         // call get api after deleting a technology
-          //         this.getQuizList();
-          //       } else {
-          //         this.dataTobeSentToSnackBarService.message = resp.message;
-          //         this.snackBarServ.openSnackBarFromComponent(
-          //           this.dataTobeSentToSnackBarService
-          //         );
-          //       }
+          this.quizServ.deleteQuiz(quiz.qid).pipe(takeUntil(this.destroyed$)).subscribe
+            ({
+              next: (resp: any) => {
+                if (resp.status == 'success') {
+                  this.dataTobeSentToSnackBarService.message =
+                    'Quiz deleted successfully';
+                  this.snackBarServ.openSnackBarFromComponent(
+                    this.dataTobeSentToSnackBarService
+                  );
+                  // call get api after deleting a technology
+                  this.getQuizList();
+                } else {
+                  this.dataTobeSentToSnackBarService.message = resp.message;
+                  this.snackBarServ.openSnackBarFromComponent(
+                    this.dataTobeSentToSnackBarService
+                  );
+                }
 
-          //     }, error: (err: any) => console.log(`quiz delete error: ${err}`)
-          //   });
+              }, error: (err: any) => console.log(`quiz delete error: ${err}`)
+            });
         }
       }
     })
-  }
-
-  /**
-   * initiate quiz
-   * @param quiz
-   */
-  onStatusUpdate(quiz: QuestionGroup){
-
-    const dataToBeSentToDailog : Partial<IConfirmDialogData> = {
-      title: 'Confirmation',
-      message: 'Are you sure you want to Initate Quiz?',
-      confirmText: 'Yes',
-      cancelText: 'No',
-      actionData: quiz,
-    }
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "fit-content";
-    dialogConfig.height = "auto";
-    dialogConfig.disableClose = false;
-    dialogConfig.panelClass = "initiate-quiz";
-    dialogConfig.data = dataToBeSentToDailog;
-    const dialogRef = this.dialogServ.openDialogWithComponent(ConfirmComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe({
-        next: (resp) => {
-          if (dialogRef.componentInstance.allowAction) {
-
-              this.router.navigate(["/usit/attempt-quiz"])
-          }
-        },
-      });
-
   }
 
   /**
@@ -252,6 +222,11 @@ export class QuizListComponent implements OnInit{
 
   onSort(event: any) {
     //this.dataSource.filter = event.target.value;
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(undefined);
+    this.destroyed$.complete()
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, FormControl, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,9 +12,10 @@ import { QuizService } from '../../services/quiz.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { DEPARTMENT } from 'src/app/constants/department';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { CATEGORY } from 'src/app/constants/category';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Subject, takeUntil } from 'rxjs';
 
 export interface Questionnaire {
   optionA: FormControl<string | null>;
@@ -33,7 +34,7 @@ export interface Questionnaire {
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.scss']
 })
-export class QuizComponent implements OnInit{
+export class QuizComponent implements OnInit,OnDestroy{
   objectK = Object;
   deptOptions = DEPARTMENT;
   categoryOptions = CATEGORY;
@@ -55,14 +56,7 @@ export class QuizComponent implements OnInit{
       optionC: '',
       optionD: '',
       answer: '',
-    },
-    {
-      question: '',
-      optionA: '',
-      optionB: '',
-      optionC: '',
-      optionD: '',
-      answer: '',
+      id: 1,
     },
   ];
   isFormSubmitted = false;
@@ -73,27 +67,70 @@ export class QuizComponent implements OnInit{
   private quizServ = inject(QuizService);
   data = inject(MAT_DIALOG_DATA);
   private dialogRef = inject(MatDialogRef<QuizComponent>);
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
+  selectedDepartment: any;
+  selectedCategory: any;
+  setTimeOutVal: any;
   ngOnInit(): void {
     if(this.data.actionName === 'edit-quiz'){
       this.initForm('');
-    this.getQuestionnaire();
+      this.getQuestionnaireById(this.data.quizData.qid);
     }
    else{
     this.initForm();
+   // this.getQuestionnaire();
    }
 
+  }
+
+  onSelect(event: MatSelectChange, type: 'dept'| 'cat'){
+
+    if(type === "dept"){
+      this.selectedDepartment = event.value;
+    }
+    if(type === "cat"){
+      this.selectedCategory = event.value;
+    }
+
+    if(this.selectedDepartment && this.selectedCategory){
+      this.getQuestionnaire();
+    }
+  }
+
+   /**
+   * fetch questionnaire
+   */
+   getQuestionnaireById(id: number){
+
+    this.quizServ.getQuizById(id).pipe(takeUntil(this.destroyed$)).subscribe({
+      next: (resp: any) => {
+        if(resp.data){
+          this.formObj = resp.data;
+          this.initForm(this.formObj);
+        }
+      }
+    });
   }
   /**
    * fetch questionnaire
    */
   getQuestionnaire(){
-    const department = this.data.quizData.department;
-    const category = this.data.quizData.category;
-    this.quizServ.getQuestionnaire(department,category).subscribe({
+    const department = this.selectedDepartment;
+    const category = this.selectedCategory;
+    this.quizServ.getQuestionnaire(department,category).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (resp: any) => {
-        if(resp.data){
-          this.formObj = resp.data;
-          this.initForm(this.formObj);
+
+        if (resp.status === "success") {
+
+          if(resp.data){
+           // this.formObj = resp.data;
+            this.dataTobeSentToSnackBarService.message = "Quiz already exists!, Pleae select different category to add the questionnaire";
+            this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"]
+            this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
+
+          }
+
         }
       }
     });
@@ -104,8 +141,8 @@ export class QuizComponent implements OnInit{
    */
   initForm(data?: any) {
     this.quizForm = this.fb.group({
-      department: ['', [ Validators.required]],
-      category: ['',[Validators.required] ],
+      department: [ data ?  data.department : '', [ Validators.required]],
+      category: [data ? data.category : '',[Validators.required] ],
       options: this.fb.array(this.initFormArrayElements(data)),
     });
   }
@@ -115,17 +152,27 @@ export class QuizComponent implements OnInit{
    * @returns form array controls
    */
   private initFormArrayElements(data?: any): FormGroup<Questionnaire>[] {
-    const response = data ? data.options : this.formObj;
-    return response.map((control: any) =>
+    let response = data ? data.options : this.formObj;
+    return this.data.actionName === 'add-quiz' ? response.map((control: any) =>
       this.fb.group({
         optionA: [control.optionA,[ Validators.required,Validators.maxLength(100)] ],
         optionB: [control.optionB,[ Validators.required,Validators.maxLength(100)] ],
         optionC: [control.optionC, [Validators.required,Validators.maxLength(100)] ],
         optionD: [control.optionD, [Validators.required,Validators.maxLength(100)] ],
         question: [control.question, [Validators.required,Validators.maxLength(200)] ],
-        answer: [control.answer],
+        answer: [control.answer]
       })
-    );
+    ) : response.map((control: any) =>
+    this.fb.group({
+      optionA: [control.optionA,[ Validators.required,Validators.maxLength(100)] ],
+      optionB: [control.optionB,[ Validators.required,Validators.maxLength(100)] ],
+      optionC: [control.optionC, [Validators.required,Validators.maxLength(100)] ],
+      optionD: [control.optionD, [Validators.required,Validators.maxLength(100)] ],
+      question: [control.question, [Validators.required,Validators.maxLength(200)] ],
+      answer: [control.answer],
+      id:[control.id]
+    })
+  );
   }
 
   /**
@@ -152,6 +199,7 @@ export class QuizComponent implements OnInit{
       optionD: ['',[Validators.required, Validators.maxLength(100)]],
       question: ['',[ Validators.required, Validators.maxLength(200)]],
       answer: [''],
+      //id: [this.formObj.length+1]
     };
 
     this.quizForm.controls.options.push(this.fb.group(controls))
@@ -177,13 +225,14 @@ export class QuizComponent implements OnInit{
       this.displayFormErrors();
       return;
     }
-    this.quizServ.saveQuestionnaire(this.quizForm.value).subscribe({
+    const saveObj = this.data.actionName ===  'add-quiz' ? this.quizForm.value : {...this.quizForm.value, qid: this.data.quizData.qid}
+    this.quizServ.addOrEdit(saveObj, this.data.actionName).pipe(takeUntil(this.destroyed$)).subscribe({
       next:(resp: any) => {
 
         if (resp.status == 'success') {
-          this.dataTobeSentToSnackBarService.message = 'Question added Successfully';
+          this.dataTobeSentToSnackBarService.message = this.data.actionName ===  'add-quiz' ? 'Question added Successfully' : 'Question updated Successfully';
         } else {
-          this.dataTobeSentToSnackBarService.message = 'Question addition failed';
+          this.dataTobeSentToSnackBarService.message =  this.data.actionName ===  'add-quiz' ? 'Question addition failed': 'Question updation failed';
           this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
         }
         this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
@@ -219,7 +268,14 @@ export class QuizComponent implements OnInit{
       this.quizForm.reset();
     }
     this.dialogRef.close()
+  }
 
+  /**
+   * clean up subscriptions
+   */
+  ngOnDestroy(): void {
 
+      this.destroyed$.next(undefined);
+      this.destroyed$.complete();
   }
 }

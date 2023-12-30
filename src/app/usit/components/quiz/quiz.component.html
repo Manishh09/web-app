@@ -28,7 +28,7 @@
         <div class="left-section">
           <mat-form-field appearance="fill" class="category-field">
             <!-- <input matInput formControlName="department" placeholder="Enter Department"> -->
-            <mat-select name="department" formControlName="department" placeholder="Select Department">
+            <mat-select name="department" formControlName="department" placeholder="Select Department" (selectionChange)="onSelect($event, 'dept')">
               <mat-option *ngFor="let option of deptOptions" [value]="option.name">
                 {{ option.name }}
               </mat-option>
@@ -39,7 +39,7 @@
         <div class="right-section">
           <mat-form-field appearance="fill" class="category-field">
             <!-- <input matInput formControlName="category" placeholder="Enter Category"> -->
-            <mat-select name="category" formControlName="category" placeholder="Select Category">
+            <mat-select name="category" formControlName="category" placeholder="Select Category" (selectionChange)="onSelect($event, 'cat')">
               <mat-option *ngFor="let option of categoryOptions" [value]="option.name">
                 {{ option.name }}
               </mat-option>
@@ -56,7 +56,7 @@
           <!-- Question -->
 
           <div class="question-container">
-            <span class="quest-num">Q{{i+1}}</span>
+            <span class="quest-num">Q{{ i+1 }}</span>
             <!-- Question Name -->
             <div class="question-style">
               <mat-form-field appearance="fill" class="question-field">

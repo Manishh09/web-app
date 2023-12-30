@@ -17,6 +17,7 @@ import { QuizComponent } from './components/quiz/quiz.component';
 import { AttemptQuizComponent } from './components/quiz/attempt-quiz/attempt-quiz.component';
 import { QuizListComponent } from './components/quiz/quiz-list/quiz-list.component';
 import { PrivilegeListComponent } from './components/privilege-list/privilege-list.component';
+import { QuizResultComponent } from './components/quiz/quiz-result/quiz-result.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
@@ -39,6 +40,10 @@ const routes: Routes = [
   {
     path: 'attempt-quiz',
     component: AttemptQuizComponent
+  },
+  {
+    path: 'quiz-result',
+    component: QuizResultComponent
   },
   { path: 'employees', component: EmployeeListComponent },
   { path: 'vendors', component: VendorListComponent },

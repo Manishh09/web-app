@@ -150,6 +150,23 @@
     {
       "text": "KPT",
       "icon": "quiz",
-      "routerLink": "/usit/quiz-list"
+      "children": [
+        {
+          "text": "KPT List",
+          "icon": "quiz",
+          "routerLink": "/usit/quiz-list"
+        },
+        {
+          "text": "Write KPT",
+          "icon": "assignment",
+          "routerLink": "/usit/attempt-quiz"
+        },
+        {
+          "text": "KPT Result",
+          "icon": "assignment",
+          "routerLink": "/usit/quiz-result"
+        }
+      ]
+
     }
   ]
