@@ -15,8 +15,8 @@
       <!-- <button mat-icon-button (click)="uploadRecruiterExcel()">
         <mat-icon>upload</mat-icon>
       </button> -->
-      <button mat-icon-button class="add-user" (click)="addRecruiter()" matTooltip="Add Recruiter" matTooltipPosition="above">
-        <mat-icon class="item-icon">person_add</mat-icon>
+      <button [disabled]="!privilegeServ.hasPrivilege('ADD_RECRUITER')" mat-icon-button class="add-user" (click)="addRecruiter()" matTooltip="Add Recruiter" matTooltipPosition="above">
+        <mat-icon [ngClass]="{'item-icon': privilegeServ.hasPrivilege('ADD_RECRUITER')}">add_circle</mat-icon>
       </button>
 
       <div class="search-recruiter">
@@ -99,12 +99,12 @@
         <ng-container matColumnDef="Action">
           <th mat-header-cell *matHeaderCellDef>Action</th>
           <td mat-cell *matCellDef="let recruiter" class="action-buttons">
-            <button mat-icon-button (click)="editRecruiter(recruiter)" class="action-button-ed" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'">
-              <mat-icon class="edit-icon">edit</mat-icon>
+            <button [disabled]="!privilegeServ.hasPrivilege('EDIT_RECRUITER')" mat-icon-button (click)="editRecruiter(recruiter)" class="action-button-ed" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'">
+              <mat-icon [ngClass]="{'edit-icon': privilegeServ.hasPrivilege('EDIT_RECRUITER')}">edit</mat-icon>
             </button>
 
-            <button mat-icon-button (click)="deleteRecruiter(recruiter)" class="action-button-ed" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'">
-              <mat-icon class="delete-icon">delete</mat-icon>
+            <button [disabled]="!privilegeServ.hasPrivilege('DELETE_RECRUITER')" mat-icon-button (click)="deleteRecruiter(recruiter)" class="action-button-ed" *ngIf="hasAcces!='Employee'  && hasAcces!='Team Lead'">
+              <mat-icon  [ngClass]="{'delete-icon': privilegeServ.hasPrivilege('DELETE_RECRUITER')}">delete</mat-icon>
             </button>
           </td>
         </ng-container>
@@ -114,7 +114,7 @@
           <td mat-cell *matCellDef="let recruiter" class="approve-buttons">
                 <ng-container *ngIf="['Approved'].includes(recruiter.rec_stat);  else ifNotApproved">
 
-                  <button  mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)" class="approve-reject-buttons"
+                  <button [disabled]="!privilegeServ.hasPrivilege('STATUS_RECRUITER')" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)" class="approve-reject-buttons"
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="recruiter.rec_stat === 'Approved'  ?   'mat-primary' : recruiter.rec_stat === 'Initiated'  ?  'mat-secondary' : 'mat-warn'">
@@ -124,7 +124,7 @@
                 </ng-container >
                   <ng-template #ifNotApproved>
                     <!-- Initiated BUTTON -->
-                    <button  *ngIf="['Initiated', 'Approved'].includes(recruiter.rec_stat)" class="approve-reject-buttons" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)"
+                    <button [disabled]="!privilegeServ.hasPrivilege('STATUS_RECRUITER')"  *ngIf="['Initiated', 'Approved'].includes(recruiter.rec_stat)" class="approve-reject-buttons" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter)"
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="'mat-primary'"> {{recruiter.rec_stat}}
@@ -132,13 +132,13 @@
 
                   <!-- Reject BUTTON -->
 
-                    <button *ngIf="recruiter.rec_stat !== 'Approved' && recruiter.rec_stat !== 'Rejected'" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter, true)" class="approve-reject-buttons"
+                    <button [disabled]="!privilegeServ.hasPrivilege('STATUS_RECRUITER')" *ngIf="recruiter.rec_stat !== 'Approved' && recruiter.rec_stat !== 'Rejected'" mat-raised-button (click)="onApproveOrRejectRecruiter(recruiter, true)" class="approve-reject-buttons"
                     [ngStyle]="{ color: 'white' }"
                     style="width: 75px; height: 25px;"
                     [ngClass]="'mat-warn'"> {{'Reject'}}
                   </button>
 
-                  <button  *ngIf="recruiter.rec_stat === 'Rejected'" mat-raised-button class="approve-reject-buttons"
+                  <button [disabled]="!privilegeServ.hasPrivilege('STATUS_RECRUITER')"  *ngIf="recruiter.rec_stat === 'Rejected'" mat-raised-button class="approve-reject-buttons"
               [ngStyle]="{ color: 'white' }"
               style="width: 75px; height: 25px;"
               [ngClass]="'mat-warn'"> {{recruiter.rec_stat}}
