@@ -1,23 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { DialogService } from 'src/app/services/dialog.service';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { Qualification } from 'src/app/usit/models/qualification';
 import { QualificationService } from 'src/app/usit/services/qualification.service';
 import { AddQualificationComponent } from './add-qualification/add-qualification.component';
-import { Qualification } from 'src/app/usit/models/qualification';
-import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-qualification-list',
@@ -37,7 +39,7 @@ import { Router } from '@angular/router';
   templateUrl: './qualification-list.component.html',
   styleUrls: ['./qualification-list.component.scss']
 })
-export class QualificationListComponent implements OnInit, AfterViewInit {
+export class QualificationListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dataSource = new MatTableDataSource<Qualification>([]);
   displayedColumns: string[] = ['Name', 'Action'];
@@ -45,9 +47,11 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private router = inject(Router);
+  protected privilegeServ = inject(PrivilegesService);
   @ViewChild(MatSort) sort!: MatSort;
   qualificationList: Qualification[]= [];
-
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
   ngOnInit(): void {
     this.getAllQualifications();
   }
@@ -57,7 +61,7 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
   }
 
   getAllQualifications() {
-    return this.qualificationServ.getAllQualifications().subscribe(
+    return this.qualificationServ.getAllQualifications().pipe(takeUntil(this.destroyed$)).subscribe(
       {
         next:(response: any) => {
           this.qualificationList = response.data;
@@ -139,7 +143,7 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
             direction: 'above',
             panelClass: ['custom-snack-success'],
           };
-          this.qualificationServ.deleteQualification(qualification.id).subscribe
+          this.qualificationServ.deleteQualification(qualification.id).pipe(takeUntil(this.destroyed$)).subscribe
             ({
               next: (resp: any) => {
                 if (resp.status == 'success') {
@@ -206,5 +210,13 @@ export class QualificationListComponent implements OnInit, AfterViewInit {
 
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  /**
+   * clean up
+   */
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

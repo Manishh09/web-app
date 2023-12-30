@@ -1,23 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { DialogService } from 'src/app/services/dialog.service';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { Visa } from 'src/app/usit/models/visa';
 import { VisaService } from 'src/app/usit/services/visa.service';
 import { AddVisaComponent } from './add-visa/add-visa.component';
-import { Visa } from 'src/app/usit/models/visa';
-import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-visa-list',
@@ -37,12 +39,13 @@ import { Router } from '@angular/router';
   templateUrl: './visa-list.component.html',
   styleUrls: ['./visa-list.component.scss']
 })
-export class VisaListComponent implements OnInit, AfterViewInit{
-
+export class VisaListComponent implements OnInit, AfterViewInit, OnDestroy{
+  // services
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private visaServ = inject(VisaService);
   private router = inject(Router);
+  protected privilegeServ = inject(PrivilegesService);
 
   displayedColumns: string[] = ['VisaStatus', 'Actions'];
   dataSource = new MatTableDataSource<Visa>([]);
@@ -60,6 +63,8 @@ export class VisaListComponent implements OnInit, AfterViewInit{
 
   @ViewChild(MatSort) sort!: MatSort;
   visaList: Visa[]= [];
+// to clear subscriptions
+private destroyed$ = new Subject<void>();
 
   ngOnInit(): void {
     this.getAllVisa()
@@ -70,7 +75,7 @@ export class VisaListComponent implements OnInit, AfterViewInit{
   }
 
   getAllVisa() {
-    return this.visaServ.getAllVisas().subscribe(
+    return this.visaServ.getAllVisas().pipe(takeUntil(this.destroyed$)).subscribe(
       {
         next:(response: any) => {
           this.visaList = response.data;
@@ -151,7 +156,7 @@ export class VisaListComponent implements OnInit, AfterViewInit{
             direction: 'above',
             panelClass: ['custom-snack-success'],
           };
-          this.visaServ.deleteVisa(visa.vid).subscribe
+          this.visaServ.deleteVisa(visa.vid).pipe(takeUntil(this.destroyed$)).subscribe
             ({
               next: (resp: any) => {
                 if (resp.status == 'success') {
@@ -185,14 +190,14 @@ export class VisaListComponent implements OnInit, AfterViewInit{
   onSort(event: any) {
     const sortDirection = event.direction;
     const sortColumn = event.active;
-  
+
     if (sortDirection !== null && sortDirection !== undefined) {
       this.dataSource.data = this.sortData(this.dataSource.data, sortColumn, sortDirection);
     } else {
       this.dataSource.data = [...this.visaList];
     }
   }
-  
+
   private sortData(data: Visa[], sortColumn: string, sortDirection: string): Visa[] {
     return data.sort((a, b) => {
       switch (sortColumn) {
@@ -206,7 +211,7 @@ export class VisaListComponent implements OnInit, AfterViewInit{
           } else {
             return valueA.localeCompare(valueB);
           }
-  
+
         default:
           return 0;
       }
@@ -221,7 +226,7 @@ export class VisaListComponent implements OnInit, AfterViewInit{
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
   }
-  
+
   handlePageEvent(event: PageEvent) {
     // console.log('page.event', event);
     // if (event) {
@@ -232,5 +237,13 @@ export class VisaListComponent implements OnInit, AfterViewInit{
     // }
     // return;
   }
-  
+
+  /**
+   * clean up
+   */
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
+
 }

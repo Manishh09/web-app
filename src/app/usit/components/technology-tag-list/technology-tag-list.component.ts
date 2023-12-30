@@ -2,24 +2,25 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { DialogService } from 'src/app/services/dialog.service';
-import { MatDialogConfig } from '@angular/material/dialog';
-import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { TechnologyTagService } from '../../services/technology-tag.service';
-import { Router } from '@angular/router';
-import { Technology } from '../../models/technology';
 import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
-import { Subject, takeUntil } from 'rxjs';
+import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
+import { Technology } from '../../models/technology';
+import { TechnologyTagService } from '../../services/technology-tag.service';
 import { AddTechnologyTagComponent } from './add-technology-tag/add-technology-tag.component';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 
 @Component({
   selector: 'app-technology-tag-list',
@@ -55,7 +56,7 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
   pageEvent!: PageEvent;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  cdr = inject(PaginatorIntlService);
+  protected privilegeServ = inject(PrivilegesService);
   // pagination code
   page: number = 1;
   itemsPerPage = 50;
@@ -88,7 +89,7 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
 
 
   getAllTechnologies() {
-    return this.techTagServ.getAllTechnologies().subscribe(
+    return this.techTagServ.getAllTechnologies().pipe(takeUntil(this.destroyed$)).subscribe(
       {
         next: (response: any) => {
           this.technologyTagList = response.data;

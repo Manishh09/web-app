@@ -8,8 +8,8 @@
     <span class="header-text"> Requirements </span>
 
     <div class="requirement-actions">
-      <button mat-icon-button class="add-user" (click)="addRequirement()">
-        <mat-icon class="item-icon">person_add</mat-icon>
+      <button  [disabled]="!privilegeServ.hasPrivilege('ADD_REQUIREMENTS')" mat-icon-button class="add-user" (click)="addRequirement()">
+        <mat-icon [ngClass]="{'item-icon': privilegeServ.hasPrivilege('ADD_REQUIREMENTS')}">add_circle</mat-icon>
       </button>
 
       <div class="search-requirement">
@@ -143,20 +143,20 @@
         <ng-container matColumnDef="Action">
           <th mat-header-cell *matHeaderCellDef>Action</th>
           <td mat-cell *matCellDef="let requirement">
-            <button
+            <button [disabled]="!privilegeServ.hasPrivilege('EDIT_REQUIREMENTS')"
               mat-icon-button
               (click)="editRequirement(requirement)"
               class="action-button-ed"
             >
-              <mat-icon class="edit-icon">edit</mat-icon>
+              <mat-icon [ngClass]="{'edit-icon': privilegeServ.hasPrivilege('EDIT_REQUIREMENTS')}">edit</mat-icon>
             </button>
 
-            <button
+            <button [disabled]="!privilegeServ.hasPrivilege('DELETE_REQUIREMENTS')"
               mat-icon-button
               (click)="deleteRequirement(requirement)"
               class="action-button-ed"
             >
-              <mat-icon class="delete-icon">delete</mat-icon>
+              <mat-icon [ngClass]="{'delete-icon': privilegeServ.hasPrivilege('DELETE_REQUIREMENTS')}">delete</mat-icon>
             </button>
           </td>
         </ng-container>

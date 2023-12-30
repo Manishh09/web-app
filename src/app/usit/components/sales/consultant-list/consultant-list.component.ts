@@ -38,6 +38,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AddconsultantComponent } from './add-consultant/add-consultant.component';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { ConsultantTrackComponent } from './consultant-track/consultant-track.component';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 @Component({
   selector: 'app-consultant-list',
   standalone: true,
@@ -121,6 +122,7 @@ export class ConsultantListComponent
   private consultantServ = inject(ConsultantService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
+  protected privilegeServ = inject(PrivilegesService);
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
 

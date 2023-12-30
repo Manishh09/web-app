@@ -3,6 +3,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
   ViewChild,
   inject,
@@ -36,6 +37,7 @@ import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InterviewService } from 'src/app/usit/services/interview.service';
 import { AddInterviewComponent } from './add-interview/add-interview.component';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 
 @Component({
   selector: 'app-interview-list',
@@ -53,7 +55,7 @@ import { AddInterviewComponent } from './add-interview/add-interview.component';
   templateUrl: './interview-list.component.html',
   styleUrls: ['./interview-list.component.scss']
 })
-export class InterviewListComponent {
+export class InterviewListComponent implements OnInit, OnDestroy{
 
   dataSource = new MatTableDataSource<any>([]);
   dataTableColumns: string[] = [
@@ -93,11 +95,14 @@ export class InterviewListComponent {
   showPageSizeOptions = true;
   showFirstLastButtons = true;
   pageSizeOptions = [5, 10, 25];
+  // services
   private activatedRoute = inject(ActivatedRoute);
   private interviewServ = inject(InterviewService);
   private dialogServ = inject(DialogService);
   private router = inject(Router);
-
+  protected privilegeServ = inject(PrivilegesService);
+   // to clear subscriptions
+   private destroyed$ = new Subject<void>();
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
     this.userid = localStorage.getItem('userid');
@@ -122,7 +127,8 @@ export class InterviewListComponent {
 
   getAll(pagIdx=1 ) {
     this.userid = localStorage.getItem('userid');
-    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, pagIdx, this.itemsPerPage, this.field).subscribe(
+    this.interviewServ.getPaginationlist(this.flag, this.hasAcces, this.userid, pagIdx, this.itemsPerPage, this.field)
+    .pipe(takeUntil(this.destroyed$)).subscribe(
       (response: any) => {
         this.entity = response.data.content;
         this.dataSource.data = response.data.content;
@@ -253,4 +259,9 @@ export class InterviewListComponent {
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
   }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(undefined);
+    this.destroyed$.complete()
+}
 }

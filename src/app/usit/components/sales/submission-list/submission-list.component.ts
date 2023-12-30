@@ -1,11 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  ViewChild,
-  inject,
+  Component, OnDestroy, OnInit, ViewChild,
+  inject
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -19,22 +15,21 @@ import {
   MatPaginatorModule,
   PageEvent,
 } from '@angular/material/paginator';
-import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
+import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { DialogService } from 'src/app/services/dialog.service';
+import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 import {
   ISnackBarData,
   SnackBarService,
 } from 'src/app/services/snack-bar.service';
-import { Recruiter } from 'src/app/usit/models/recruiter';
-import { StatusComponent } from 'src/app/dialogs/status/status.component';
-import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
-import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
-import { Subject, takeUntil } from 'rxjs';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { PaginatorIntlService } from 'src/app/services/paginator-intl.service';
 import { SubmissionService } from 'src/app/usit/services/submission.service';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AddSubmissionComponent } from './add-submission/add-submission.component';
 
 @Component({
@@ -54,7 +49,7 @@ import { AddSubmissionComponent } from './add-submission/add-submission.componen
   styleUrls: ['./submission-list.component.scss'],
   providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntlService }],
 })
-export class SubmissionListComponent {
+export class SubmissionListComponent implements OnInit, OnDestroy{
 
   dataSource = new MatTableDataSource<any>([]);
   dataTableColumns: string[] = [
@@ -102,7 +97,7 @@ export class SubmissionListComponent {
   private submissionServ = inject(SubmissionService);
   private  activatedRoute= inject(ActivatedRoute);
   private router = inject(Router);
-
+  protected privilegeServ = inject(PrivilegesService);
 
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
@@ -368,8 +363,13 @@ export class SubmissionListComponent {
         },
       });
   }
-  
+
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  ngOnDestroy(): void {
+      this.destroyed$.next(undefined);
+      this.destroyed$.complete()
   }
 }

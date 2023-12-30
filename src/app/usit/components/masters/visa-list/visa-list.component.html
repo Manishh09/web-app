@@ -9,10 +9,10 @@
       Visa List
     </span>
     <div class="visa-actions">
-      <button mat-icon-button class="add-user" (click)="addVisa()" matTooltip="Add Visa" matTooltipPosition="left">
-        <mat-icon class="item-icon">add_circle</mat-icon>
+      <button [disabled]="!privilegeServ.hasPrivilege('ADD_VISA')" mat-icon-button class="add-user" (click)="addVisa()" matTooltip="Add Visa" matTooltipPosition="left">
+        <mat-icon [ngClass]="{'item-icon': privilegeServ.hasPrivilege('ADD_VISA')}">add_circle</mat-icon>
       </button>
-  
+
       <div class="search-visa" >
         <input matInput type="search"  class="search" placeholder="search visa"
         (keyup)="onFilter($event)"  >
@@ -22,26 +22,26 @@
   <div class="table-wrapper">
     <section class="table-style mat-elevation-z8">
       <table mat-table [dataSource]="dataSource" matSort  (matSortChange)="onSort($event)">
-  
+
         <!--- Note that these columns can be defined in any order.
               The actual rendered columns are set as a property on the row definition" -->
-  
+
         <!-- Name Column -->
         <ng-container matColumnDef="VisaStatus">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by VisaStatus"> Visa Status </th>
           <td mat-cell *matCellDef="let element"> {{element.visastatus}} </td>
         </ng-container>
-  
+
           <!-- actions -->
         <ng-container matColumnDef="Actions" class="actions">
           <th mat-header-cell *matHeaderCellDef> Action </th>
           <td mat-cell *matCellDef="let visa" class="action-buttons">
-            <button mat-icon-button (click)="editVisa(visa)" class="action-button-ed">
-              <mat-icon>edit</mat-icon>
+            <button  [disabled]="!privilegeServ.hasPrivilege('EDIT_VISA')" mat-icon-button (click)="editVisa(visa)" class="action-button-ed">
+              <mat-icon [ngClass]="{'edit-icon': privilegeServ.hasPrivilege('EDIT_VISA')}">edit</mat-icon>
             </button>
-  
-            <button mat-icon-button (click)="deleteVisa(visa)" class="action-button-ed">
-              <mat-icon>delete</mat-icon>
+
+            <button  [disabled]="!privilegeServ.hasPrivilege('DELETE_VISA')" mat-icon-button (click)="deleteVisa(visa)" class="action-button-ed">
+              <mat-icon [ngClass]="{'delete-icon': privilegeServ.hasPrivilege('DELETE_VISA')}">delete</mat-icon>
             </button>
           </td>
         </ng-container>
@@ -52,7 +52,7 @@
     </section>
       <!-- paginator -->
       <!-- <div class="paginator">
-      <mat-paginator 
+      <mat-paginator
               (page)="handlePageEvent($event)"
               [pageSize]="pageSize"
               [length]="totalItems"

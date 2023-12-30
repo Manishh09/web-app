@@ -1,23 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { DialogService } from 'src/app/services/dialog.service';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 import { ISnackBarData, SnackBarService } from 'src/app/services/snack-bar.service';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { Company } from 'src/app/usit/models/company';
 import { CompanyService } from 'src/app/usit/services/company.service';
 import { AddCompanyComponent } from './add-company/add-company.component';
-import { Company } from 'src/app/usit/models/company';
-import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-companies-list',
@@ -37,18 +39,20 @@ import { Router } from '@angular/router';
   templateUrl: './companies-list.component.html',
   styleUrls: ['./companies-list.component.scss']
 })
-export class CompaniesListComponent implements OnInit, AfterViewInit {
+export class CompaniesListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private companyServ = inject(CompanyService);
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
   private router = inject(Router);
+  protected privilegeServ = inject(PrivilegesService);
 
   dataSource = new MatTableDataSource<Company>([]);
   displayedColumns: string[] = ['Company', 'Actions'];
   @ViewChild(MatSort) sort!: MatSort;
   companyList: Company[]= [];
-
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
   ngOnInit(): void {
     this.getAllCompanies()
   }
@@ -58,7 +62,7 @@ export class CompaniesListComponent implements OnInit, AfterViewInit {
   }
 
   getAllCompanies() {
-    return this.companyServ.getAllCompanies().subscribe(
+    return this.companyServ.getAllCompanies().pipe(takeUntil(this.destroyed$)).subscribe(
       {
         next:(response: any) => {
           this.companyList = response.data;
@@ -140,7 +144,7 @@ export class CompaniesListComponent implements OnInit, AfterViewInit {
             direction: 'above',
             panelClass: ['custom-snack-success'],
           };
-          this.companyServ.deleteCompany(company.companyid).subscribe
+          this.companyServ.deleteCompany(company.companyid).pipe(takeUntil(this.destroyed$)).subscribe
             ({
               next: (resp: any) => {
                 if (resp.status == 'success') {
@@ -209,4 +213,11 @@ export class CompaniesListComponent implements OnInit, AfterViewInit {
     this.router.navigateByUrl('/usit/dashboard');
   }
 
+  /**
+   * clean up
+   */
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
 }

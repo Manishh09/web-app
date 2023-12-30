@@ -442,8 +442,12 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = "add-privilege";
     dialogConfig.data = actionData;
-    this.dialogServ.openDialogWithComponent(ManagePrivilegeComponent, dialogConfig);
-
+    const dialogRef = this.dialogServ.openDialogWithComponent(ManagePrivilegeComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(resp =>{
+      if(dialogRef.componentInstance.submitted){
+        this.getAll()
+      }
+    })
   }
 
   /**
@@ -451,7 +455,7 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
    */
   savePrivileges() {
     console.log("Save Privileges Object", this.entity)
-    this.privilegServ.addPrevilegeToRole(this.entity).subscribe(
+    this.privilegServ.addPrevilegeToRole(this.entity).pipe(takeUntil(this.destroyed$)).subscribe(
       (result) => {
         this.dataToBeSentToSnackBar.message =  'Previleges added successfully!';
         this.snackBarServ.openSnackBarFromComponent(this.dataToBeSentToSnackBar);
