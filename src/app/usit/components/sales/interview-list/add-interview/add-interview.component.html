@@ -116,73 +116,70 @@
           <span class="header-text">Closure Details:</span>
         </div>
 
-        <form [formGroup]="closureForm" (ngSubmit)="onSubmit()">
-          <div class="form">
-            <div class="form-column-left">
-              <mat-form-field class="example-form-field">
-                <mat-label>Visa Validity</mat-label>
-                <input matInput [matDatepicker]="datepicker2" formControlName="visaValidity">
-                <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
-                <mat-datepicker #datepicker2></mat-datepicker>
-                <mat-error *ngIf="closureForm.get('visaValidity')?.hasError('required')"> Visa Validity is required</mat-error>
-              </mat-form-field>
-    
-              <mat-form-field>
-                <mat-label>Project Duration</mat-label>
-                <input type="text" matInput formControlName="projectDuration">
-                <mat-error *ngIf="closureForm.get('projectDuration')!.hasError('required')"> Project Duration is required</mat-error>
-              </mat-form-field>
-    
-    
-              <mat-form-field>
-                <mat-label>{{ paymentwithctc }}</mat-label>
-                <input type="text" matInput formControlName="billRateVendor">
-                <mat-error *ngIf="closureForm.get('billRateVendor')!.hasError('required')"> {{ paymentwithctc }} is required</mat-error>
-              </mat-form-field>
-    
-              <mat-form-field>
-                <mat-label>Billing Cycle</mat-label>
-                <input type="text" matInput formControlName="billingCycle">
-                <mat-error *ngIf="closureForm.get('billingCycle')!.hasError('required')"> Billing Cycle is required</mat-error>
-              </mat-form-field>
-    
-              <mat-form-field class="example-form-field">
-                <mat-label>Project End Date</mat-label>
-                <input matInput [matDatepicker]="datepicker3" formControlName="projectendtdate">
-                <mat-datepicker-toggle matIconSuffix [for]="datepicker3"></mat-datepicker-toggle>
-                <mat-datepicker #datepicker3></mat-datepicker>
-                <mat-error *ngIf="closureForm.get('projectendtdate')!.hasError('required')"> Project End Date is required</mat-error>
-              </mat-form-field>
-            </div>
-            <div class="form-column-right">
-              <mat-form-field class="example-form-field">
-                <mat-label>Project Start Date</mat-label>
-                <input matInput [matDatepicker]="datepicker4" formControlName="projectStartDate">
-                <mat-datepicker-toggle matIconSuffix [for]="datepicker4"></mat-datepicker-toggle>
-                <mat-datepicker #datepicker4></mat-datepicker>
-                <mat-error *ngIf="closureForm.get('projectStartDate')!.hasError('required')"> Project Start Date is required</mat-error>
-              </mat-form-field>
-    
-              <mat-form-field>
-                <mat-label>{{ payrateFromVendor }}</mat-label>
-                <input type="text" matInput formControlName="payRateConsultant">
-                <mat-error *ngIf="closureForm.get('payRateConsultant')!.hasError('required')"> {{ payrateFromVendor }} is required</mat-error>
-              </mat-form-field>
-    
-              <mat-form-field>
-                <mat-label>Vendor AR Contact</mat-label>
-                <input type="text" matInput formControlName="vendorArPhoneNumber">
-                <mat-error *ngIf="closureForm.get('vendorArPhoneNumber')!.hasError('required')"> Vendor AR Contact is required</mat-error>
-              </mat-form-field>
-    
-              <mat-form-field>
-                <mat-label>Payment Cycle</mat-label>
-                <input type="text" matInput formControlName="paymentCycle">
-                <mat-error *ngIf="closureForm.get('paymentCycle')!.hasError('required')"> Payment Cycle is required</mat-error>
-              </mat-form-field>
-            </div>
+        <div  formGroupName="closure" class="form">
+          <div class="form-column-left">
+            <mat-form-field class="example-form-field">
+              <mat-label>Visa Validity</mat-label>
+              <input matInput [matDatepicker]="datepicker2" formControlName="visaValidity">
+              <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
+              <mat-datepicker #datepicker2></mat-datepicker>
+              <mat-error *ngIf="interviewForm.get('closure.visaValidity')?.hasError('required')"> Visa Validity is required</mat-error>
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>Project Duration</mat-label>
+              <input type="text" matInput formControlName="projectDuration">
+              <mat-error *ngIf="interviewForm.get('closure.projectDuration')!.hasError('required')"> Project Duration is required</mat-error>
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>{{ paymentwithctc }}</mat-label>
+              <input type="text" matInput formControlName="billRateVendor">
+              <mat-error *ngIf="interviewForm.get('closure.billRateVendor')!.hasError('required')"> {{ paymentwithctc }} is required</mat-error>
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>Billing Cycle</mat-label>
+              <input type="text" matInput formControlName="billingCycle">
+              <mat-error *ngIf="interviewForm.get('closure.billingCycle')!.hasError('required')"> Billing Cycle is required</mat-error>
+            </mat-form-field>
+  
+            <mat-form-field class="example-form-field">
+              <mat-label>Project End Date</mat-label>
+              <input matInput [matDatepicker]="datepicker3" formControlName="projectendtdate">
+              <mat-datepicker-toggle matIconSuffix [for]="datepicker3"></mat-datepicker-toggle>
+              <mat-datepicker #datepicker3></mat-datepicker>
+              <mat-error *ngIf="interviewForm.get('closure.projectendtdate')!.hasError('required')"> Project End Date is required</mat-error>
+            </mat-form-field>
           </div>
-        </form>
+          <div class="form-column-right">
+            <mat-form-field class="example-form-field">
+              <mat-label>Project Start Date</mat-label>
+              <input matInput [matDatepicker]="datepicker4" formControlName="projectStartDate">
+              <mat-datepicker-toggle matIconSuffix [for]="datepicker4"></mat-datepicker-toggle>
+              <mat-datepicker #datepicker4></mat-datepicker>
+              <mat-error *ngIf="interviewForm.get('closure.projectStartDate')!.hasError('required')"> Project Start Date is required</mat-error>
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>{{ payrateFromVendor }}</mat-label>
+              <input type="text" matInput formControlName="payRateConsultant">
+              <mat-error *ngIf="interviewForm.get('closure.payRateConsultant')!.hasError('required')"> {{ payrateFromVendor }} is required</mat-error>
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>Vendor AR Contact</mat-label>
+              <input type="text" matInput formControlName="vendorArPhoneNumber">
+              <mat-error *ngIf="interviewForm.get('closure.vendorArPhoneNumber')!.hasError('required')"> Vendor AR Contact is required</mat-error>
+            </mat-form-field>
+  
+            <mat-form-field>
+              <mat-label>Payment Cycle</mat-label>
+              <input type="text" matInput formControlName="paymentCycle">
+              <mat-error *ngIf="interviewForm.get('closure.paymentCycle')!.hasError('required')"> Payment Cycle is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
 
       </div>
     </form>

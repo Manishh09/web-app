@@ -93,7 +93,6 @@ export class AddInterviewComponent implements OnInit {
   intno !: string;
   onBoard!: any;
   closureFlag = false;
-  closureForm : any = FormGroup;
   private datePipe = inject(DatePipe);
   intId: any;
 
@@ -112,13 +111,13 @@ export class AddInterviewComponent implements OnInit {
       this.payrateFromVendor = "Bill Rate from Client";
       this.paymentwithctc = "Pay Rate To Vendor";
     } else {
-
+      this.payrateFromVendor = "Bill Rate from Client";
+      this.paymentwithctc = "Pay Rate To Vendor";
     }
     if (this.data.actionName === "edit-interview") {
       this.initializeInterviewForm(new InterviewInfo());
       this.interviewServ.getEntity(this.data.interviewData.intrid).subscribe(
         (response: any) => {
-          console.log(response);
         // const ctc = response.data.submission.ratetype;
         // if((ctc=='1099' || ctc=='W2') && this.flag != 'sales'){
         //   this.paymentwithctc = "Pay Rate To Consultant";
@@ -132,23 +131,11 @@ export class AddInterviewComponent implements OnInit {
         this.intId = this.entity.intrid;
         if (this.onBoard == 'OnBoarded') {
           this.closureFlag = true;
-          this.initializeClosureForm(new Closure())
-          this.interviewServ.getClosureByIntId(this.entity.intrid).subscribe(
-            (resp: any) => {
-              console.log(response);
-              this.initializeClosureForm(resp);
-            }
-          )
-          this.initializeInterviewForm(response.data);
-          
         }
         else {
-          // this.closureFlag = false;
-          this.initializeInterviewForm(response.data);
-          if(this.onBoard === "Selected" || this.onBoard === "OnBoarded"){
-            this.initializeClosureForm(new Closure())
-          }
+          this.closureFlag = false;
         }
+        this.initializeInterviewForm(response.data);
       });
     } else {
       this.initializeInterviewForm(new InterviewInfo());
@@ -178,38 +165,31 @@ export class AddInterviewComponent implements OnInit {
       users:localStorage.getItem('userid'),
       interviewno: [this.data.actionName === "edit-interview" ?  interviewData.interviewno : ''],
       intrid: [interviewData ? interviewData.intrid : ''],
-      
+      closure: this.formBuilder.group({
+        interviewid: [this.intId],
+        closureid: [interviewData && interviewData.closure ? interviewData.closure.closureid: ''],
+        visaValidity: [interviewData && interviewData.closure ? interviewData.closure.visaValidity : ''],
+        projectDuration: [interviewData && interviewData.closure ? interviewData.closure.projectDuration : ''],
+        billRateVendor: [interviewData && interviewData.closure ? interviewData.closure.billRateVendor : ''],
+        billingCycle: [interviewData && interviewData.closure ? interviewData.closure.billingCycle : ''],
+        projectendtdate: [interviewData && interviewData.closure ? interviewData.closure.projectendtdate : ''],
+        projectStartDate: [interviewData && interviewData.closure ? interviewData.closure.projectStartDate : ''],
+        payRateConsultant: [interviewData && interviewData.closure ? interviewData.closure.payRateConsultant : ''],
+        vendorArPhoneNumber: [interviewData && interviewData.closure ? interviewData.closure.vendorArPhoneNumber : ''],
+        paymentCycle: [interviewData && interviewData.closure ? interviewData.closure.paymentCycle : ''],
+      })
     });
-  }
-
-  private initializeClosureForm(closureData: any) {
-    console.log(closureData);
-    this.closureForm = this.formBuilder.group({
-      interviewid: [this.intId],
-      closureid: [closureData.closureid],
-      visaValidity: [closureData ? closureData.visaValidity : ''],
-      projectDuration: [closureData ? closureData.projectDuration : ''],
-      billRateVendor: [closureData ? closureData.billRateVendor : ''],
-      billingCycle: [closureData ? closureData.billingCycle : ''],
-      projectendtdate: [closureData ? closureData.projectendtdate : ''],
-      projectStartDate: [closureData ? closureData.projectStartDate : ''],
-      payRateConsultant: [closureData ? closureData.payRateConsultant : ''],
-      vendorArPhoneNumber: [closureData ? closureData.vendorArPhoneNumber : ''],
-      paymentCycle: [closureData ? closureData.paymentCycle : ''],
-    });
-
-    console.log(this.closureForm.value);
 
     this.interviewForm.get('interviewstatus').valueChanges.subscribe((res: any) => {
-      const visaValidity = this.closureForm.get('visaValidity');
-      const projectStartDate = this.closureForm.get('projectStartDate');
-      const projectDuration = this.closureForm.get('projectDuration');
-      const payRateConsultant = this.closureForm.get('payRateConsultant');
-      const billRateVendor = this.closureForm.get('billRateVendor');
-      const vendorArPhoneNumber = this.closureForm.get('vendorArPhoneNumber');
-      const billingCycle = this.closureForm.get('billingCycle');
-      const paymentCycle = this.closureForm.get('paymentCycle');
-      const projectendtdate = this.closureForm.get('projectendtdate');
+      const visaValidity = this.interviewForm.get('closure.visaValidity');
+      const projectStartDate = this.interviewForm.get('closure.projectStartDate');
+      const projectDuration = this.interviewForm.get('closure.projectDuration');
+      const payRateConsultant = this.interviewForm.get('closure.payRateConsultant');
+      const billRateVendor = this.interviewForm.get('closure.billRateVendor');
+      const vendorArPhoneNumber = this.interviewForm.get('closure.vendorArPhoneNumber');
+      const billingCycle = this.interviewForm.get('closure.billingCycle');
+      const paymentCycle = this.interviewForm.get('closure.paymentCycle');
+      const projectendtdate = this.interviewForm.get('closure.projectendtdate');
       if (res == "OnBoarded") {
         visaValidity.setValidators(Validators.required);
         projectStartDate.setValidators(Validators.required);
@@ -265,6 +245,17 @@ export class AddInterviewComponent implements OnInit {
       this.displayFormErrors();
       return;
     }
+    if (this.interviewForm.get('interviewstatus').value === "OnBoarded") {
+      const visaValidityFormControl = this.interviewForm.get('closure.visaValidity');
+      const projectStartFormControl = this.interviewForm.get('closure.projectStartDate');
+      const projectEndFormControl = this.interviewForm.get('closure.projectendtdate')
+      const formattedVisaValidity = this.datePipe.transform(visaValidityFormControl.value, 'yyyy-MM-dd');
+      const formattedProjectStart = this.datePipe.transform(projectStartFormControl.value, 'yyyy-MM-dd');
+      const formattedProjectEnd = this.datePipe.transform(projectEndFormControl.value, 'yyyy-MM-dd');
+      visaValidityFormControl.setValue(formattedVisaValidity);
+      projectStartFormControl.setValue(formattedProjectStart);
+      projectEndFormControl.setValue(formattedProjectEnd);
+    }
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',
       duration: 2500,
@@ -273,7 +264,6 @@ export class AddInterviewComponent implements OnInit {
       direction: 'above',
       panelClass: ['custom-snack-success'],
     };
-    console.log(this.closureForm.value);
     const saveReqObj = this.getSaveData();
     this.interviewServ
       .addORUpdateInterview(saveReqObj,this.data.actionName)
@@ -285,28 +275,6 @@ export class AddInterviewComponent implements OnInit {
               this.data.actionName === 'add-interview'
                 ? 'Interview added successfully'
                 : 'Interview updated successfully';
-            if (resp.data.interviewstatus === "OnBoarded") {
-              const visaValidityFormControl = this.closureForm.get('visaValidity');
-              const projectStartFormControl = this.closureForm.get('projectStartDate');
-              const projectEndFormControl = this.closureForm.get('projectendtdate')
-              const formattedVisaValidity = this.datePipe.transform(visaValidityFormControl.value, 'yyyy-MM-dd');
-              const formattedProjectStart = this.datePipe.transform(projectStartFormControl.value, 'yyyy-MM-dd');
-              const formattedProjectEnd = this.datePipe.transform(projectEndFormControl.value, 'yyyy-MM-dd');
-              visaValidityFormControl.setValue(formattedVisaValidity);
-              projectStartFormControl.setValue(formattedProjectStart);
-              projectEndFormControl.setValue(formattedProjectEnd);
-              console.log(this.closureForm.value);
-              this.interviewServ.addClosure(this.closureForm.value).subscribe({
-                next: (response) => {
-                  console.log("Closure Added Successfully",);
-                },
-                error: (err) => {
-                  console.error("Error adding closure", err);
-
-                }
-              });
-
-            }
             this.dialogRef.close();
           } else {
             dataToBeSentToSnackBar.message = resp.message ? resp.message : 'Interview already Exists';
@@ -367,7 +335,7 @@ export class AddInterviewComponent implements OnInit {
 }
 
 export const TIME_ZONE = [
-  'AST', 'EST', 'EDT', 'CST', 'CDT', 'MST', 'MDT', 'PST', 'PDT', 'AKST', 'AKDT', 'HST', 'HAST', 'HADT', 'SST', 'SDT', 'CHST', 'IST'
+  'AST', 'EST', 'EDT', 'CST', 'CDT', 'MST', 'MDT', 'PST', 'PDT', 'AKST', 'AKDT', 'HST', 'HAST', 'HADT', 'SST', 'SDT', 'CHST'
 ] as const;
 
 export const RADIO_OPTIONS = {
