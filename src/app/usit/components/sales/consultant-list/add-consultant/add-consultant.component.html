@@ -160,8 +160,8 @@
         </mat-form-field>
 
         <!-- status -->
-        <mat-form-field appearance="fill" *ngIf="flag=='presales'">
-          <mat-label>Select Status {{consultantForm.get('status').value}}</mat-label>
+        <mat-form-field appearance="fill" *ngIf="flag=='presales' || data.actionName == 'edit-consultant'">
+          <mat-label>Select Status</mat-label>
           <mat-select formControlName="status">
             <mat-option *ngFor="let option of selectOptionObj.statusType" [value]="option">
               {{ option }}
@@ -505,7 +505,7 @@
               (click)="downloadfile(entity.consultantid,entity.h1bcopy,'h1b')">{{entity.h1bcopy}}</a>
           </td>
           <td *ngIf="entity.h1bcopy !==null ">
-            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'h1b')">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'h1bcopy')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>

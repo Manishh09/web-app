@@ -35,7 +35,7 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
   id!: number;
   RoleName!: string;
   entity = new Privilege();
-  selectedRoles: any[] = [];
+  role: any[] = [];
   type: string[] = [];
   name!: string;
   vendor: any[] = [];
@@ -44,15 +44,18 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
   consultant: any[] = [];
   visa: any[] = [];
   configuration: any[] = [];
+  taskmanagement: any[] = [];
+  //taskmanagement
   qualification: any[] = [];
+  kpt: any[] = [];
+  requirement: any[] = [];
   technology_tags: any[] = [];
   immigration: any[] = [];
-  userprev: any[] = [];
-  pre_sales: any[] = [];
-  s_sales: any[] = [];
-  s_submission: any[] = [];
-  s_interviews: any[] = [];
+  users: any[] = [];
+  submission: any[] = [];
+  interview: any[] = [];
   privilegResp: any[] = [];
+  company: any[] = [];
    // snackbar
    dataToBeSentToSnackBar: ISnackBarData = {
     message: '',
@@ -93,13 +96,19 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
         this.visa = response.data.visa;
         this.configuration = response.data.configuration;
         this.qualification = response.data.qualification;
+        //taskmanagement
+        this.requirement =  response.data.requirement;
+        this.kpt =  response.data.kpt;
+        this.role =  response.data.role;
+        this.company =  response.data.company;
+       // console.log(this.company)
+        this.taskmanagement = response.data.taskmanagement;
         this.technology_tags = response.data.technology_tag;
         this.immigration = response.data.immigration;
-        this.userprev = response.data.user;
-        this.pre_sales = response.data.pre_sales;
-        this.s_sales = response.data.s_sales;
-        this.s_submission = response.data.s_submission;
-        this.s_interviews = response.data.s_interview;
+        this.users = response.data.user;
+        this.submission = response.data.submission;
+        //console.log(this.submission)
+        this.interview = response.data.interview;
         this.selecedPrivileges();
         this.mapResponseData();
       });
@@ -109,9 +118,16 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
     this.privilegResp.push(
       {
         title: 'User',
-        privileges: this.userprev,
-        isSelected: this.userprev
-          ? this.userprev.every((priv: any) => priv.selected === true)
+        privileges: this.users,
+        isSelected: this.users
+          ? this.users.every((priv: any) => priv.selected === true)
+          : false,
+      },
+      {
+        title: 'Role',
+        privileges: this.role,
+        isSelected: this.role
+          ? this.role.every((priv: any) => priv.selected === true)
           : false,
       },
       {
@@ -150,10 +166,10 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
           : false,
       },
       {
-        title: 'Pre-Sales',
-        privileges: this.pre_sales,
-        isSelected: this.pre_sales
-          ? this.pre_sales.every((priv: any) => priv.selected === true)
+        title: 'Company',
+        privileges: this.company,
+        isSelected: this.company
+          ? this.company.every((priv: any) => priv.selected === true)
           : false,
       },
       {
@@ -165,16 +181,16 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
       },
       {
         title: 'Submission',
-        privileges: this.s_submission,
-        isSelected: this.consultant
-          ? this.consultant.every((priv: any) => priv.selected === true)
+        privileges: this.submission,
+        isSelected: this.submission
+          ? this.submission.every((priv: any) => priv.selected === true)
           : false,
       },
       {
         title: 'Interview',
-        privileges: this.s_interviews,
-        isSelected: this.s_interviews
-          ? this.s_interviews.every((priv: any) => priv.selected === true)
+        privileges: this.interview,
+        isSelected: this.interview
+          ? this.interview.every((priv: any) => priv.selected === true)
           : false,
       },
       {
@@ -190,7 +206,31 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
         isSelected: this.qualification
           ? this.qualification.every((priv: any) => priv.selected === true)
           : false,
+      },
+      {
+        title: 'Requirement',
+        privileges: this.requirement,
+        isSelected: this.requirement
+          ? this.requirement.every((priv: any) => priv.selected === true)
+          : false,
+      },
+      {
+        title: 'KPT',
+        privileges: this.kpt,
+        isSelected: this.kpt
+          ? this.kpt.every((priv: any) => priv.selected === true)
+          : false,
+      },
+      //requirement
+      {
+        title: 'Task Management',
+        privileges: this.taskmanagement,
+        isSelected: this.taskmanagement
+          ? this.taskmanagement.every((priv: any) => priv.selected === true)
+          : false,
       }
+
+      //taskmanagement
     );
   }
 
@@ -212,12 +252,23 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
             });
           });
         }
-        if (this.userprev != null) {
-          this.userprev.forEach((userele) => {
+        if (this.users != null) {
+          this.users.forEach((userele) => {
             response.data.user.forEach((userresp: any) => {
               if (userele.id === userresp.id) {
                 this.entity.privilegeIds.push(userresp.id);
                 userele.selected = true;
+              }
+            });
+          });
+        }
+
+        if (this.role != null) {
+          this.role.forEach((role) => {
+            response.data.role.forEach((userresp: any) => {
+              if (role.id === userresp.id) {
+                this.entity.privilegeIds.push(userresp.id);
+                role.selected = true;
               }
             });
           });
@@ -265,9 +316,10 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
             });
           });
         }
-        if (this.pre_sales != null) {
-          this.pre_sales.forEach((ele) => {
-            response.data.pre_sales.forEach((resp: any) => {
+
+        if (this.consultant != null) {
+          this.consultant.forEach((ele) => {
+            response.data.consultant.forEach((resp: any) => {
               if (ele.id === resp.id) {
                 this.entity.privilegeIds.push(resp.id);
                 ele.selected = true;
@@ -275,9 +327,10 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
             });
           });
         }
-        if (this.s_sales != null) {
-          this.s_sales.forEach((ele) => {
-            response.data.s_sales.forEach((resp: any) => {
+
+        if (this.interview != null) {
+          this.interview.forEach((ele) => {
+            response.data.interview.forEach((resp: any) => {
               if (ele.id === resp.id) {
                 this.entity.privilegeIds.push(resp.id);
                 ele.selected = true;
@@ -285,9 +338,10 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
             });
           });
         }
-        if (this.s_submission != null) {
-          this.s_submission.forEach((ele) => {
-            response.data.s_submission.forEach((resp: any) => {
+
+        if (this.visa != null) {
+          this.visa.forEach((ele) => {
+            response.data.visa.forEach((resp: any) => {
               if (ele.id === resp.id) {
                 this.entity.privilegeIds.push(resp.id);
                 ele.selected = true;
@@ -295,9 +349,45 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
             });
           });
         }
-        if (this.s_interviews != null) {
-          this.s_interviews.forEach((ele) => {
-            response.data.s_interview.forEach((resp: any) => {
+
+        if (this.submission != null) {
+          this.submission.forEach((ele) => {
+            response.data.submission.forEach((resp: any) => {
+              if (ele.id === resp.id) {
+                this.entity.privilegeIds.push(resp.id);
+                ele.selected = true;
+              }
+            });
+          });
+        }
+
+      
+//requirement
+        if (this.qualification != null) {
+          this.qualification.forEach((ele) => {
+            response.data.qualification.forEach((resp: any) => {
+              if (ele.id === resp.id) {
+                this.entity.privilegeIds.push(resp.id);
+                ele.selected = true;
+              }
+            });
+          });
+        }
+        if (this.taskmanagement != null) {
+          this.taskmanagement.forEach((ele) => {
+            response.data.taskmanagement.forEach((resp: any) => {
+              if (ele.id === resp.id) {
+                this.entity.privilegeIds.push(resp.id);
+                ele.selected = true;
+              }
+            });
+          });
+        }
+        //taskmanagement
+       
+        if (this.interview != null) {
+          this.interview.forEach((ele) => {
+            response.data.interview.forEach((resp: any) => {
               if (ele.id === resp.id) {
                 this.entity.privilegeIds.push(resp.id);
                 ele.selected = true;
@@ -315,9 +405,42 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
             });
           });
         }
+        if (this.requirement != null) {
+          this.requirement.forEach((ele) => {
+            response.data.requirement.forEach((resp: any) => {
+              if (ele.id === resp.id) {
+                this.entity.privilegeIds.push(resp.id);
+                ele.selected = true;
+              }
+            });
+          });
+        }
+
+        if (this.kpt != null) {
+          this.kpt.forEach((ele) => {
+            response.data.kpt.forEach((resp: any) => {
+              if (ele.id === resp.id) {
+                this.entity.privilegeIds.push(resp.id);
+                ele.selected = true;
+              }
+            });
+          });
+        }
+        //requirement
         if (this.qualification != null) {
           this.qualification.forEach((ele) => {
             response.data.qualification.forEach((resp: any) => {
+              if (ele.id === resp.id) {
+                this.entity.privilegeIds.push(resp.id);
+                ele.selected = true;
+              }
+            });
+          });
+        }
+
+        if (this.company != null) {
+          this.company.forEach((ele) => {
+            response.data.company.forEach((resp: any) => {
               if (ele.id === resp.id) {
                 this.entity.privilegeIds.push(resp.id);
                 ele.selected = true;
