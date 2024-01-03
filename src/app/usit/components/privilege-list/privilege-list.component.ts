@@ -465,12 +465,11 @@ export class PrivilegeListComponent implements OnInit, OnDestroy {
       } else {
         ele.selected = false;
         card.isSelected = false;
-        this.entity.privilegeIds = []
-        // this.entity.privilegeIds.forEach((id, index) => {
-        //   if (ele.id === id) {
-        //     this.entity.privilegeIds?.splice(index, 1);
-        //   }
-        // });
+        this.entity.privilegeIds.forEach((id, index) => {
+          if (ele.id === id) {
+            this.entity.privilegeIds?.splice(index, 1);
+          }
+        });
       }
       this.entity.privilegeIds = [...new Set(this.entity.privilegeIds)]
     });

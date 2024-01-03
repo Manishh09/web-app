@@ -13,6 +13,7 @@ export class DialogService {
   constructor(private dialog:  MatDialog) { }
 
   openDialogWithComponent(comp: ComponentType<any> , dialogConfig: MatDialogConfig){
+    dialogConfig.disableClose = true;
     return this.dialog.open(comp, dialogConfig);
 
   }
