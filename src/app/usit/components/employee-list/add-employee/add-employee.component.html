@@ -156,7 +156,7 @@
           <mat-label>Select Department</mat-label>
           <input matInput formControlName="department" [matAutocomplete]="departmentAuto">
           <mat-autocomplete #departmentAuto="matAutocomplete">
-            <mat-option *ngFor="let option of departmentOptions" [value]="option">
+            <mat-option *ngFor="let option of filteredDepartmentOptions | async" [value]="option">
               {{ option }}
             </mat-option>
           </mat-autocomplete>
@@ -164,19 +164,21 @@
             Deparment</mat-error>
         </mat-form-field>
         <!-- Select Role with MatAutoComplete-->
-        <mat-form-field appearance="fill" *ngIf="false">
+        <div formGroupName="role" class="select-role-field">
+        <mat-form-field appearance="fill" >
           <mat-label>Select Role</mat-label>
-          <input matInput formGroupName="role" [matAutocomplete]="roleAuto">
+          <input matInput formControlName="rolename" [matAutocomplete]="roleAuto">
           <mat-autocomplete #roleAuto="matAutocomplete">
-            <mat-option *ngFor="let option of roleOptions" [value]="option.roleid">
+            <mat-option *ngFor="let option of filteredRoleOptions | async" [value]="option.rolename">
               {{ option.rolename }}
             </mat-option>
           </mat-autocomplete>
-          <mat-error *ngIf="employeeForm.get('role.roleid').hasError('required')">Role is
+          <mat-error *ngIf="employeeForm.get('role.rolename').hasError('required')">Role is
             Required</mat-error>
         </mat-form-field>
-        <!-- Select Role with MatSelect-->
-        <div formGroupName="role" class="select-role-field">
+        </div>
+        <!-- Select Role with MatSelect -->
+        <div formGroupName="role" class="select-role-field" *ngIf="false">
           <mat-form-field appearance="fill">
             <mat-label>Select Role</mat-label>
             <mat-select name="role" formControlName="roleid">

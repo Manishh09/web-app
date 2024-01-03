@@ -131,10 +131,16 @@ td:nth-child(2) {
 
 .table-style {
   width: 100%;
-  height: calc(100% - 86px);
-  overflow: auto;
+  max-height: 61svh;
+  overflow-y: auto;
+  overflow-x: hidden;
+
 }
 
+.action-btns{
+  display: flex;
+  flex-direction: row;
+}
 .mat-mdc-header-row  {
   z-index: 1000;
 }
@@ -206,14 +212,14 @@ td:nth-child(2) {
 
 
 .mat-mdc-header-row {
-  height: 30px !important; 
+  height: 30px !important;
 }
 
 .mat-mdc-row {
-  height: 30px !important; 
+  height: 30px !important;
 }
 
 ul.breadcrumb li:last-child {
   color: black;
-  pointer-events: none; 
+  pointer-events: none;
 }
