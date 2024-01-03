@@ -14,7 +14,7 @@ export class InterviewInfo {
     recmaxno!: string;
     round!: string;
     salesmaxno!: string;
-    submission= new SubmissionInfo();
+    submission!: number;
     timezone!: string;
     updatedby = localStorage.getItem('userid');
     users = new Employee();

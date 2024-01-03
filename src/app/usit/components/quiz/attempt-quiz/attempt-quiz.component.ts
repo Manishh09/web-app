@@ -175,8 +175,8 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
     if (event) {
       const formArr = this.quizForm.controls.options;
       const userAnsControl = formArr.controls[questId]?.get('userans');
-      const answerControl = formArr.controls[questId]?.get('answer');
-      answerControl?.patchValue(event.value);
+      // const answerControl = formArr.controls[questId]?.get('answer');
+      // answerControl?.patchValue(event.value);
       userAnsControl?.patchValue(event.value);
     }
   }
