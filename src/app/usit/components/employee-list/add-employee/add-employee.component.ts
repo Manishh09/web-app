@@ -427,11 +427,11 @@ export class AddEmployeeComponent {
       joiningDateFormControl.setValue(formattedJoiningDate);
       relievingDateFormControl.setValue(formattedRelievingDate);
     }
-    const role: any = { roleid: this.roleOptions.find( (role: any) => role.rolename.toLocaleLowerCase() === this.employeeForm.controls.role.controls.rolename.value.toLocaleLowerCase()).roleid};
     if (this.employeeForm.invalid) {
       this.displayFormErrors();
       return;
     }
+    const role: any = { roleid: this.roleOptions.find( (role: any) => role.rolename.toLocaleLowerCase() === this.employeeForm.controls.role.controls.rolename.value.toLocaleLowerCase()).roleid};
     // updates employee object form values
     if (this.data.actionName === "edit-employee") {
       [this.employeeForm.value].forEach((formVal, idx) => {
