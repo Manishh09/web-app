@@ -193,7 +193,7 @@ export class AddSubmissionComponent implements OnInit{
       flg: [this.data.flag ? this.data.flag.toLocaleLowerCase() : ''],
       // user: [submissionData ? submissionData.user: ''],
       submissionid: [submissionData ? submissionData.submissionid: ''],
-      updatedby: [this.data.actionName === "edit-submission" ?  submissionData.updatedby : '0'],
+      updatedby: [this.data.actionName === "edit-submission" ?  localStorage.getItem('userid') : '0'],
       status: [this.data.actionName === "edit-submission" ?  submissionData.status : 'Active'],
       remarks: [submissionData ? submissionData.remarks: ''],
       substatus: [this.data.actionName === "edit-submission" ?  submissionData.substatus : 'Submitted'],

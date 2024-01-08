@@ -162,12 +162,13 @@ export class AddInterviewComponent implements OnInit {
       mode: [interviewData ? interviewData.mode : '', Validators.required],
       feedback: [interviewData ? interviewData.feedback : '', Validators.required],
       interviewstatus: [interviewData ? interviewData.interviewstatus : '', [Validators.required]],
-      users:localStorage.getItem('userid'),
-      interviewno: [this.data.actionName === "edit-interview" ?  interviewData.interviewno : ''],
+      users: localStorage.getItem('userid'),
+      interviewno: [this.data.actionName === "edit-interview" ? interviewData.interviewno : ''],
+      updatedby: [this.data.actionName === "edit-interview" ? localStorage.getItem('userid') : '0'],
       intrid: [interviewData ? interviewData.intrid : ''],
       closure: this.formBuilder.group({
         interviewid: [this.intId],
-        closureid: [interviewData && interviewData.closure ? interviewData.closure.closureid: ''],
+        closureid: [interviewData && interviewData.closure ? interviewData.closure.closureid : ''],
         visaValidity: [interviewData && interviewData.closure ? interviewData.closure.visaValidity : ''],
         projectDuration: [interviewData && interviewData.closure ? interviewData.closure.projectDuration : ''],
         billRateVendor: [interviewData && interviewData.closure ? interviewData.closure.billRateVendor : ''],
@@ -177,6 +178,9 @@ export class AddInterviewComponent implements OnInit {
         payRateConsultant: [interviewData && interviewData.closure ? interviewData.closure.payRateConsultant : ''],
         vendorArPhoneNumber: [interviewData && interviewData.closure ? interviewData.closure.vendorArPhoneNumber : ''],
         paymentCycle: [interviewData && interviewData.closure ? interviewData.closure.paymentCycle : ''],
+        vendorApPhoneNumber: this.flag === 'Recruiting' ?
+          this.formBuilder.control(interviewData && interviewData.closure ? interviewData.closure.vendorApPhoneNumber : '') :
+          null,
       })
     });
 
@@ -190,7 +194,8 @@ export class AddInterviewComponent implements OnInit {
       const billingCycle = this.interviewForm.get('closure.billingCycle');
       const paymentCycle = this.interviewForm.get('closure.paymentCycle');
       const projectendtdate = this.interviewForm.get('closure.projectendtdate');
-      if (res == "OnBoarded") {
+      const vendorApPhoneNumber = this.interviewForm.get('closure.vendorApPhoneNumber');
+      if (res == "OnBoarded" && localStorage.getItem('department') == "Accounts") {
         visaValidity.setValidators(Validators.required);
         projectStartDate.setValidators(Validators.required);
         projectDuration.setValidators(Validators.required);
@@ -199,7 +204,12 @@ export class AddInterviewComponent implements OnInit {
         vendorArPhoneNumber.setValidators(Validators.required);
         billingCycle.setValidators(Validators.required);
         paymentCycle.setValidators(Validators.required);
-        projectendtdate.setValidators(Validators.required);
+        // projectendtdate.setValidators(Validators.required);
+        vendorApPhoneNumber.setValidators(Validators.required);
+      } else if (res == "OnBoarded" && localStorage.getItem('department') !== "Accounts"){
+        projectStartDate.setValidators(Validators.required);
+        projectDuration.setValidators(Validators.required);
+        billRateVendor.setValidators(Validators.required);
       }
       else {
         visaValidity.clearValidators();
@@ -210,7 +220,8 @@ export class AddInterviewComponent implements OnInit {
         vendorArPhoneNumber.clearValidators();
         billingCycle.clearValidators();
         paymentCycle.clearValidators();
-        projectendtdate.clearValidators();
+        // projectendtdate.clearValidators();
+        vendorApPhoneNumber.clearValidators();
       }
       visaValidity.updateValueAndValidity();
       projectStartDate.updateValueAndValidity();
@@ -220,7 +231,7 @@ export class AddInterviewComponent implements OnInit {
       vendorArPhoneNumber.updateValueAndValidity();
       billingCycle.updateValueAndValidity();
       paymentCycle.updateValueAndValidity();
-      projectendtdate.updateValueAndValidity();
+      // projectendtdate.updateValueAndValidity();
     });
   }
 
@@ -335,7 +346,7 @@ export class AddInterviewComponent implements OnInit {
 }
 
 export const TIME_ZONE = [
-  'AST', 'EST', 'EDT', 'CST', 'CDT', 'MST', 'MDT', 'PST', 'PDT', 'AKST', 'AKDT', 'HST', 'HAST', 'HADT', 'SST', 'SDT', 'CHST', 'IST'
+  'AST', 'EST', 'EDT', 'CST', 'CDT', 'MST', 'MDT', 'PST', 'PDT', 'AKST', 'AKDT', 'HST', 'HAST', 'HADT', 'SST', 'SDT', 'CHST'
 ] as const;
 
 export const RADIO_OPTIONS = {

@@ -101,6 +101,7 @@ export class InterviewListComponent implements OnInit, OnDestroy{
   private dialogServ = inject(DialogService);
   private router = inject(Router);
   protected privilegeServ = inject(PrivilegesService);
+  private snackBarServ = inject(SnackBarService);
    // to clear subscriptions
    private destroyed$ = new Subject<void>();
   ngOnInit(): void {
@@ -182,6 +183,59 @@ export class InterviewListComponent implements OnInit, OnDestroy{
          this.getAll(this.currentPageIndex + 1);
       }
     })
+  }
+
+  deleteInterview(interview: any) {
+    const dataToBeSentToDailog: Partial<IConfirmDialogData> = {
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      actionData: interview,
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = 'fit-content';
+    dialogConfig.height = 'auto';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'delete-interview';
+    dialogConfig.data = dataToBeSentToDailog;
+    const dialogRef = this.dialogServ.openDialogWithComponent(
+      ConfirmComponent,
+      dialogConfig
+    );
+
+    // call delete api after  clicked 'Yes' on dialog click
+
+    dialogRef.afterClosed().subscribe({
+      next: (resp) => {
+        if (dialogRef.componentInstance.allowAction) {
+          const dataToBeSentToSnackBar: ISnackBarData = {
+            message: '',
+            duration: 1500,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            direction: 'above',
+            panelClass: ['custom-snack-success'],
+          };
+
+          this.interviewServ.deleteEntity(interview.intrid).pipe(takeUntil(this.destroyed$))
+          .subscribe({next:(response: any) => {
+            if (response.status == 'Success') {
+              this.getAll();
+              dataToBeSentToSnackBar.message = 'Interview Deleted successfully';
+            } else {
+              dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+              dataToBeSentToSnackBar.message = 'Record Deletion failed';
+            }
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }, error: (err: any) => {
+            dataToBeSentToSnackBar.message = err.message;
+            dataToBeSentToSnackBar.panelClass = ['custom-snack-failure'];
+            this.snackBarServ.openSnackBarFromComponent(dataToBeSentToSnackBar);
+          }});
+        }
+      },
+    });
   }
 
   onFilter(event: any) {

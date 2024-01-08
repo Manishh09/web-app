@@ -17,7 +17,7 @@ export class InterviewInfo {
     submission!: number;
     timezone!: string;
     updatedby = localStorage.getItem('userid');
-    users = new Employee();
+    users !: number;
     createddate!:string;
 	updateddate!:string;
     status!:string;

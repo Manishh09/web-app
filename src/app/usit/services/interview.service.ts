@@ -54,4 +54,8 @@ export class InterviewService {
   getClosureByIntId(id: number) {
     return this.apiServ.get("billpay/getByInterviewId/" + id);
   }
+
+  getOnboardedDetails(flg: string) {
+    return this.apiServ.get("interview/getOnboardedDetails/" + flg);
+  }
 }

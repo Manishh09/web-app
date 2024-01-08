@@ -160,7 +160,7 @@
         </mat-form-field>
 
         <!-- status -->
-        <mat-form-field appearance="fill" *ngIf="flag=='presales' || data.actionName == 'edit-consultant'">
+        <mat-form-field appearance="fill">
           <mat-label>Select Status</mat-label>
           <mat-select formControlName="status">
             <mat-option *ngFor="let option of selectOptionObj.statusType" [value]="option">
@@ -288,7 +288,7 @@
             </mat-select>
             <button matSuffix mat-icon-button (click)="onAddQualification();$event.preventDefault();$event.stopImmediatePropagation()"><mat-icon>add</mat-icon></button>
 
-            <mat-error *ngIf="consultantForm.get('qualification')!.hasError('required')">Qualifications
+            <mat-error *ngIf="consultantForm.get('qualification')!.hasError('required')">Qualification is
               required
             </mat-error>
           </mat-form-field>
@@ -297,10 +297,6 @@
         <mat-form-field appearance="fill">
           <mat-label>University</mat-label>
           <input matInput formControlName="university" maxlength="80">
-          <mat-error *ngIf="consultantForm.get('university')!.hasError('required')">University
-            is
-            required</mat-error>
-
         </mat-form-field>
 
       </div>
@@ -516,7 +512,7 @@
               (click)="downloadfile(entity.consultantid,entity.dlcopy,'dl')">{{entity.dlcopy}}</a>
           </td>
           <td *ngIf="entity.dlcopy !==null ">
-            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'dl')">
+            <button mat-icon-button type="button" class="action-button-ed" (click)="deletefile(entity.consultantid,'dlcopy')">
               <mat-icon>delete</mat-icon>
             </button>
           </td>

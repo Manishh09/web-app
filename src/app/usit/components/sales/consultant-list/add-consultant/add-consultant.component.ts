@@ -225,7 +225,7 @@ export class AddconsultantComponent implements OnInit, OnDestroy {
       currentlocation: [consultantData ? consultantData.currentlocation : '', Validators.required],
       summary: [consultantData ? consultantData.summary : ''],
       qualification: [consultantData ? consultantData.qualification : '', Validators.required],
-      university: [consultantData ? consultantData.university : '', Validators.required],
+      university: [consultantData ? consultantData.university : ''],
       yop: [consultantData ? consultantData.yop : ''],
       emprefname: [consultantData ? consultantData.emprefname : ''],
       //emprefemail: new FormControl(consultantData ? consultantData.emprefemail : ''),

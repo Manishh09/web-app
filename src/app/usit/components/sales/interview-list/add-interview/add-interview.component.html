@@ -172,6 +172,12 @@
               <input type="text" matInput formControlName="vendorArPhoneNumber">
               <mat-error *ngIf="interviewForm.get('closure.vendorArPhoneNumber')!.hasError('required')"> Vendor AR Contact is required</mat-error>
             </mat-form-field>
+
+            <mat-form-field *ngIf="flag === 'Recruiting'">
+              <mat-label>Vendor Ap Contact</mat-label>
+              <input type="text" matInput formControlName="vendorApPhoneNumber">
+              <mat-error *ngIf="interviewForm.get('closure.vendorApPhoneNumber')!.hasError('required')"> Vendor AP Contact is required</mat-error>
+            </mat-form-field>
   
             <mat-form-field>
               <mat-label>Payment Cycle</mat-label>

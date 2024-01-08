@@ -121,6 +121,9 @@
                         <button [disabled]="!privilegeServ.hasPrivilege('EDIT_INTERVIEWS')" mat-icon-button (click)="editInterview(interview)" class="action-button-ed">
                             <mat-icon [ngClass]="{'edit-icon': privilegeServ.hasPrivilege('EDIT_INTERVIEWS')}">edit</mat-icon>
                         </button>
+                        <button mat-icon-button (click)="deleteInterview(interview)" class="action-button-ed">
+                            <mat-icon [ngClass]="'delete-icon'">delete</mat-icon>
+                        </button>
                     </td>
                 </ng-container>
 
