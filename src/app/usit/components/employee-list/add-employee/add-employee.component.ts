@@ -159,7 +159,17 @@ export class AddEmployeeComponent {
             this.getTeamLead(managerId);
             this.initilizeAddEmployeeForm(this.empObj);
             this.validateControls();
-
+            const roleId = response.data.role.roleid;
+            if ( roleId == 5 || roleId == 6 ) {
+              this.managerflg = true;
+              this.teamleadflg = false;
+            } else if (roleId == 7 || roleId == 8) {
+              this.managerflg = true;
+              this.teamleadflg = true;
+            } else {
+              this.managerflg = false;
+              this.teamleadflg = false;
+            }
           }
         })
     } else {
@@ -169,7 +179,7 @@ export class AddEmployeeComponent {
     }
     // common for add employee
     // this.validateControls();
-   this.optionsMethod();
+    this.optionsMethod();
 
 
   }
@@ -228,12 +238,9 @@ export class AddEmployeeComponent {
       teamlead: [employeeData ? employeeData.teamlead : ''],
       // role: [employeeData ? employeeData.role.rolename : '', Validators.required],
       role: this.formBuilder.group({
-        rolename: new FormControl(employeeData ? employeeData.role.rolename : '', [
+        roleid: new FormControl(employeeData ? employeeData.role.roleid : '', [
           Validators.required
         ]),
-        // roleid: new FormControl(employeeData ? employeeData.role.roleid : '', [
-        //   Validators.required
-        // ]),
       })
     });
 
@@ -251,15 +258,14 @@ export class AddEmployeeComponent {
       pseudoname.updateValueAndValidity();
     });
     // for manager validation
-    this.employeeForm.get('role.rolename').valueChanges.subscribe((res: any) => {
+    this.employeeForm.get('role.roleid').valueChanges.subscribe((res: any) => {
       const manager = this.employeeForm.get('manager');
       const tl = this.employeeForm.get('teamlead');
-      const roleid = this.roleOptions.find((role: any)=> role.rolename.toLocaleLowerCase() === res.toLocaleLowerCase()).roleid;
-      if (roleid === 5 || res === 6) {
+      if (res == 5 || res == 6) {
         this.managerflg = true;
         this.teamleadflg = false;
         manager.setValidators(Validators.required);
-      } else if (roleid === 7 || roleid === 8) { // role id: 7, 8 -??
+      } else if (res == 7 || res == 8) {
         this.managerflg = true;
         this.teamleadflg = true;
         manager.setValidators(Validators.required);
@@ -282,7 +288,7 @@ export class AddEmployeeComponent {
 
     if (type === "roles") {
       this.filteredRoleOptions =
-        this.employeeForm.controls.role.controls.rolename.valueChanges.pipe(
+        this.employeeForm.controls.role.valueChanges.pipe(
           startWith(''),
           map((value: any) => {
             const name = typeof value === 'string' ? value : value?.name;
@@ -291,7 +297,7 @@ export class AddEmployeeComponent {
 
           )
         );
-
+      return
     } else if (type === "manager") {
       this.filteredManagerOptions =
         this.employeeForm.controls.manager.valueChanges.pipe(
@@ -306,7 +312,8 @@ export class AddEmployeeComponent {
       this.filteredDepartmentOptions =
         this.employeeForm.controls.department.valueChanges.pipe(
           startWith(''),
-          map((value: any) =>  this._filterOptions(value || '', this.departmentOptions.slice())
+          map((value: any) =>
+            this._filterOptions(value || '', this.departmentOptions)
           )
         );
     } else {
@@ -348,9 +355,8 @@ export class AddEmployeeComponent {
         next: (response: any) => {
           this.rolearr = response.data;
           this.roleOptions = response.data;
-          //roles: auto-complete -
-          this.optionsMethod("roles");
-          this.optionsMethod("department")
+          //TBD: auto-complete -
+          // this.optionsMethod("roles")
         },
         error: (err) => {
           this.dataTobeSentToSnackBarService.message = err.message;
@@ -372,8 +378,8 @@ export class AddEmployeeComponent {
         next: (response: any) => {
           this.managerarr = response.data;
           this.managerOptions = response.data;
-          //manager: auto-complete -
-        //  this.optionsMethod("manager")
+          //TBD: auto-complete -
+          //  this.optionsMethod("manager")
         },
         error: (err) => {
           this.dataTobeSentToSnackBarService.message = err.message;
@@ -402,8 +408,8 @@ export class AddEmployeeComponent {
         next: (response: any) => {
           this.tlarr = response.data;
           this.teamLeadOptions = response.data;
-          // teamLead: autocomplete
-        //  this.optionsMethod("teamLead")
+          // TBD autocomplete:
+          // this.optionsMethod("teamLead")
         },
         error: (err) => {
           this.dataTobeSentToSnackBarService.message = err.message;
@@ -431,7 +437,6 @@ export class AddEmployeeComponent {
       this.displayFormErrors();
       return;
     }
-    const role: any = { roleid: this.roleOptions.find( (role: any) => role.rolename.toLocaleLowerCase() === this.employeeForm.controls.role.controls.rolename.value.toLocaleLowerCase()).roleid};
     // updates employee object form values
     if (this.data.actionName === "edit-employee") {
       [this.employeeForm.value].forEach((formVal, idx) => {
@@ -455,10 +460,10 @@ export class AddEmployeeComponent {
         this.empObj.ifsc = formVal.ifsc;
         this.empObj.branch = formVal.branch;
         this.empObj.teamlead = formVal.teamlead;
-        this.empObj.role = role;
+        this.empObj.role = formVal.role;
       })
     }
-    const saveObj = this.data.actionName === "edit-employee" ? this.empObj : {...this.employeeForm.value, role: { roleid: role.roleid}};
+    const saveObj = this.data.actionName === "edit-employee" ? this.empObj : this.employeeForm.value;
     //this.uploadFileOnSubmit(1);
     this.empManagementServ.addOrUpdateEmployee(saveObj, this.data.actionName).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (data: any) => {
