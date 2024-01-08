@@ -63,6 +63,11 @@
           "text": "Interviews",
           "icon": "chat_bubble_outline",
           "routerLink": "/usit/sales-interviews"
+        },
+        {
+          "text": "Closures",
+          "icon": "check_circle",
+          "routerLink": "/usit/sales-closures"
         }
       ]
     },
@@ -89,6 +94,11 @@
           "text": "Interviews",
           "icon": "chat_bubble_outline",
           "routerLink": "/usit/rec-interviews"
+        },
+        {
+          "text": "Closures",
+          "icon": "check_circle",
+          "routerLink": "/usit/rec-closures"
         }
       ]
     },
@@ -115,6 +125,11 @@
           "text": "Interviews",
           "icon": "chat_bubble_outline",
           "routerLink": "/usit/dom-interview"
+        },
+        {
+          "text": "Closures",
+          "icon": "check_circle",
+          "routerLink": "/usit/dom-closures"
         }
       ]
     },
@@ -167,6 +182,5 @@
           "routerLink": "/usit/quiz-result"
         }
       ]
-
     }
   ]

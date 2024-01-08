@@ -18,6 +18,7 @@ import { AttemptQuizComponent } from './components/quiz/attempt-quiz/attempt-qui
 import { QuizListComponent } from './components/quiz/quiz-list/quiz-list.component';
 import { PrivilegeListComponent } from './components/privilege-list/privilege-list.component';
 import { QuizResultComponent } from './components/quiz/quiz-result/quiz-result.component';
+import { ClosureListComponent } from './components/sales/closure-list/closure-list.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
@@ -121,6 +122,18 @@ const routes: Routes = [
   {
     path: 'dom-interviews', component: InterviewListComponent,
     data: { isDomInterview: true }
+  },
+  {
+    path: 'sales-closures', component: ClosureListComponent,
+    data: { isSalesClosure: true }
+  },
+  {
+    path: 'rec-closures', component: ClosureListComponent,
+    data: { isRecClosure: true }
+  },
+  {
+    path: 'dom-closures', component: ClosureListComponent,
+    data: { isDomClosure: true }
   }
 ];
 
