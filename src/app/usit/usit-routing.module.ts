@@ -19,6 +19,7 @@ import { QuizListComponent } from './components/quiz/quiz-list/quiz-list.compone
 import { PrivilegeListComponent } from './components/privilege-list/privilege-list.component';
 import { QuizResultComponent } from './components/quiz/quiz-result/quiz-result.component';
 import { ClosureListComponent } from './components/sales/closure-list/closure-list.component';
+import { PurchaseOrderListComponent } from './components/accounts&billing/purchase-order-list/purchase-order-list.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
@@ -134,6 +135,9 @@ const routes: Routes = [
   {
     path: 'dom-closures', component: ClosureListComponent,
     data: { isDomClosure: true }
+  },
+  {
+    path: 'purchase-orders', component: PurchaseOrderListComponent,
   }
 ];
 

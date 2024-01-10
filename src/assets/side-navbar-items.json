@@ -182,5 +182,16 @@
           "routerLink": "/usit/quiz-result"
         }
       ]
+    },
+    {
+      "text": "Accounts & Billing",
+      "icon": "receipt_long",
+      "children": [
+        {
+          "text": "Create PO",
+          "icon": "note_add",
+          "routerLink": "/usit/purchase-orders"
+        }
+      ]
     }
   ]
