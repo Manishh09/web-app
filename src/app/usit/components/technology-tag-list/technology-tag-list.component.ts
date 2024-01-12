@@ -43,13 +43,15 @@ import { PrivilegesService } from 'src/app/services/privileges.service';
 })
 export class TechnologyTagListComponent implements OnInit, AfterViewInit{
 
-  displayedColumns: string[] = ['Technology', 'Skills', 'Actions'];
+  displayedColumns: string[] = ['SerialNum','Technology', 'Skills', 'Actions'];
   dataSource = new MatTableDataSource<any>([]);
   technologyTagList: Technology[] = [];
   // paginator
+  length = 50;
+  pageIndex = 0;
   pageSize = 50; // items per page
   currentPageIndex = 0;
-  pageSizeOptions = [5, 10, 25, 50];
+  pageSizeOptions = [50, 75, 100];
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
@@ -85,6 +87,7 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
 
@@ -94,6 +97,9 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
         next: (response: any) => {
           this.technologyTagList = response.data;
           this.dataSource.data = response.data;
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
           this.totalItems = response.data.totalElements;
         },
         error: (err: any) => console.log(err)
@@ -208,13 +214,11 @@ export class TechnologyTagListComponent implements OnInit, AfterViewInit{
 
   }
 
-  handlePageEvent(event: PageEvent) {
-    if (event) {
-      this.pageEvent = event;
-      const currentPageIndex = event.pageIndex;
-      this.currentPageIndex = currentPageIndex;
-    }
-    return;
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
   }
 
   getRowClass(row: any): string {

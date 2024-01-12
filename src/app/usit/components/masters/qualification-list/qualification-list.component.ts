@@ -6,7 +6,7 @@ import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -42,7 +42,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class QualificationListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dataSource = new MatTableDataSource<Qualification>([]);
-  displayedColumns: string[] = ['Name', 'Action'];
+  displayedColumns: string[] = ['SerialNum', 'Name', 'Action'];
   private qualificationServ = inject(QualificationService);
   private dialogServ = inject(DialogService);
   private snackBarServ = inject(SnackBarService);
@@ -50,6 +50,20 @@ export class QualificationListComponent implements OnInit, AfterViewInit, OnDest
   protected privilegeServ = inject(PrivilegesService);
   @ViewChild(MatSort) sort!: MatSort;
   qualificationList: Qualification[]= [];
+  // paginator
+  length = 50;
+  pageIndex = 0;
+  pageSize = 50; // items per page
+  currentPageIndex = 0;
+  pageSizeOptions = [50, 75, 100];
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  pageEvent!: PageEvent;
+  totalItems: number = 0;
+  page: number = 1;
+  itemsPerPage = 50;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
   ngOnInit(): void {
@@ -58,6 +72,7 @@ export class QualificationListComponent implements OnInit, AfterViewInit, OnDest
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   getAllQualifications() {
@@ -66,6 +81,9 @@ export class QualificationListComponent implements OnInit, AfterViewInit, OnDest
         next:(response: any) => {
           this.qualificationList = response.data;
           this.dataSource.data = response.data;
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
         },
         error: (err)=> console.log(err)
       }
@@ -210,6 +228,13 @@ export class QualificationListComponent implements OnInit, AfterViewInit, OnDest
 
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
   }
 
   /**

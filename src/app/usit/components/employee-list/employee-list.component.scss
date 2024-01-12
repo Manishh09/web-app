@@ -131,7 +131,7 @@ td:nth-child(2) {
 
 .table-style {
   width: 100%;
-  max-height: 61svh;
+  max-height: 61vh;
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -222,4 +222,10 @@ td:nth-child(2) {
 ul.breadcrumb li:last-child {
   color: black;
   pointer-events: none;
+}
+
+@media screen and (min-width: 1440px) {
+  .table-style {
+    max-height: 70vh;
+  }
 }

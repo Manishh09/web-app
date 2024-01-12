@@ -6,7 +6,7 @@ import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -48,9 +48,24 @@ export class CompaniesListComponent implements OnInit, AfterViewInit, OnDestroy 
   protected privilegeServ = inject(PrivilegesService);
 
   dataSource = new MatTableDataSource<Company>([]);
-  displayedColumns: string[] = ['Company', 'Actions'];
+  displayedColumns: string[] = ['SerialNum', 'Company', 'Actions'];
   @ViewChild(MatSort) sort!: MatSort;
   companyList: Company[]= [];
+  // paginator
+  length = 50;
+  pageIndex = 0;
+  pageSize = 50; // items per page
+  currentPageIndex = 0;
+  pageSizeOptions = [50, 75, 100];
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  pageEvent!: PageEvent;
+  totalItems: number = 0;
+  page: number = 1;
+  itemsPerPage = 50;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
   ngOnInit(): void {
@@ -59,6 +74,7 @@ export class CompaniesListComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   getAllCompanies() {
@@ -67,6 +83,9 @@ export class CompaniesListComponent implements OnInit, AfterViewInit, OnDestroy 
         next:(response: any) => {
           this.companyList = response.data;
           this.dataSource.data = response.data;
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
         },
         error: (err)=> console.log(err)
       }
@@ -211,6 +230,13 @@ export class CompaniesListComponent implements OnInit, AfterViewInit, OnDestroy 
 
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
   }
 
   /**

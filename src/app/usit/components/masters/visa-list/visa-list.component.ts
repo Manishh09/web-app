@@ -6,7 +6,7 @@ import { MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -47,12 +47,14 @@ export class VisaListComponent implements OnInit, AfterViewInit, OnDestroy{
   private router = inject(Router);
   protected privilegeServ = inject(PrivilegesService);
 
-  displayedColumns: string[] = ['VisaStatus', 'Actions'];
+  displayedColumns: string[] = ['SerialNum', 'VisaStatus', 'Actions'];
   dataSource = new MatTableDataSource<Visa>([]);
   // paginator
+  length = 50;
+  pageIndex = 0;
   pageSize = 50; // items per page
   currentPageIndex = 0;
-  pageSizeOptions = [5, 10, 25, 50];
+  pageSizeOptions = [50, 75, 100];
   hidePageSize = false;
   showPageSizeOptions = true;
   showFirstLastButtons = true;
@@ -62,6 +64,7 @@ export class VisaListComponent implements OnInit, AfterViewInit, OnDestroy{
   itemsPerPage = 50;
 
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   visaList: Visa[]= [];
 // to clear subscriptions
 private destroyed$ = new Subject<void>();
@@ -72,6 +75,7 @@ private destroyed$ = new Subject<void>();
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   getAllVisa() {
@@ -80,6 +84,9 @@ private destroyed$ = new Subject<void>();
         next:(response: any) => {
           this.visaList = response.data;
           this.dataSource.data = response.data;
+          this.dataSource.data.map((x: any, i) => {
+            x.serialNum = i + 1;
+          });
         },
         error: (err)=> console.log(err)
       }
@@ -227,15 +234,11 @@ private destroyed$ = new Subject<void>();
     this.router.navigateByUrl('/usit/dashboard');
   }
 
-  handlePageEvent(event: PageEvent) {
-    // console.log('page.event', event);
-    // if (event) {
-    //   this.pageEvent = event;
-    //   const currentPageIndex = event.pageIndex;
-    //   this.currentPageIndex = currentPageIndex;
-    //     this.getAllData(event.pageIndex + 1);
-    // }
-    // return;
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
   }
 
   /**
