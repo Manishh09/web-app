@@ -1,25 +1,18 @@
-<!-- <ul class="breadcrumb">
-  <li><a href="#" routerLink="/dashboard">Home</a></li>
-  <li><a href="#" routerLink="/users">Add User</a></li>
-</ul> -->
-
-<!-- <div class="header-container mat-elevation-z1">
-  <span class="header-text">
-    Add User
-  </span>
-</div> -->
-<div class="header-container mat-elevation-z1">
-  <span class="header-text" mat-dialog-title>
+<!-- top header container -->
+<section class="header-container" id="mainHeader">
+  <span class="header-text" mat-dialog-title id="mainHeaderTitle">
     {{data.title}}
   </span>
-  <button mat-icon-button (click)="onCancel()">
+  <button mat-icon-button  (click)="onCancel()" class="btn-close" id="btnClose">
     <mat-icon>close</mat-icon>
   </button>
-</div>
-<mat-card class="center-card">
-
-  <form [formGroup]="employeeForm" class="employee-form">
-    <div class="form">
+</section>
+<!-- matcard starts-->
+<mat-card class="card" id="empCard">
+  <!-- form starts-->
+  <form [formGroup]="employeeForm" class="employee-form" id="empForm">
+    <!-- form input controls -->
+    <section class="form-container">
       <div class="form-column-left" *ngIf="employeeForm.controls">
         <!-- Full Name -->
         <mat-form-field appearance="fill">
@@ -119,7 +112,6 @@
           <mat-error *ngIf="employeeForm.get('panno').hasError('pattern')">Invalid PAN Number</mat-error>
         </mat-form-field>
       </div>
-
       <div class="form-column-right">
         <!-- BANK -->
         <mat-form-field appearance="fill">
@@ -156,7 +148,7 @@
           <mat-label>Select Department</mat-label>
           <input matInput formControlName="department" [matAutocomplete]="departmentAuto">
           <mat-autocomplete #departmentAuto="matAutocomplete">
-            <mat-option *ngFor="let option of departmentOptions" [value]="option">
+            <mat-option *ngFor="let option of filteredDepartmentOptions | async" [value]="option">
               {{ option }}
             </mat-option>
           </mat-autocomplete>
@@ -164,18 +156,20 @@
             Deparment</mat-error>
         </mat-form-field>
         <!-- Select Role with MatAutoComplete-->
-        <mat-form-field appearance="fill" *ngIf="false">
+        <div formGroupName="role" class="select-role-field" *ngIf="false">
+        <mat-form-field appearance="fill" >
           <mat-label>Select Role</mat-label>
-          <input matInput formGroupName="role" [matAutocomplete]="roleAuto">
+          <input matInput formControlName="rolename" [matAutocomplete]="roleAuto">
           <mat-autocomplete #roleAuto="matAutocomplete">
-            <mat-option *ngFor="let option of roleOptions" [value]="option.roleid">
+            <mat-option *ngFor="let option of filteredRoleOptions | async" [value]="option.rolename">
               {{ option.rolename }}
             </mat-option>
           </mat-autocomplete>
-          <mat-error *ngIf="employeeForm.get('role.roleid').hasError('required')">Role is
+          <mat-error *ngIf="employeeForm.get('role.rolename').hasError('required')">Role is
             Required</mat-error>
         </mat-form-field>
-        <!-- Select Role with MatSelect-->
+        </div>
+        <!-- Select Role with MatSelect -->
         <div formGroupName="role" class="select-role-field">
           <mat-form-field appearance="fill">
             <mat-label>Select Role</mat-label>
@@ -257,182 +251,188 @@
             is Required</mat-error>
         </mat-form-field> -->
       </div>
-    </div>
-    <div class="header-container-upload-documents">
-      <span class="header-text">Upload Documents</span>
-    </div>
-
-    <div class="upload-documents">
-      <div class="upload-documents-left">
-        <!-- Resume Upload -->
-        <mat-form-field class="upload">
-          <mat-label for="resume">Resume</mat-label>
-          <div class="upload-container">
-            <input matInput readonly name="resumeName" class="file-input"
-              [value]="resumeupload ? resumeupload.name : 'No file chosen'" />
-            <label for="resume" class="browse-button-label">
-              <button type="button" mat-icon-button (click)="resume.click()"><mat-icon>upload_file</mat-icon></button>
-            </label>
-            <input type="file" #resume id="resume" (change)="uploadResume($event)" name="resumeUploadFile"
-              accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              style="display: none;" />
-          </div>
-          <mat-hint *ngIf="resumeError" style="color: #f44336; font-size: 12px;">Resume size should be less than 2
-            mb</mat-hint>
-          <mat-hint *ngIf="resumeFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
-            15-20 characters before upload</mat-hint>
-        </mat-form-field>
-
-
-        <!-- Aadhar Upload -->
-        <mat-form-field class="upload">
-          <mat-label for="aadhar">Aadhar</mat-label>
-          <div class="upload-container">
-            <input matInput readonly name="aadharName" class="file-input"
-              [value]="aadharUpload ? aadharUpload.name : 'No file chosen'" />
-            <label for="aadhar" class="browse-button-label">
-              <button type="button" mat-icon-button (click)="aadhar.click()"><mat-icon>upload_file</mat-icon></button>
-            </label>
-            <input type="file" #aadhar id="aadhar" (change)="uploadAadhar($event)" name="aadharUploadFile"
-              accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              style="display: none;" />
-          </div>
-          <mat-hint *ngIf="aadharError" style="color: #f44336; font-size: 12px;">Aadhar size should be less than 2
-            mb</mat-hint>
-          <mat-hint *ngIf="aadharFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
-            15-20 characters before upload</mat-hint>
-        </mat-form-field>
-
-        <!-- Pan Upload -->
-        <mat-form-field class="upload">
-          <mat-label for="pan">Pan</mat-label>
-          <div class="upload-container">
-            <input matInput readonly name="pan" class="file-input"
-              [value]="panUpload ? panUpload.name : 'No file chosen'" />
-            <label for="pan" class="browse-button-label">
-              <button type="button" mat-icon-button (click)="pan.click()"><mat-icon>upload_file</mat-icon></button>
-            </label>
-            <input type="file" #pan id="pan" (change)="uploadPan($event)" name="panUploadFile"
-              accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              style="display: none;" />
-          </div>
-          <mat-hint *ngIf="panError" style="color: #f44336; font-size: 12px;">Pan size should be less than 2
-            mb</mat-hint>
-          <mat-hint *ngIf="panFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
-            15-20 characters before upload</mat-hint>
-        </mat-form-field>
+    </section>
+    <!--form upload controls -->
+    <section class="section-upload-documents">
+      <div class="header-upload-documents">
+        <span class="header-upload-text">Upload Documents</span>
       </div>
 
-      <div class="upload-documents-right">
-        <!-- Bank Passbook Upload -->
-        <mat-form-field class="upload">
-          <mat-label for="bank">Bank Passbook</mat-label>
-          <div class="upload-container">
-            <input matInput readonly name="bank" class="file-input"
-              [value]="bankUpload ? bankUpload .name : 'No file chosen'" />
-            <label for="bank" class="browse-button-label">
-              <button type="button" mat-icon-button (click)="bank.click()"><mat-icon>upload_file</mat-icon></button>
-            </label>
-            <input type="file" #bank id="bankPassbookUploadFile" (change)="uploadBank($event)"
-              name="bankPassbookUploadFile"
-              accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              style="display: none;" />
-          </div>
-          <mat-hint *ngIf="bankError" style="color: #f44336; font-size: 12px;">Bank Passbook size should be less than 2
-            mb</mat-hint>
-          <mat-hint *ngIf="bankFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
-            15-20 characters before upload</mat-hint>
-        </mat-form-field>
+      <div class="upload-doc-cotainer">
+        <div class="upload-doc-left">
+          <!-- Resume Upload -->
+          <mat-form-field class="upload">
+            <mat-label for="resume">Resume</mat-label>
+            <div class="upload-inp-container">
+              <input matInput readonly name="resumeName" class="file-input"
+                [value]="resumeupload ? resumeupload.name : 'No file chosen'" />
+              <label for="resume" class="browse-button-label">
+                <button type="button" mat-icon-button (click)="resume.click()"><mat-icon>upload_file</mat-icon></button>
+              </label>
+              <input type="file" #resume id="resume" (change)="uploadResume($event)" name="resumeUploadFile"
+                accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                style="display: none;" />
+            </div>
+            <mat-hint *ngIf="resumeError" style="color: #f44336; font-size: 12px;">Resume size should be less than 2
+              mb</mat-hint>
+            <mat-hint *ngIf="resumeFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+              15-20 characters before upload</mat-hint>
+          </mat-form-field>
 
-        <!-- Other Documents Upload -->
-        <mat-form-field class="upload">
-          <mat-label for="otherDocumentsUploadFile">Other Documents</mat-label>
-          <div class="upload-container">
-            <input matInput multiple readonly name="otherDocumentsName" class="file-input" />
-            <label for="otherDocumentsUploadFile" class="browse-button-label">
-              <button type="button" mat-icon-button
-                (click)="multifiles.click()"><mat-icon>upload_file</mat-icon></button>
-            </label>
-            <input type="file" id="otherDocumentsUploadFile" (change)="onFileChange($event)" multiple #multifiles
-              name="otherDocumentsUploadFile" multiple="multiple"
-              accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              style="display: none;" />
-          </div>
-          <mat-hint *ngIf="multifilesError" style="color: #f44336; font-size: 12px;">Other Documents size should be less
-            than 4 mb</mat-hint>
-          <mat-hint *ngIf="multifilesFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename
-            to 15-20 characters before upload</mat-hint>
-        </mat-form-field>
+
+          <!-- Aadhar Upload -->
+          <mat-form-field class="upload">
+            <mat-label for="aadhar">Aadhar</mat-label>
+            <div class="upload-inp-container">
+              <input matInput readonly name="aadharName" class="file-input"
+                [value]="aadharUpload ? aadharUpload.name : 'No file chosen'" />
+              <label for="aadhar" class="browse-button-label">
+                <button type="button" mat-icon-button (click)="aadhar.click()"><mat-icon>upload_file</mat-icon></button>
+              </label>
+              <input type="file" #aadhar id="aadhar" (change)="uploadAadhar($event)" name="aadharUploadFile"
+                accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                style="display: none;" />
+            </div>
+            <mat-hint *ngIf="aadharError" style="color: #f44336; font-size: 12px;">Aadhar size should be less than 2
+              mb</mat-hint>
+            <mat-hint *ngIf="aadharFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+              15-20 characters before upload</mat-hint>
+          </mat-form-field>
+
+          <!-- Pan Upload -->
+          <mat-form-field class="upload">
+            <mat-label for="pan">Pan</mat-label>
+            <div class="upload-inp-container">
+              <input matInput readonly name="pan" class="file-input"
+                [value]="panUpload ? panUpload.name : 'No file chosen'" />
+              <label for="pan" class="browse-button-label">
+                <button type="button" mat-icon-button (click)="pan.click()"><mat-icon>upload_file</mat-icon></button>
+              </label>
+              <input type="file" #pan id="pan" (change)="uploadPan($event)" name="panUploadFile"
+                accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                style="display: none;" />
+            </div>
+            <mat-hint *ngIf="panError" style="color: #f44336; font-size: 12px;">Pan size should be less than 2
+              mb</mat-hint>
+            <mat-hint *ngIf="panFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+              15-20 characters before upload</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="upload-doc-right">
+          <!-- Bank Passbook Upload -->
+          <mat-form-field class="upload">
+            <mat-label for="bank">Bank Passbook</mat-label>
+            <div class="upload-inp-container">
+              <input matInput readonly name="bank" class="file-input"
+                [value]="bankUpload ? bankUpload .name : 'No file chosen'" />
+              <label for="bank" class="browse-button-label">
+                <button type="button" mat-icon-button (click)="bank.click()"><mat-icon>upload_file</mat-icon></button>
+              </label>
+              <input type="file" #bank id="bankPassbookUploadFile" (change)="uploadBank($event)"
+                name="bankPassbookUploadFile"
+                accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                style="display: none;" />
+            </div>
+            <mat-hint *ngIf="bankError" style="color: #f44336; font-size: 12px;">Bank Passbook size should be less than 2
+              mb</mat-hint>
+            <mat-hint *ngIf="bankFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename to
+              15-20 characters before upload</mat-hint>
+          </mat-form-field>
+
+          <!-- Other Documents Upload -->
+          <mat-form-field class="upload">
+            <mat-label for="otherDocumentsUploadFile">Other Documents</mat-label>
+            <div class="upload-inp-container">
+              <input matInput multiple readonly name="otherDocumentsName" class="file-input" />
+              <label for="otherDocumentsUploadFile" class="browse-button-label">
+                <button type="button" mat-icon-button
+                  (click)="multifiles.click()"><mat-icon>upload_file</mat-icon></button>
+              </label>
+              <input type="file" id="otherDocumentsUploadFile" (change)="onFileChange($event)" multiple #multifiles
+                name="otherDocumentsUploadFile" multiple="multiple"
+                accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                style="display: none;" />
+            </div>
+            <mat-hint *ngIf="multifilesError" style="color: #f44336; font-size: 12px;">Other Documents size should be less
+              than 4 mb</mat-hint>
+            <mat-hint *ngIf="multifilesFileNameLength" style="color: #f44336; font-size: 12px;">File name too long, rename
+              to 15-20 characters before upload</mat-hint>
+          </mat-form-field>
+        </div>
       </div>
-    </div>
+    </section>
+    <!-- list -->
+    <section class="section-list-documents">
+      <div class="header-upload-documents"  *ngIf="data.actionName === 'edit-employee'">
+        <span class="header-upload-text">List Documents</span>
+      </div>
+      <div class="list-documents-table-container"   *ngIf="data.actionName === 'edit-employee'">
+        <table class="documents-table">
+          <tr class="tbl-header">
+            <th class="tbl-header-name">Document Name</th>
+            <th>Action</th>
+          </tr>
+          <tr>
+            <td *ngIf="empObj.resume !==null "><a class="dowload-file-link" [style.cursor]="'pointer'"
+                (click)="downloadfile(empObj.userid,empObj.resume,'resume')">{{empObj.resume}}</a>
+            </td>
+            <td *ngIf="empObj.resume !==null ">
+              <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'resume')">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td *ngIf="empObj.pan !==null "><a class="dowload-file-link" [style.cursor]="'pointer'"
+                (click)="downloadfile(empObj.userid,empObj.pan,'pan')">{{empObj.pan}}</a>
+            </td>
+            <td *ngIf="empObj.pan !==null ">
+              <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'pan')">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
 
-    <div class="header-container-upload-documents" *ngIf="data.actionName === 'edit-employee'">
-      <span class="header-text">List Documents</span>
-    </div>
-    <div class="list-documents" *ngIf="data.actionName === 'edit-employee'">
-      <table class="documents-table">
-        <tr>
-          <th>Document Name</th>
-          <th>Delete</th>
-        </tr>
-        <tr>
-          <td *ngIf="empObj.resume !==null "><a class="ab" style="cursor:pointer"
-              (click)="downloadfile(empObj.userid,empObj.resume,'resume')">{{empObj.resume}}</a>
-          </td>
-          <td *ngIf="empObj.resume !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'resume')">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td *ngIf="empObj.pan !==null "><a class="ab" style="cursor:pointer"
-              (click)="downloadfile(empObj.userid,empObj.pan,'pan')">{{empObj.pan}}</a>
-          </td>
-          <td *ngIf="empObj.pan !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'pan')">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </tr>
+          <tr>
+            <td *ngIf="empObj.aadhar !==null "><a class="dowload-file-link" [style.cursor]="'pointer'"
+                (click)="downloadfile(empObj.userid,empObj.aadhar,'aadhar')">{{empObj.aadhar}}</a>
+            </td>
+            <td *ngIf="empObj.aadhar !==null ">
+              <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'aadhar')">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td *ngIf="empObj.bpassbook !==null "><a class="dowload-file-link" [style.cursor]="'pointer'"
+                (click)="downloadfile(empObj.userid,empObj.bpassbook,'bpassbook')">{{empObj.bpassbook}}</a>
+            </td>
+            <td *ngIf="empObj.bpassbook !==null ">
+              <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'bpassbook')">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
 
-        <tr>
-          <td *ngIf="empObj.aadhar !==null "><a class="ab" style="cursor:pointer"
-              (click)="downloadfile(empObj.userid,empObj.aadhar,'aadhar')">{{empObj.aadhar}}</a>
-          </td>
-          <td *ngIf="empObj.aadhar !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'aadhar')">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td *ngIf="empObj.bpassbook !==null "><a class="ab" style="cursor:pointer"
-              (click)="downloadfile(empObj.userid,empObj.bpassbook,'bpassbook')">{{empObj.bpassbook}}</a>
-          </td>
-          <td *ngIf="empObj.bpassbook !==null ">
-            <button mat-icon-button class="action-button-ed" (click)="deletefile(empObj.userid,'bpassbook')">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </tr>
-
-        <tr *ngFor="let data of filesArr">
-          <td><a class="ab" style="cursor:pointer" (click)="filedetails(data)">{{data.filename}}</a></td>
-          <td width="6%">
-            <button mat-icon-button class="action-button-ed" (click)="deletemultiple(data.docid)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </tr>
-      </table>
-    </div>
+          <tr *ngFor="let data of filesArr">
+            <td><a class="dowload-file-link" [style.cursor]="'pointer'" (click)="filedetails(data)">{{data.filename}}</a></td>
+            <td width="6%">
+              <button mat-icon-button class="action-button-ed" (click)="deletemultiple(data.docid)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </table>
+         <!-- <p class="no-data-sfound" *ngIf="!filesArr.length">{{'No documents data'}}</p> -->
+      </div>
+    </section>
   </form>
-
-  <div class="form-button-right">
-    <!-- <div class="form-button-inner"> -->
-    <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
+  <!-- form ends-->
+  <!-- Bottom Action Buttons -->
+  <div class="action-btns">
+    <button class="btn-cancel" mat-raised-button color="white" (click)="onCancel()">Cancel</button>
     <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
-    <!-- </div> -->
   </div>
 </mat-card>
+<!-- matcard ends-->

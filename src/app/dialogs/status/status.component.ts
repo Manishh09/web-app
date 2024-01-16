@@ -30,7 +30,7 @@ export class StatusComponent implements OnInit {
 
     this.statusForm  = this.formBuilder.group(
       {
-        reasonForStatusUpdate: ["", [Validators.required, Validators.minLength(4), Validators.maxLength(200)]]
+        reasonForStatusUpdate: ["", [Validators.required, Validators.minLength(4), Validators.maxLength(250)]]
       }
     )
     this.remarks = this.data.actionData.remarks;

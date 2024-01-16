@@ -179,9 +179,8 @@ export class AddEmployeeComponent {
     }
     // common for add employee
     // this.validateControls();
-    this.optionsMethod();
-
-
+    this.optionsMethod('department'); // for auto-complete
+    //this.optionsMethod('roles');
   }
 
   private initilizeAddEmployeeForm(employeeData: any) {

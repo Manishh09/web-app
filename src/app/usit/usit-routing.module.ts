@@ -20,129 +20,160 @@ import { PrivilegeListComponent } from './components/privilege-list/privilege-li
 import { QuizResultComponent } from './components/quiz/quiz-result/quiz-result.component';
 import { ClosureListComponent } from './components/sales/closure-list/closure-list.component';
 import { PurchaseOrderListComponent } from './components/accounts&billing/purchase-order-list/purchase-order-list.component';
+import { UserInfoComponent } from './components/recruitment/user-info/user-info.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
   {
     path: 'dashboard',
-    component: DashboardComponent
+    component: DashboardComponent,
   },
   {
     path: 'privileges/:id',
-    component: PrivilegeListComponent
+    component: PrivilegeListComponent,
   },
   {
     path: 'quiz-list',
-    component: QuizListComponent
+    component: QuizListComponent,
   },
   {
     path: 'save-quiz',
-    component: QuizComponent
+    component: QuizComponent,
   },
   {
     path: 'attempt-quiz',
-    component: AttemptQuizComponent
+    component: AttemptQuizComponent,
   },
   {
     path: 'quiz-result',
-    component: QuizResultComponent
+    component: QuizResultComponent,
   },
   { path: 'employees', component: EmployeeListComponent },
+  {
+    path: 'user-info/:id',
+    component: UserInfoComponent,
+  },
   { path: 'vendors', component: VendorListComponent },
   { path: 'roles', component: RolesListComponent },
   { path: 'recruiters', component: RecruiterListComponent },
   {
-    path: 'sales-submission', component: SubmissionListComponent,
-    data: { isSaleSub: true }
+    path: 'sales-submission',
+    component: SubmissionListComponent,
+    data: { isSaleSub: true },
   },
   {
-    path: 'rec-submission', component: SubmissionListComponent,
-    data: { isRecSub: true }
+    path: 'rec-submission',
+    component: SubmissionListComponent,
+    data: { isRecSub: true },
   },
   {
-    path: 'dom-submission', component: SubmissionListComponent,
-    data: { isDomSub: true }
+    path: 'dom-submission',
+    component: SubmissionListComponent,
+    data: { isDomSub: true },
   },
   {
-    path: 'sales-interview', component: InterviewListComponent,
-    data: { isSalesInt: true }
+    path: 'sales-interview',
+    component: InterviewListComponent,
+    data: { isSalesInt: true },
   },
   {
-    path: 'rec-interview', component: InterviewListComponent,
-    data: { isRecInt: true }
+    path: 'rec-interview',
+    component: InterviewListComponent,
+    data: { isRecInt: true },
   },
   {
-    path: 'dom-interview', component: InterviewListComponent,
-    data: { isDomInt: true }
+    path: 'dom-interview',
+    component: InterviewListComponent,
+    data: { isDomInt: true },
   },
 
   { path: 'visa', component: VisaListComponent },
   { path: 'qualification', component: QualificationListComponent },
   { path: 'companies', component: CompaniesListComponent },
   { path: 'technology-tag', component: TechnologyTagListComponent },
-  { path: 'rec-requirements', component: RequirementListComponent,
-  data: {isRecRequirement : true} },
-  { path: 'dom-requirements', component: RequirementListComponent,
-  data: {isDomRequirement : true} },
   {
-    path: 'sales-consultants', component: ConsultantListComponent,
-    data: { isSalesConsultant: true }
+    path: 'rec-requirements',
+    component: RequirementListComponent,
+    data: { isRecRequirement: true },
   },
   {
-    path: 'rec-consultants', component: ConsultantListComponent,
-    data: { isRecConsultant: true }
+    path: 'dom-requirements',
+    component: RequirementListComponent,
+    data: { isDomRequirement: true },
   },
   {
-    path: 'pre-sales', component: ConsultantListComponent,
-    data: { isPreConsultant: true }
+    path: 'sales-consultants',
+    component: ConsultantListComponent,
+    data: { isSalesConsultant: true },
   },
   {
-    path: 'dom-consultants', component: ConsultantListComponent,
-    data: { isDomConsultant: true }
+    path: 'rec-consultants',
+    component: ConsultantListComponent,
+    data: { isRecConsultant: true },
   },
   {
-    path: 'sales-submissions', component: SubmissionListComponent,
-    data: { isSalesSubmission: true }
+    path: 'pre-sales',
+    component: ConsultantListComponent,
+    data: { isPreConsultant: true },
   },
   {
-    path: 'rec-submissions', component: SubmissionListComponent,
-    data: { isRecSubmission: true }
+    path: 'dom-consultants',
+    component: ConsultantListComponent,
+    data: { isDomConsultant: true },
   },
   {
-    path: 'dom-submissions', component: SubmissionListComponent,
-    data: { isDomSubmission: true }
+    path: 'sales-submissions',
+    component: SubmissionListComponent,
+    data: { isSalesSubmission: true },
   },
   {
-    path: 'sales-interviews', component: InterviewListComponent,
-    data: { isSalesInterview: true }
+    path: 'rec-submissions',
+    component: SubmissionListComponent,
+    data: { isRecSubmission: true },
   },
   {
-    path: 'rec-interviews', component: InterviewListComponent,
-    data: { isRecInterview: true }
+    path: 'dom-submissions',
+    component: SubmissionListComponent,
+    data: { isDomSubmission: true },
   },
   {
-    path: 'dom-interviews', component: InterviewListComponent,
-    data: { isDomInterview: true }
+    path: 'sales-interviews',
+    component: InterviewListComponent,
+    data: { isSalesInterview: true },
   },
   {
-    path: 'sales-closures', component: ClosureListComponent,
-    data: { isSalesClosure: true }
+    path: 'rec-interviews',
+    component: InterviewListComponent,
+    data: { isRecInterview: true },
   },
   {
-    path: 'rec-closures', component: ClosureListComponent,
-    data: { isRecClosure: true }
+    path: 'dom-interviews',
+    component: InterviewListComponent,
+    data: { isDomInterview: true },
   },
   {
-    path: 'dom-closures', component: ClosureListComponent,
-    data: { isDomClosure: true }
+    path: 'sales-closures',
+    component: ClosureListComponent,
+    data: { isSalesClosure: true },
   },
   {
-    path: 'purchase-orders', component: PurchaseOrderListComponent,
-  }
+    path: 'rec-closures',
+    component: ClosureListComponent,
+    data: { isRecClosure: true },
+  },
+  {
+    path: 'dom-closures',
+    component: ClosureListComponent,
+    data: { isDomClosure: true },
+  },
+  {
+    path: 'purchase-orders',
+    component: PurchaseOrderListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class UsitRoutingModule { }
+export class UsitRoutingModule {}

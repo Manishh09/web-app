@@ -36,6 +36,7 @@ import {
 import { Recruiter } from 'src/app/usit/models/recruiter';
 import { VendorService } from 'src/app/usit/services/vendor.service';
 import { AddVendorComponent } from './add-vendor/add-vendor.component';
+import { VendorCompanyRecInfoComponent } from './vendor-company-rec-info/vendor-company-rec-info.component';
 
 @Component({
   selector: 'app-vendor-list',
@@ -325,6 +326,28 @@ export class VendorListComponent implements OnInit {
    *
    */
   uploadVendor() {}
+
+  /**
+   * go to company-info
+   */
+  goToCompanyRecInfo(element: any){
+    const actionData = {
+      title: `${element.company} Recruiter's`,
+      id: element.id,
+      actionName: 'vendor-rec-company-info',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '62dvw';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'vendor-rec-company-info';
+    dialogConfig.data = actionData;
+
+   this.dialogServ.openDialogWithComponent(
+      VendorCompanyRecInfoComponent,
+      dialogConfig
+    );
+  }
+
   /**
    * add
    */
@@ -335,7 +358,7 @@ export class VendorListComponent implements OnInit {
       actionName: 'add-vendor',
     };
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = '65vw';
+    dialogConfig.width = '62dvw';
     // dialogConfig.height = "100vh";
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = 'add-vendor';

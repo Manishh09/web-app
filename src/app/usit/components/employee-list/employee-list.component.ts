@@ -279,7 +279,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
 
   private getDialogConfigData(dataToBeSentToDailog: Partial<IConfirmDialogData>, action: {delete: boolean; edit: boolean; add: boolean, updateSatus?: boolean}) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = action.edit ||  action.add  ?  '65vw' : action.delete ? 'fit-content' : "400px";
+    dialogConfig.width = action.edit ||  action.add  ?  '62dvw' : action.delete ? 'fit-content' : "400px";
     dialogConfig.height = 'auto';
     dialogConfig.disableClose = false;
     dialogConfig.panelClass = dataToBeSentToDailog.actionName;
@@ -347,7 +347,7 @@ export class EmployeeListComponent implements OnInit, AfterViewInit, OnDestroy{
 
   goToUserInfo(id: number){
 
-    this.router.navigate([`usit/user/info/${id}`])
+    this.router.navigate(['usit/user-info',id])
   }
   /** clean up subscriptions */
   ngOnDestroy(): void {

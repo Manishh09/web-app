@@ -4,7 +4,7 @@
   height: 86vh;
 }
 
-ul{
+ul {
   padding-inline-start: 10px;
   background-color: rgb(228, 231, 234);
   height: 2rem;
@@ -36,35 +36,46 @@ ul.breadcrumb li a:hover {
   text-decoration: underline;
 }
 
-.table-wrapper{
+.table-wrapper {
   flex: 1;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   // padding: 4px;
+  margin: 4px;
 }
+
 table {
   width: 100%;
 
 }
-.mat-mdc-header-row  {
+
+.mat-mdc-header-row {
   background-color: rgb(213, 231, 231);
-  position: sticky; top: 0;
+  position: sticky;
+  top: 0;
 }
+
 thead {
-  position: sticky; top: 0;
+  position: sticky;
+  top: 0;
 }
-tbody{
+
+tbody {
   text-align: left;
 }
+
 .mat-sort-header-arrow {
   color: #1a1717;
 }
+
 // .mat-mdc-row  {
 //   height: 48px !important;
 // }
 .mat-mdc-column {
   border-right: 1px solid currentColor;
 }
-.mat-column-Designation{
+
+.mat-column-Designation {
   width: 32px;
   border-right: 1px solid lightgray;
   padding-right: 24px;
@@ -72,10 +83,11 @@ tbody{
 }
 
 
-.mat-column-HeadQuarter{
+.mat-column-HeadQuarter {
   width: 62px !important;
 }
-.mat-column-Company{
+
+.mat-column-Company {
   width: 72px !important;
 }
 
@@ -83,24 +95,40 @@ tbody{
   border-right: 1px solid lightgray;
 
 }
-.mat-column-ApproveOrReject{
-  width: 82px !important;
+
+.mat-column-ApproveOrReject {
+  width: fit-content !important;
 }
 
-.mat-column-SerialNum, .mat-column-Company,
- .mat-column-HeadQuarter,
-  .mat-column-Fed-Id,
-  .mat-column-Fed-Id, .mat-column-VendorType, .mat-column-TierType, .mat-column-AddedBy,
-  .mat-column-AddedOn,
-  .mat-column-LastUpdated,
-  .mat-column-Action,
-  .mat-column-Status{
+.mat-column-SerialNum,
+.mat-column-Company,
+.mat-column-HeadQuarter,
+.mat-column-Fed-Id,
+.mat-column-Fed-Id,
+.mat-column-VendorType,
+.mat-column-TierType,
+.mat-column-AddedBy,
+.mat-column-AddedOn,
+.mat-column-LastUpdated,
+.mat-column-Action,
+.mat-column-Status,
+.mat-column-ApproveOrReject {
 
   border-right: 1px solid lightgray;
+}
 
+.company-recruiter-info {
+  cursor: pointer !important;
+  // color: #0275d8 !important;
+}
+
+.action-btns {
+  display: flex;
+  flex-direction: row;
 
 }
-.header-container{
+
+.header-container {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -116,21 +144,26 @@ tbody{
   margin: 4px;
   background-color: rgb(228, 231, 234);
 }
-.header-text{
- padding-left: 8px;
- font-weight: 600 ;
+
+.header-text {
+  padding-left: 8px;
+  font-weight: 600;
 }
-.add-vendor{
+
+.add-vendor {
   cursor: pointer;
 }
-.vendor-actions{
+
+.vendor-actions {
   display: flex;
   align-items: center;
-  input:focus{
+
+  input:focus {
     border: solid 2px #3f51b5 !important;
     outline: none;
   }
-  .search{
+
+  .search {
     height: 32px;
     padding: 0px 8px;
 
@@ -139,21 +172,23 @@ tbody{
 
 .vendor-table-style {
   padding: 0 2px;
-  width: max-content;
+  // width: max-content;
+  width: 100%;
   max-height: calc(100% - 2px);
   overflow: auto;
   display: block;
 }
 
-.mdc-data-table__cell, .mdc-data-table__header-cell{
+.mdc-data-table__cell,
+.mdc-data-table__header-cell {
   padding: 0 4px 0 4px;
 }
 
-.mat-mdc-header-row  {
+.mat-mdc-header-row {
   z-index: 1000;
 }
 
-.no-data-found{
+.no-data-found {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -171,13 +206,17 @@ tbody{
   .responsive-table {
     table-layout: auto;
   }
-  .mdc-data-table__cell, .mdc-data-table__header-cell{
+
+  .mdc-data-table__cell,
+  .mdc-data-table__header-cell {
     padding: 0px 2px;
   }
 }
 
 @media screen and (min-width: 768px) and (max-width: 1024px) {
-  .mdc-data-table__cell, .mdc-data-table__header-cell{
+
+  .mdc-data-table__cell,
+  .mdc-data-table__header-cell {
     padding: 0px 2px;
   }
 }
@@ -207,7 +246,7 @@ tbody{
   top: 10px;
 }
 
-.filter-vendors{
+.filter-vendors {
   display: flex;
   column-gap: 5px;
 }
@@ -232,7 +271,8 @@ tbody{
   color: black;
 }
 
-.edit-icon, .delete-icon {
+.edit-icon,
+.delete-icon {
   color: rgb(99, 98, 98);
 }
 
@@ -256,7 +296,7 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
   height: 25px;
 }
 
-.approve-reject-buttons{
+.approve-reject-buttons {
   width: fit-content;
   height: auto;
 }

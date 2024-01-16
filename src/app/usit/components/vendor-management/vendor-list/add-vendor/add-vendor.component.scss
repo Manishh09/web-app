@@ -1,3 +1,29 @@
+/**** POP-UP HEADER - STARTS ****/
+.header-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  background-color: whitesmoke;
+  z-index: 99999;
+  top: 0;
+  overflow: hidden;
+}
+
+.close-btn{
+  overflow: hidden !important;
+  // border: none;
+  // background: none;
+  // cursor: pointer;
+}
+
+.header-text {
+  padding-left: 2rem;
+  font-weight: 600;
+  font-size: larger;
+}
+/**** POP-UP HEADER - ENDS ****/
 .responsive-list {
   display: flex;
   flex-direction: row;
@@ -5,9 +31,7 @@
   align-items: center;
 }
 
-.spacer {
-  flex: 1;
-}
+
 
 @media screen and (max-width: 768px) {
   .responsive-list {
@@ -15,20 +39,20 @@
     align-items: flex-start;
   }
 
-  .spacer {
-    display: none;
-  }
 }
-
-.start-end-list {
+.card {
+  margin: 0 auto;
+  padding: 16px;
+  height: 80vh;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.end-item {
-  margin-left: auto;
+.vendor-form{
+  height: 75vh;
+  overflow: auto;
 }
-
 .form-column-left{
   width: 50%;
   display: flex;
@@ -49,108 +73,28 @@
 }
 }
 
-
-.form{
+.form-container{
   display: flex;
   flex-direction: row;
+  gap: 2rem;
 }
 
-.form .form-column-left .mat-mdc-form-field{
-  width: 80%;
- // height: 60px;
+
+.form-container .form-column-left .mat-mdc-form-field {
+  width: 95%;
   margin-bottom: 12px;
 }
 
-.form .form-column-right .mat-mdc-form-field{
-  width: 80%;
-  // height: 60px;
+.form-container .form-column-right .mat-mdc-form-field {
+  width: 99%;
   margin-bottom: 12px;
-}
-
-.form-button{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-}
-
-.form-button-left{
-  width: 50%;
-  display: flex !important;
-  justify-content: flex-start;
-}
-
-.form-button-right{
-  margin-top: 8px;
-  display: flex !important;
-  justify-content: flex-end;
-  gap: 10px;
-  padding-right: 45px;
-}
-
-ul{
-  padding-inline-start: 10px;
-}
-
-ul.breadcrumb {
-  list-style: none;
-}
-
-ul.breadcrumb li {
-  display: inline;
-}
-
-ul.breadcrumb li+li:before {
-  color: black;
-  content: "/\00a0";
-}
-
-ul.breadcrumb li a {
-  color: #0275d8;
-  text-decoration: none;
-}
-
-ul.breadcrumb li a:hover {
-  color: #01447e;
-  text-decoration: underline;
-}
-
-.mat-card{
-  max-width: 96%;
-  padding-top: 20px;
-
-}
-
-.mat-list{
-  max-width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-.mat-mdc-list-item-content{
-  padding-left: 0 !important;
-  padding-right: 0 !important;
 }
 
 .mat-icon-button{
   width: auto;
 }
 
-.center-card {
-  margin: 0 auto;
-  padding: 16px;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
 
-.vendor-form{
-
-  height: 75vh;
-
-  overflow: auto;
-}
 
 .anchor-link {
   color: inherit;
@@ -159,53 +103,28 @@ ul.breadcrumb li a:hover {
   align-items: center;
 }
 
-.header-text{
- padding-left: 8px;
- font-weight: 600 ;
-}
+
 
 .mat-mdc-form-field-infix{
   padding-top: 0;
-}
-
-.header-container{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 6px 55px;
-  justify-content: space-between;
-  height: 48px;
-  background-color: whitesmoke;
-  z-index: 99999;
-  top: 0;
-  overflow: hidden;
- // margin: 4px 4px 0 4px;
-}
-.header-text{
- //padding-left: 55px;
- font-weight: 600 ;
-}
-
-.mat-elevation-z1{
-  box-shadow: none;
 }
 
 mat-error {
   font-size: 12px;
 }
 
-
+// RESPONSIVE FORM STYLES
 @media screen and (max-width: 425px) {
-  .form {
+  .form-container {
     flex-direction: column;
-  }
+}
 
   .form-column-left,
   .form-column-right {
     width: 100%;
   }
 
-  .center-card {
+  .card {
     margin: 0 auto;
     padding: 8px;
   }
@@ -214,6 +133,8 @@ mat-error {
     padding: 6px 28px;
   }
 }
+
+/*** TEL INPUT - STYLES STARTS ***/
 
 .country-selector{
   opacity:1 !important;
@@ -252,4 +173,20 @@ mat-mdc-menu-content{
 
 .mat-mdc-option {
   min-height: 36px !important;
+}
+/*** TEL INPUT - STYLES ENDS HERE ***/
+
+// ACTION BUTTONS
+.form-action-buttons {
+  margin-top: 8px;
+  display: flex !important;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  background-color: #e3edf6;
+}
+::ng-deep .mat-mdc-form-field-error-wrapper{
+  padding: 0px !important;
 }

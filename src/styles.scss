@@ -92,3 +92,29 @@ body {
 .mat-icon .mat-icon-button ::ng-deep .mat-button-focus-overlay {
   display: none;
 }
+
+/*** MAT-ERROR STYLES - START ****/
+mat-error {
+  font-size: 12px;
+}
+/*** MAT-ERROR STYLES - ENDS ****/
+
+
+
+/**** ACTION BUTTON STYLES - START ****/
+
+.action-btns {
+  margin-top: 8px;
+  display: flex !important;
+  justify-content: flex-end;
+  gap: 10px;
+  //padding-right: 1.5rem;
+}
+.btn-cancel{
+  background-color: #e3edf6;
+}
+/**** ACTION BUTTON STYLES - ENDS ****/
+
+.delete-icon{
+  color: rgb(231, 50, 50) !important;
+}

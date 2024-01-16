@@ -38,6 +38,8 @@ import {
   of,
   Subject,
   takeUntil,
+  startWith,
+  map,
 } from 'rxjs';
 import { Company } from 'src/app/usit/models/company';
 
@@ -77,7 +79,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   vendorObj = new Vms();
   vendorForm: any = FormGroup;
   submitted = false;
-  rolearr: any = [];
+  companyOptions: any = [];
   cityarr: any = [];
   pinarr: any = [];
   statearr: any = [];
@@ -90,7 +92,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   };
 
   companySearchData: any[] = [];
-  searchObs$!: Observable<any>;
+  searchCompanyOptions$!: Observable<any>;
   selectOptionObj = {
     companyType: COMPANY_TYPE,
     tierType: TIER_TYPE,
@@ -106,7 +108,9 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   //   public dialogRef: MatDialogRef<AddVendorComponent>
   // ) {}
   ngOnInit(): void {
+
     this.getvendorcompanydetails(); //This method will be  called for company auto-complete search
+    this.searchCompanyOptions$ = this.vendorServ.getCompanies().pipe(map((x:any)=> x.data));
     if(this.data.actionName === "edit-vendor"){
       this.bindFormControlValueOnEdit();
     }
@@ -242,18 +246,38 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       }
       trtype.updateValueAndValidity();
     });
-    this.companyAutoCompleteSearch();
+  //  this.companyAutoCompleteSearch();
+// this.searchCompanyOptions$ =
+//     this.vendorForm.controls.company.valueChanges.pipe(
+//       startWith(''),
+//       map((value: any) =>
+//         this._filterOptions({company: value} || '', this.companyOptions)
+//       )
+//     );
   }
+  private _filterOptions(value: any, options: string[]): string[] {
+    const filterValue = value.company.trim().toLowerCase();
+    const filteredCompanies = options.filter((option: any) =>
+      option.company.trim().toLowerCase().includes(filterValue)
+    );
+    return filteredCompanies;
 
+  }
   /**
    * getVendor Company Details
    */
   getvendorcompanydetails() {
 
-    
+
     this.vendorServ.getCompanies() .subscribe((response: any) => {
-          this.rolearr = response.data;
-          console.log(this.rolearr)
+          this.companyOptions = response.data;
+          this.searchCompanyOptions$ =
+          this.vendorForm.controls.company.valueChanges.pipe(
+            startWith(''),
+            map((value: any) =>
+              this._filterOptions({company: value} || '', this.companyOptions)
+            )
+          );
       });
   }
 
@@ -368,7 +392,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   }
 
   companyAutoCompleteSearch() {
-    this.searchObs$ = this.vendorForm.get('company').valueChanges.pipe(
+    this.searchCompanyOptions$ = this.vendorForm.get('company').valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       switchMap((term: any) => {
@@ -392,8 +416,8 @@ export class AddVendorComponent implements OnInit, OnDestroy {
    * @returns
    */
   getFilteredValue(term: any): Observable<any> {
-    if (term && this.rolearr) {
-      const sampleArr = this.rolearr.filter(
+    if (term && this.companyOptions) {
+      const sampleArr = this.companyOptions.filter(
         (val: any) =>
           val.company
             .trim()

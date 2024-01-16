@@ -10,7 +10,7 @@
     </span>
     <div class="emp-actions">
       <button [disabled]="!privilegeServ.hasPrivilege('ADD_EMPLOYEE')" mat-icon-button disableRipple class="add-user" (click)="addEmployee()" matTooltip="Add Employee" matTooltipPosition="left">
-        <mat-icon  [ngClass]="{'item-icon': privilegeServ.hasPrivilege('ADD_EMPLOYEE')}">person_add</mat-icon>
+        <mat-icon  [ngClass]="{'item-icon': privilegeServ.hasPrivilege('ADD_EMPLOYEE')}">add_circle</mat-icon>
       </button>
 
       <div class="search-employee">
@@ -111,7 +111,7 @@
               <mat-icon>edit</mat-icon>
             </button>
             <button [disabled]="!privilegeServ.hasPrivilege('DELETE_EMPLOYEE')" mat-icon-button (click)="deleteEmployee(emp)" class="action-button-ed">
-              <mat-icon>delete</mat-icon>
+              <mat-icon [ngClass]="{'delete-icon': privilegeServ.hasPrivilege('DELETE_EMPLOYEE')}">delete</mat-icon>
             </button>
             </span>
           </td>

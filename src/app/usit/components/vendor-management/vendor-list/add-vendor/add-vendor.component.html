@@ -1,28 +1,31 @@
 
-<div class="header-container mat-elevation-z1">
-    <span class="header-text" mat-dialog-title>
-      {{data.title}}
-    </span>
-    <button mat-icon-button (click)="onCancel()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-  <mat-card class="center-card">
-
+<!-- top header container -->
+<section class="header-container" id="mainHeader">
+  <span class="header-text" mat-dialog-title id="mainHeaderTitle">
+    {{data.title}}
+  </span>
+  <button mat-icon-button  (click)="onCancel()" class="btn-close" id="btnClose">
+    <mat-icon>close</mat-icon>
+  </button>
+</section>
+<!-- mat-card starts -->
+  <mat-card  class="card" id="empCard">
+    <!-- form- starts -->
     <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()" class="vendor-form" >
-      <div class="form">
+      <section class=form-container>
+        <!-- form - left controls -->
         <div class="form-column-left">
           <!-- Company -->
           <mat-form-field appearance="fill">
             <mat-label>Company</mat-label>
            <input matInput formControlName="company" [matAutocomplete]="companyAutoCmp" maxlength="75">
             <mat-autocomplete #companyAutoCmp="matAutocomplete">
-                <mat-option *ngFor="let option of (searchObs$ | async)"
+                <mat-option *ngFor="let option of (searchCompanyOptions$ | async)"
                   [value]="option.company.trim()">
                   {{ option.company.trim() }}
                 </mat-option>
             </mat-autocomplete>
-              <mat-hint *ngIf="(searchObs$ | async)?.length === 0">No results found</mat-hint>
+              <mat-hint *ngIf="(searchCompanyOptions$ | async)?.length === 0">No results found</mat-hint>
               <mat-error *ngIf="vendorForm.get('company')!.hasError('required')">Company Name
                 is Required
               </mat-error>
@@ -126,6 +129,7 @@
 
         </div>
 
+        <!-- form - right controls -->
         <div class="form-column-right">
          <!-- OTHER DETAILS SECTION -->
           <!-- staff   -->
@@ -166,14 +170,13 @@
 
 
         </div>
-      </div>
-
-
+      </section>
     </form>
-    <div class="form-button-right">
-      <!-- <div class="form-button-inner"> -->
-      <button mat-raised-button color="white" (click)="onCancel()">Cancel</button>
+    <!-- form-ends -->
+    <!-- form-bottom action buttons -->
+    <div class="form-action-buttons">
+      <button mat-raised-button class="btn-cancel" color="white" (click)="onCancel()">Cancel</button>
       <button mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
-      <!-- </div> -->
     </div>
   </mat-card>
+  <!-- mat-card-ends -->
