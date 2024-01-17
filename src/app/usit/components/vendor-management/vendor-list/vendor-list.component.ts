@@ -603,13 +603,13 @@ export class VendorListComponent implements OnInit {
             : 'Reject',
         id: vendor.id,
         userid: this.loginId,
-        remarks: dialogRef.componentInstance.remarks,
+        // remarks: dialogRef.componentInstance.remarks
       };
       dialogRef.afterClosed().subscribe(() => {
         if (dialogRef.componentInstance.allowAction) {
           this.vendorServ
             .approveORRejectVendor(
-              statReqObj,
+              {...statReqObj, remarks: dialogRef.componentInstance.remarks},
               statReqObj.action as 'Approved' | 'Reject'
             )
             .pipe(takeUntil(this.destroyed$))

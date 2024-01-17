@@ -518,13 +518,13 @@ export class RecruiterListComponent implements OnInit {
             : 'Reject',
         id: recruiter.id,
         userid: this.loginId,
-        remarks: dialogRef.componentInstance.remarks,
+       // remarks: dialogRef.componentInstance.remarks,
       };
       dialogRef.afterClosed().subscribe(() => {
         if (dialogRef.componentInstance.allowAction) {
           this.recruiterServ
             .approveORRejectRecruiter(
-              statReqObj,
+              {...statReqObj, remarks: dialogRef.componentInstance.remarks},
               statReqObj.action as 'Approved' | 'Reject'
             )
             .pipe(takeUntil(this.destroyed$))
