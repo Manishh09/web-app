@@ -81,7 +81,7 @@
   </section>
     <!-- paginator -->
 
-    <div class="paginator">
+    <div class="paginator" *ngIf="dataSource.filteredData.length">
       <mat-paginator
                   (page)="handlePageEvent($event)"
                   [pageSize]="pageSize"

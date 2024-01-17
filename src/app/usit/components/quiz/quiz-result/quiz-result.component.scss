@@ -73,7 +73,12 @@ thead {
 .kpt-actions {
   display: flex;
   align-items: center;
-
+  .search-kpt{
+    input:focus {
+      border: solid 2px #3f51b5 !important;
+      outline: none;
+    }
+   }
   .search {
     height: 32px;
     padding: 0px 8px;

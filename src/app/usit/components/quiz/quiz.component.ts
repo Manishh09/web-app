@@ -34,7 +34,7 @@ export interface Questionnaire {
   templateUrl: './quiz.component.html',
   styleUrls: ['./quiz.component.scss']
 })
-export class QuizComponent implements OnInit,OnDestroy{
+export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
   objectK = Object;
   deptOptions = DEPARTMENT;
   categoryOptions = CATEGORY;
@@ -246,8 +246,9 @@ export class QuizComponent implements OnInit,OnDestroy{
     })
   }
 
-  /** to display form validation messages */
+  /** to display form validation messages form-array's controls*/
   displayFormErrors() {
+    //validation for form-array's controls
     this.quizForm.controls.options.controls.forEach((fg: any) => {
       if (fg && fg.invalid) {
         Object.keys(fg.controls).forEach((fgc) => {
@@ -258,8 +259,14 @@ export class QuizComponent implements OnInit,OnDestroy{
         });
       }
     });
+    /** to display form validation messages for controls other than the form-array's controls*/
+    Object.keys(this.quizForm.controls).forEach((field) => {
+      const control = this.quizForm.get(field);
+      if (control && control.invalid) {
+        control.markAsTouched();
+      }
+    });
   }
-
   /**
    * cancels data entered
    */

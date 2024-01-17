@@ -20,6 +20,7 @@ import { IConfirmDialogData } from 'src/app/dialogs/models/confirm-dialog-data';
 import { ConfirmComponent } from 'src/app/dialogs/confirm/confirm.component';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { PrivilegesService } from 'src/app/services/privileges.service';
 
 @Component({
   selector: 'app-quiz-list',
@@ -68,6 +69,7 @@ export class QuizListComponent implements OnInit, OnDestroy{
   private snackBarServ = inject(SnackBarService);
   private quizServ = inject(QuizService);
   private router = inject(Router);
+  protected privilegeServ = inject(PrivilegesService);
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
   ngOnInit(): void {
