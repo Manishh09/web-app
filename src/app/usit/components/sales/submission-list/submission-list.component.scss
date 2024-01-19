@@ -220,11 +220,17 @@ tbody {
   column-gap: 5px;
 }
 
-@media screen and (min-width: 1400px) {
-  .vendor-table-style {
+@media screen and (min-width: 2100px) {
+  .submission-table-style {
     width: 100%;
-    height: calc(100% - 0px);
+    height: calc(100% - 8px);
     overflow: auto;
+  }
+}
+
+@media screen and (min-width: 1500px) and (max-width: 2100px) {
+  .submission-table-style {
+    height: calc(100% - 4px);
   }
 }
 
@@ -293,8 +299,16 @@ ul.breadcrumb li:last-child {
 
 .dom-submission-table-style {
   padding: 0 2px;
-  width: 100%;
+  width: max-content;
   max-height: calc(100% - 2px);
   overflow: auto;
   display: block;
+}
+
+@media screen and (min-width: 1900px) {
+  .dom-submission-table-style {
+    width: 100%;
+    height: calc(100% - 8px);
+    overflow: auto;
+  }
 }

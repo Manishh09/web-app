@@ -32,6 +32,7 @@ import {
 import { Consultantinfo } from 'src/app/usit/models/consultantinfo';
 import { RequirementService } from 'src/app/usit/services/requirement.service';
 import { AddRequirementComponent } from './add-requirement/add-requirement.component';
+import { RequirementInfoComponent } from './requirement-info/requirement-info.component';
 
 @Component({
   selector: 'app-requirement-list',
@@ -280,6 +281,27 @@ export class RequirementListComponent implements OnInit, OnDestroy {
 
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  /**
+   * go to requirement-info
+   */
+  goToReqInfo(element: any){
+    const actionData = {
+      title: `${element.reqnumber}`,
+      id: element.requirementid,
+      actionName: 'req-info',
+    };
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '62dvw';
+    dialogConfig.disableClose = false;
+    dialogConfig.panelClass = 'req-info';
+    dialogConfig.data = actionData;
+
+   this.dialogServ.openDialogWithComponent(
+      RequirementInfoComponent,
+      dialogConfig
+    );
   }
 
   /**
