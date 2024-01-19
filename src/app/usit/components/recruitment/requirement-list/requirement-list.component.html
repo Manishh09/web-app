@@ -57,7 +57,7 @@
           >
             Requirement Number
           </th>
-          <td mat-cell *matCellDef="let element">{{ element?.reqnumber }}</td>
+          <td mat-cell *matCellDef="let element" class="req-info" (click)="goToReqInfo(element)">{{ element?.reqnumber }}</td>
         </ng-container>
         <!-- Date-->
         <ng-container matColumnDef="Date">
@@ -142,7 +142,7 @@
         <!-- Action Column -->
         <ng-container matColumnDef="Action">
           <th mat-header-cell *matHeaderCellDef>Action</th>
-          <td mat-cell *matCellDef="let requirement">
+          <td mat-cell *matCellDef="let requirement" class="action-buttons">
             <button [disabled]="!privilegeServ.hasPrivilege('EDIT_REQUIREMENTS')"
               mat-icon-button
               (click)="editRequirement(requirement)"
