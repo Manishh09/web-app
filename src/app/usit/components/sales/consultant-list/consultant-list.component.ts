@@ -695,6 +695,10 @@ export class ConsultantListComponent
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
   }
+
+  goToUserInfo(id: number){
+    this.router.navigate(['usit/user-info',id])
+  }
 }
 
 export interface ReportVo {

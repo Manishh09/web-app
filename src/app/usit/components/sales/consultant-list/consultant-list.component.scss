@@ -99,11 +99,11 @@ tbody{
 
 
 }
-td:nth-child(3) , td:nth-child(4){
-    cursor: pointer;
-    margin-bottom: 2px;
-    color: #0275d8;
-}
+// td:nth-child(3) , td:nth-child(4){
+//     cursor: pointer;
+//     margin-bottom: 2px;
+//     color: #0275d8;
+// }
 .header-container{
   display: flex;
   flex-direction: row;
@@ -148,7 +148,7 @@ td:nth-child(3) , td:nth-child(4){
 .consultant-table-style {
   padding: 0 2px;
   width: max-content;
-  max-height: calc(100% - 2px);
+  max-height: calc(100% - 4px);
   overflow: auto;
   display: block;
 }
@@ -224,10 +224,10 @@ td:nth-child(3) , td:nth-child(4){
   column-gap: 5px;
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 2700px) {
   .consultant-table-style {
     width: 100%;
-    height: calc(100% - 0px);
+    height: calc(100% - 8px);
     overflow: auto;
   }
 }
@@ -271,4 +271,20 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
 .approve-reject-buttons{
   width: fit-content;
   height: auto;
+}
+
+.dom-consultant-table-style {
+  padding: 0 2px;
+  width: max-content;
+  max-height: calc(100% - 4px);
+  overflow: auto;
+  display: block;
+}
+
+@media screen and (min-width: 2000px) {
+  .consultant-table-style {
+    width: 100%;
+    height: calc(100% - 8px);
+    overflow: auto;
+  }
 }
