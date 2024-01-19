@@ -372,4 +372,8 @@ export class SubmissionListComponent implements OnInit, OnDestroy{
       this.destroyed$.next(undefined);
       this.destroyed$.complete()
   }
+
+  goToUserInfo(id: number){
+    this.router.navigate(['usit/user-info',id])
+  }
 }

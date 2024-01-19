@@ -180,7 +180,7 @@ export class AddSubmissionComponent implements OnInit{
       requirement: [submissionData ? submissionData?.requirement : '', [Validators.required]],
       consultant: [submissionData ? submissionData?.consultant : '', [Validators.required]],
       position: [submissionData ? submissionData.position : '', [Validators.required]],
-      ratetype: [submissionData ? submissionData.ratetype : ''],
+      ratetype: [submissionData ? submissionData.ratetype : '', [Validators.required]],
       submissionrate: [submissionData ? submissionData.submissionrate : '', [Validators.required]],
       endclient: [submissionData ? submissionData.endclient : ''],
       implpartner: [submissionData ? submissionData.implpartner : ''],
