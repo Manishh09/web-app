@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { InterviewService } from 'src/app/usit/services/interview.service';
 import { Subject, takeUntil } from 'rxjs';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-closure-list',
@@ -15,6 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
     MatIconModule,
     MatButtonModule,
     CommonModule,
+    MatPaginatorModule,
   ],
   templateUrl: './closure-list.component.html',
   styleUrls: ['./closure-list.component.scss']
@@ -53,10 +56,30 @@ export class ClosureListComponent implements OnInit, OnDestroy {
   totalItems: any;
   closureCount!: number;
   currentPageIndex = 0;
+  // paginator
+  length = 50;
+  pageIndex = 0;
+  pageSize = 50; // items per page
+  pageSizeOptions = [50, 75, 100];
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  pageEvent!: PageEvent;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  // pagination code
+  page: number = 1;
+  itemsPerPage = 50;
+  field = 'empty';
 
   ngOnInit(): void {
     this.getFlag();
     this.getAll();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   getFlag(){
@@ -88,7 +111,7 @@ export class ClosureListComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(event: any) {
-
+    this.dataSource.filter = event.target.value;
   }
 
   generateSerialNumber(index: number): number {
@@ -99,6 +122,13 @@ export class ClosureListComponent implements OnInit, OnDestroy {
 
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  handlePageEvent(e: PageEvent) {
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
   }
 
   ngOnDestroy(): void {}
