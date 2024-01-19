@@ -1,11 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
-  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,18 +14,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DialogService } from 'src/app/services/dialog.service';
+import { Subject, takeUntil } from 'rxjs';
+import { CATEGORY } from 'src/app/constants/category';
 import { DEPARTMENT } from 'src/app/constants/department';
+import { transform } from 'src/app/functions/timer';
+import { DialogService } from 'src/app/services/dialog.service';
 import {
   ISnackBarData,
   SnackBarService,
 } from 'src/app/services/snack-bar.service';
-import { QuizService } from 'src/app/usit/services/quiz.service';
-import { Questionnaire } from '../quiz.component';
-import { CATEGORY } from 'src/app/constants/category';
 import { Option, QuestionGroup } from 'src/app/usit/models/questionnnaire';
-import { pauseTimer, transform } from 'src/app/functions/timer';
-import { Subject, takeUntil } from 'rxjs';
+import { QuizService } from 'src/app/usit/services/quiz.service';
 const TIMEOUT_VALUE = 60;
 @Component({
   selector: 'app-attempt-quiz',
@@ -46,8 +44,7 @@ const TIMEOUT_VALUE = 60;
   templateUrl: './attempt-quiz.component.html',
   styleUrls: ['./attempt-quiz.component.scss'],
 })
-export class AttemptQuizComponent implements OnInit , OnDestroy{
-
+export class AttemptQuizComponent implements OnInit, OnDestroy {
   objectK = Object;
   deptOptions = DEPARTMENT;
   categoryOptions = CATEGORY;
@@ -69,28 +66,27 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
   private quizServ = inject(QuizService);
   selectedDepartment: any;
   selectedCategory: any;
-  clock: string = "";
+  clock: string = '';
   interval!: any;
- // to clear subscriptions
- private destroyed$ = new Subject<void>();
- // services
+  // to clear subscriptions
+  private destroyed$ = new Subject<void>();
+  timeLeft: number = 0;
+  // services
   ngOnInit(): void {
-   // this.getQuestionnaire();
-   this.initForm('');
+    // this.getQuestionnaire();
+    this.initForm('');
   }
 
-  onSelect(event: MatSelectChange, type: 'dept'| 'cat'){
-
-    if(type === "dept"){
+  onSelect(event: MatSelectChange, type: 'dept' | 'cat') {
+    if (type === 'dept') {
       this.selectedDepartment = event.value;
     }
-    if(type === "cat"){
+    if (type === 'cat') {
       this.selectedCategory = event.value;
     }
 
-    if(this.selectedDepartment && this.selectedCategory){
+    if (this.selectedDepartment && this.selectedCategory) {
       this.getQuestionnaire();
-      // this.onTimeout()
     }
   }
   /**
@@ -98,32 +94,39 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
    */
   getQuestionnaire() {
     this.initForm('');
-    this.quizServ.getQuestionnaire(this.selectedDepartment, this.selectedCategory)
-    .pipe(takeUntil(this.destroyed$))
-    .subscribe({
-      next: (resp: any) => {
-        if (resp.status === "success") {
-
-          if(resp.data){
-            this.formObj = resp.data;
-            this.initForm(this.formObj.options);
-            this.onTimeout();
+    this.quizServ
+      .getQuestionnaire(this.selectedDepartment, this.selectedCategory)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (resp: any) => {
+          if (resp.status === 'success') {
+            if (resp.data) {
+              this.formObj = resp.data;
+              this.initForm(this.formObj.options);
+              this.onTimeout();
+            } else {
+              this.dataTobeSentToSnackBarService.message =
+                'No Questions Available under the selected category and department, Please select valid data';
+              this.dataTobeSentToSnackBarService.panelClass = [
+                'custom-snack-failure',
+              ];
+              this.snackBarServ.openSnackBarFromComponent(
+                this.dataTobeSentToSnackBarService
+              );
+              this.initForm('');
+            }
           }
-          else{
-
-            this.dataTobeSentToSnackBarService.message = "No Questions Available under the selected category and department, Please select valid data";
-            this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"]
-            this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-            this.initForm('')
-          }
-        }
-      },
-      error: err => {
-        this.dataTobeSentToSnackBarService.message = "Internal server error";
-        this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"]
-        this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-      }
-    });
+        },
+        error: (err) => {
+          this.dataTobeSentToSnackBarService.message = 'Internal server error';
+          this.dataTobeSentToSnackBarService.panelClass = [
+            'custom-snack-failure',
+          ];
+          this.snackBarServ.openSnackBarFromComponent(
+            this.dataTobeSentToSnackBarService
+          );
+        },
+      });
   }
 
   /**
@@ -133,9 +136,8 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
     this.quizForm = this.fb.group({
       department: [this.selectedDepartment, [Validators.required]],
       category: [this.selectedCategory, [Validators.required]],
-      options: this.fb.array(data ? this.initFormArrayElements(data): []),
+      options: this.fb.array(data ? this.initFormArrayElements(data) : []),
     });
-
   }
   /**
    *
@@ -161,7 +163,7 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
         question: [control.question],
         answer: [control.answer],
         userans: [''],
-        id:[control.id]
+        id: [control.id],
       })
     );
   }
@@ -181,21 +183,21 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
     }
   }
 
-  onTimeout(){
-    let timeVal = TIMEOUT_VALUE;
+  onTimeout() {
+    this.timeLeft = TIMEOUT_VALUE;
     this.interval = setInterval(() => {
-      if (timeVal === 0) {
-       this.pauseTimer();
+      if (this.timeLeft === 0) {
+        this.pauseTimer();
       } else {
-        timeVal--;
+        this.timeLeft--;
       }
-      this.clock = transform(timeVal);
+      this.clock = transform(this.timeLeft);
     }, 1000);
   }
 
-  pauseTimer(){
+  pauseTimer() {
     clearInterval(this.interval);
-    this.onSubmit()
+    this.onSubmit();
   }
   /**
    *
@@ -213,28 +215,41 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
       userid: localStorage.getItem('userid'),
       qid: this.formObj.qid,
     };
-    this.quizServ.attemptQuiz(saveObj).pipe(takeUntil(this.destroyed$)).subscribe({
-      next: (resp: any) => {
-        if (resp.status == 'success') {
-          this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-success"];
-          this.dataTobeSentToSnackBarService.message = 'Quiz submitted successfully';
-        } else {
-          this.dataTobeSentToSnackBarService.message = 'Quiz submission failed';
-          this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
-        }
-        this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-      },
-      error: (err: any) => {
-        console.log(err.message);
-        this.dataTobeSentToSnackBarService.message = err.message;
-        this.dataTobeSentToSnackBarService.panelClass = [
-          'custom-snack-failure',
-        ];
-        this.snackBarServ.openSnackBarFromComponent(
-          this.dataTobeSentToSnackBarService
-        );
-      },
-    });
+    this.quizServ
+      .attemptQuiz(saveObj)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe({
+        next: (resp: any) => {
+          if (resp.status == 'success') {
+            this.dataTobeSentToSnackBarService.panelClass = [
+              'custom-snack-success',
+            ];
+            this.dataTobeSentToSnackBarService.message =
+              'Quiz submitted successfully';
+            clearInterval(this.interval);
+            this.timeLeft = 0;
+          } else {
+            this.dataTobeSentToSnackBarService.message =
+              'Quiz submission failed';
+            this.dataTobeSentToSnackBarService.panelClass = [
+              'custom-snack-failure',
+            ];
+          }
+          this.snackBarServ.openSnackBarFromComponent(
+            this.dataTobeSentToSnackBarService
+          );
+        },
+        error: (err: any) => {
+          console.log(err.message);
+          this.dataTobeSentToSnackBarService.message = err.message;
+          this.dataTobeSentToSnackBarService.panelClass = [
+            'custom-snack-failure',
+          ];
+          this.snackBarServ.openSnackBarFromComponent(
+            this.dataTobeSentToSnackBarService
+          );
+        },
+      });
   }
 
   /** to display form validation messages */
@@ -257,6 +272,7 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
   onCancel() {
     this.quizForm.reset();
     this.selectedCategory = this.selectedDepartment = '';
+    clearInterval(this.interval);
   }
 
   ngOnDestroy(): void {
@@ -264,7 +280,5 @@ export class AttemptQuizComponent implements OnInit , OnDestroy{
 
     this.destroyed$.next(undefined);
     this.destroyed$.complete();
-
   }
 }
-
