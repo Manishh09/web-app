@@ -177,7 +177,7 @@ export class AddInterviewComponent implements OnInit {
         projectStartDate: [interviewData && interviewData.closure ? interviewData.closure.projectStartDate : ''],
         payRateConsultant: [interviewData && interviewData.closure ? interviewData.closure.payRateConsultant : ''],
         vendorArPhoneNumber: [interviewData && interviewData.closure ? interviewData.closure.vendorArPhoneNumber : ''],
-        paymentCycle: [interviewData && interviewData.closure ? interviewData.closure.paymentCycle : ''],
+        paymentCycle: [interviewData && interviewData.closure ? parseInt(interviewData.closure.paymentCycle, 10) : ''],
         vendorApPhoneNumber: this.flag === 'Recruiting' ?
           this.formBuilder.control(interviewData && interviewData.closure ? interviewData.closure.vendorApPhoneNumber : '') :
           null,
@@ -260,12 +260,15 @@ export class AddInterviewComponent implements OnInit {
       const visaValidityFormControl = this.interviewForm.get('closure.visaValidity');
       const projectStartFormControl = this.interviewForm.get('closure.projectStartDate');
       const projectEndFormControl = this.interviewForm.get('closure.projectendtdate')
+      // const paymentCycleFormControl = this.interviewForm.get('closure.paymentCycle')
       const formattedVisaValidity = this.datePipe.transform(visaValidityFormControl.value, 'yyyy-MM-dd');
       const formattedProjectStart = this.datePipe.transform(projectStartFormControl.value, 'yyyy-MM-dd');
       const formattedProjectEnd = this.datePipe.transform(projectEndFormControl.value, 'yyyy-MM-dd');
+      // const formattedPaymentCycle = paymentCycleFormControl.value.toString();
       visaValidityFormControl.setValue(formattedVisaValidity);
       projectStartFormControl.setValue(formattedProjectStart);
       projectEndFormControl.setValue(formattedProjectEnd);
+      // paymentCycleFormControl.setValue(formattedPaymentCycle);
     }
     const dataToBeSentToSnackBar: ISnackBarData = {
       message: '',

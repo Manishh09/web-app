@@ -12,7 +12,7 @@
         <input type="hidden" formControlName="id">
         <mat-form-field class="technologyname-field">
           <mat-label>Technology</mat-label>
-          <input title="" matInput formControlName="technologyarea" maxlength="15">
+          <input title="" matInput formControlName="technologyarea" maxlength="75">
           <!-- errors -->
           <mat-error class="error-message" *ngIf="controls['technologyarea'].errors && controls['technologyarea'].errors['required']"> Technology is required</mat-error>
         </mat-form-field>

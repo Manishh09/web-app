@@ -129,7 +129,7 @@
   .interview-table-style {
     padding: 0 2px;
     width: max-content;
-    max-height: calc(100% - 2px);
+    max-height: calc(100% - 3px);
     overflow: auto;
     display: block;
   }
@@ -204,10 +204,10 @@
     column-gap: 5px;
   }
   
-  @media screen and (min-width: 1400px) {
-    .vendor-table-style {
+  @media screen and (min-width: 2000px) {
+    .interview-table-style {
       width: 100%;
-      height: calc(100% - 0px);
+      height: calc(100% - 8px);
       overflow: auto;
     }
   }
@@ -259,15 +259,7 @@
     pointer-events: none;
   }
 
-  .consultant-name, .employeer-name {
+  .employeer-name {
     cursor: pointer;
     color: #0275d8;
-  }
-
-  .dom-interview-table-style{
-    padding: 0 2px;
-    width: 100%;
-    max-height: calc(100% - 2px);
-    overflow: auto;
-    display: block;
   }

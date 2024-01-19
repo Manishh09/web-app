@@ -20,7 +20,7 @@
         </div>
     </div>
     <div id="table-container" class="table-wrapper">
-        <section class="mat-elevation-z8" [ngClass]="{'dom-interview-table-style': flag === 'Domrecruiting', 'interview-table-style': flag !== 'Domrecruiting'}">
+        <section class="mat-elevation-z8 interview-table-style">
             <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSort($event)" oncopy="return false">
 
                 <!--- Note that these columns can be defined in any order.
@@ -99,10 +99,10 @@
                     <td mat-cell *matCellDef="let element">
                         <ng-container *ngIf="this.flag == 'Recruiting'; then recInterview else salesInterview"></ng-container>
                         <ng-template #recInterview>
-                            {{ element?.reqnumber }}<span class="employeer-name">{{element.fullname}}</span>
+                            {{ element?.reqnumber }}<span class="employeer-name" (click)="goToUserInfo(element.userid)">{{element.fullname}}</span>
                         </ng-template>
                         <ng-template #salesInterview>
-                            <span class="employeer-name">{{element.pseudoname}}</span>
+                            <span class="employeer-name" (click)="goToUserInfo(element.userid)">{{element.pseudoname}}</span>
                         </ng-template>
                 </ng-container>
 
