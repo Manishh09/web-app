@@ -103,16 +103,19 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   dialogRef = inject(MatDialogRef<AddVendorComponent>);
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
-  // constructor(
-  //   @Inject(MAT_DIALOG_DATA) protected data: any,
-  //   public dialogRef: MatDialogRef<AddVendorComponent>
-  // ) {}
+   
   designation = localStorage.getItem('designation');
+  isCompanyDataAvailable: boolean = false;
 
   ngOnInit(): void {
 
-    this.getvendorcompanydetails(); //This method will be  called for company auto-complete search
-    this.searchCompanyOptions$ = this.vendorServ.getCompanies().pipe(map((x:any)=> x.data));
+   // this.getvendorcompanydetails(); 
+   //This below snippet will be  for company auto-complete search
+    this.searchCompanyOptions$ = this.vendorServ.getCompanies().pipe(map((x:any)=> x.data), tap(resp => {
+        if (resp && resp.length) {
+          this.getCompanyOptionsForAutoComplete(resp);
+        }
+    }));
     if(this.data.actionName === "edit-vendor"){
       this.bindFormControlValueOnEdit();
     }
@@ -262,15 +265,14 @@ export class AddVendorComponent implements OnInit, OnDestroy {
     const filteredCompanies = options.filter((option: any) =>
       option.company.trim().toLowerCase().includes(filterValue)
     );
+    this.isCompanyDataAvailable = filteredCompanies.length === 0;
     return filteredCompanies;
 
   }
   /**
-   * getVendor Company Details
+   * getVendor Company Details : NOT USED
    */
   getvendorcompanydetails() {
-
-
     this.vendorServ.getCompanies() .subscribe((response: any) => {
           this.companyOptions = response.data;
           this.searchCompanyOptions$ =
@@ -281,6 +283,17 @@ export class AddVendorComponent implements OnInit, OnDestroy {
             )
           );
       });
+  }
+
+  getCompanyOptionsForAutoComplete(data: any){
+    this.companyOptions = data;
+    this.searchCompanyOptions$ =
+    this.vendorForm.controls.company.valueChanges.pipe(
+      startWith(''),
+      map((value: any) =>
+        this._filterOptions({company: value} || '', this.companyOptions)
+      )
+    );
   }
 
   // not used

@@ -77,14 +77,20 @@ export class AddRecruiterComponent implements OnInit {
 
     statusType: STATUS_TYPE,
   };
+  isCompanyDataAvailable: boolean = false;
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: any,
     public dialogRef: MatDialogRef<AddRecruiterComponent>
   ) { }
   designation = localStorage.getItem('designation');
   ngOnInit(): void {
-    this.getvendorcompanydetails()
-    this.searchCompanyOptions$ = this.recruiterServ.getCompanies(this.dept).pipe(map((x:any)=> x.data));
+    //this.getvendorcompanydetails();
+    this.getFlagDetails();
+    this.searchCompanyOptions$ = this.recruiterServ.getCompanies(this.dept).pipe(map((x:any)=> x.data), tap(resp =>{
+      if(resp && resp.length) {
+        this.getCompanyOptionsForAutoComplete(resp);
+      }
+    }));
     if (this.data.actionName === 'edit-recruiter') {
       this.iniRecruiterForm(new Recruiter());
       this.recruiterServ.getEntity(this.data.recruiterData.id).subscribe(
@@ -257,18 +263,7 @@ export class AddRecruiterComponent implements OnInit {
   dept = 'all';
 
   getvendorcompanydetails() {
-    this.flg = localStorage.getItem('department');
-    const role = localStorage.getItem('role');
-
-    if (role == 'Super Admin' || role == 'Admin') {
-      this.dept = "all";
-    }
-    if (this.flg == 'Recruiting') {
-      this.dept = 'Recruiting'
-    }
-    if (this.flg == 'Bench Sales') {
-      this.dept = 'Bench Sales'
-    }
+    this.getFlagDetails();
     this.recruiterServ.getCompanies(this.dept).subscribe(
       (response: any) => {
         this.companyOptions = response.data;
@@ -283,13 +278,40 @@ export class AddRecruiterComponent implements OnInit {
     )
   }
 
+  private getFlagDetails() {
+    this.flg = localStorage.getItem('department');
+    const role = localStorage.getItem('role');
+
+    if (role == 'Super Admin' || role == 'Admin') {
+      this.dept = "all";
+    }
+    if (this.flg == 'Recruiting') {
+      this.dept = 'Recruiting';
+    }
+    if (this.flg == 'Bench Sales') {
+      this.dept = 'Bench Sales';
+    }
+  }
+
   private _filterOptions(value: any, options: string[]): string[] {
     const filterValue = value.company.trim().toLowerCase();
     const filteredCompanies = options.filter((option: any) =>
       option.company.trim().toLowerCase().includes(filterValue)
     );
+    this.isCompanyDataAvailable = filteredCompanies.length === 0;
     return filteredCompanies;
 
+  }
+
+  getCompanyOptionsForAutoComplete(data: any){
+    this.companyOptions = data;
+    this.searchCompanyOptions$ =
+      this.recruiterForm.controls.vendor.controls.company.valueChanges.pipe(
+        startWith(''),
+        map((value: any) =>
+          this._filterOptions({ company: value }  || '', this.companyOptions)
+        )
+      );
   }
 
   displayFormErrors() {
