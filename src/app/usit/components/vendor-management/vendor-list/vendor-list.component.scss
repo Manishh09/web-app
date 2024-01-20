@@ -83,13 +83,14 @@ tbody {
 }
 
 
-.mat-column-HeadQuarter {
-  width: 62px !important;
-}
+// .mat-column-HeadQuarter {
+//   width: 62px !important;
+// }
 
-.mat-column-Company {
-  width: 72px !important;
-}
+// .mat-column-Company {
+//   width: 72px !important;
+//   
+// }
 
 .mat-column-Name {
   border-right: 1px solid lightgray;
@@ -119,7 +120,7 @@ tbody {
 
 .company-recruiter-info {
   cursor: pointer !important;
-  // color: #0275d8 !important;
+  color: #4154f1;
 }
 
 .action-btns {
@@ -254,7 +255,7 @@ tbody {
 @media screen and (min-width: 1400px) {
   .vendor-table-style {
     width: 100%;
-    height: calc(100% - 0px);
+    height: calc(100% - 8px);
     overflow: auto;
   }
 }
@@ -304,4 +305,9 @@ td.approve-buttons.cdk-cell.cdk-column-Approve-Reject.mat-column-Approve-Reject.
 ul.breadcrumb li:last-child {
   color: black;
   pointer-events: none;
+}
+
+.user-info {
+  cursor: pointer !important;
+  color: #4154f1;
 }

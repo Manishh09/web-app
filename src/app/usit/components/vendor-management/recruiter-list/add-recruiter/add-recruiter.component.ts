@@ -51,7 +51,7 @@ export class AddRecruiterComponent implements OnInit {
   recruiterObj = new Recruiter();
   recruiterForm: any = FormGroup;
   submitted = false;
-  rolearr: { company: string }[] = [];
+  companyOptions: any = [];
   cityarr: any = [];
   pinarr: any = [];
   statearr: any = [];
@@ -71,6 +71,7 @@ export class AddRecruiterComponent implements OnInit {
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
   searchObs$!: Observable<any>;
+  searchCompanyOptions$!: Observable<any>;
   companySearchData: any[] = [];
   selectOptionObj = {
 
@@ -80,8 +81,10 @@ export class AddRecruiterComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) protected data: any,
     public dialogRef: MatDialogRef<AddRecruiterComponent>
   ) { }
+  designation = localStorage.getItem('designation');
   ngOnInit(): void {
     this.getvendorcompanydetails()
+    this.searchCompanyOptions$ = this.recruiterServ.getCompanies(this.dept).pipe(map((x:any)=> x.data));
     if (this.data.actionName === 'edit-recruiter') {
       this.iniRecruiterForm(new Recruiter());
       this.recruiterServ.getEntity(this.data.recruiterData.id).subscribe(
@@ -124,7 +127,7 @@ export class AddRecruiterComponent implements OnInit {
         updatedby: [recruiterData ? recruiterData.updatedby : ''],
         vendor: this.formBuilder.group({
           vmsid: [recruiterData ? recruiterData.vendor.vmsid   : ''],
-          company: [recruiterData ? recruiterData.vendor.company   : ''],
+          company: [recruiterData ? recruiterData.vendor.company   : '', Validators.required],
         }),
         user: localStorage.getItem('userid'),
       }
@@ -136,7 +139,7 @@ export class AddRecruiterComponent implements OnInit {
       this.recruiterForm.addControl('rec_stat',this.formBuilder.control(recruiterData ? recruiterData.rec_stat : ''));
     }
     this.validateControls()
-    this.companyAutoCompleteSearch()
+    // this.companyAutoCompleteSearch()
   }
 
   validateControls(action = 'add-recruiter') {
@@ -201,6 +204,7 @@ export class AddRecruiterComponent implements OnInit {
     };
     if (this.recruiterForm.invalid) {
       //this.blur = "enable"
+      this.recruiterForm.markAllAsTouched();
       this.displayFormErrors();
       return;
     }
@@ -267,9 +271,25 @@ export class AddRecruiterComponent implements OnInit {
     }
     this.recruiterServ.getCompanies(this.dept).subscribe(
       (response: any) => {
-        this.rolearr = response.data;
+        this.companyOptions = response.data;
+        this.searchCompanyOptions$ =
+          this.recruiterForm.controls.vendor.controls.company.valueChanges.pipe(
+            startWith(''),
+            map((value: any) =>
+              this._filterOptions({ company: value }  || '', this.companyOptions)
+            )
+          );
       }
     )
+  }
+
+  private _filterOptions(value: any, options: string[]): string[] {
+    const filterValue = value.company.trim().toLowerCase();
+    const filteredCompanies = options.filter((option: any) =>
+      option.company.trim().toLowerCase().includes(filterValue)
+    );
+    return filteredCompanies;
+
   }
 
   displayFormErrors() {
@@ -315,8 +335,8 @@ export class AddRecruiterComponent implements OnInit {
    * @returns
    */
   getFilteredValue(term: any): Observable<any> {
-    if (term && this.rolearr) {
-      const sampleArr = this.rolearr.filter((val: any) => val.company.trim().toLowerCase().includes(term.trim().toLowerCase()) == true)
+    if (term && this.companyOptions) {
+      const sampleArr = this.companyOptions.filter((val: any) => val.company.trim().toLowerCase().includes(term.trim().toLowerCase()) == true)
       this.companySearchData = sampleArr;
       return of(this.companySearchData);
     }

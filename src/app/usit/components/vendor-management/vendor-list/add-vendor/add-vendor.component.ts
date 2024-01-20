@@ -107,6 +107,8 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   //   @Inject(MAT_DIALOG_DATA) protected data: any,
   //   public dialogRef: MatDialogRef<AddVendorComponent>
   // ) {}
+  designation = localStorage.getItem('designation');
+
   ngOnInit(): void {
 
     this.getvendorcompanydetails(); //This method will be  called for company auto-complete search

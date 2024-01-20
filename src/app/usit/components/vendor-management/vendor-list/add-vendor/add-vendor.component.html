@@ -112,7 +112,7 @@
           <!-- <mat-autocomplete #companyTypeAutoCmp="matAutocomplete"> -->
             <mat-select formControlName="status">
               <mat-option *ngFor="let option of selectOptionObj.statusType"
-              [value]="option">
+              [value]="option" [disabled]="(option === 'Approved' || option === 'Rejected') && designation == 'Executive'" >
               {{ option }}
             </mat-option>
             </mat-select>

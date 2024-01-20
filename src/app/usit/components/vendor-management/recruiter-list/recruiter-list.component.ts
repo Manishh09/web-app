@@ -108,6 +108,7 @@ export class RecruiterListComponent implements OnInit {
   itemsPerPage = 50;
   AssignedPageNum!: any;
   field = 'empty';
+  companyType: string = '';
 
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
@@ -567,7 +568,7 @@ export class RecruiterListComponent implements OnInit {
     const recruitertype = row.recruitertype;
     if (recruitertype === 'Recruiter') {
       return 'technical-recruiter';
-    } else if (recruitertype === 'Bench Sales Recruiter') {
+    } else if (recruitertype === 'Bench Sales') {
       return 'bench-sales-recruiter';
     } else if (recruitertype === 'Both') {
       return 'both-recruiters';
@@ -605,6 +606,10 @@ export class RecruiterListComponent implements OnInit {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;
       this.currentPageIndex = currentPageIndex;
+      if(this.companyType) {
+        this.getAllVendorByType(this.companyType, event.pageIndex + 1)
+        return
+      }
       this.getAllRecruiters(event.pageIndex + 1);
     }
     return;
@@ -612,5 +617,23 @@ export class RecruiterListComponent implements OnInit {
 
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  getAllVendorByType(type: string, pageIndex = 0) {
+    this.companyType = type;
+    const page = pageIndex ?  pageIndex : this.page;
+    this.recruiterServ.getAllVendorByType( this.hasAcces,this.loginId, page,this.pageSize, type, this.field).subscribe(
+      (response: any) => {
+        this.dataSource.data = response.data.content
+        // for serial-num {}
+        this.dataSource.data.map((x: any, i) => {
+          x.serialNum = this.generateSerialNumber(i);
+        });
+        this.totalItems = response.data.totalElements;
+      })
+  }
+
+  goToUserInfo(id: number){
+    this.router.navigate(['usit/user-info',id])
   }
 }

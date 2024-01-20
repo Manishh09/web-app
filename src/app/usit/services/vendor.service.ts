@@ -78,4 +78,8 @@ export class VendorService {
   approveORRejectVendor(entity: any, action: 'Approved' | 'Reject'){
     return action === 'Approved' ? this.approvevms(entity.action, entity.id, entity.userid): this.rejectVendor(entity.id, entity.remarks, entity.userid);
   }
+
+  getAllVendorByType(access: string, userid: number,page: any, size: any, companytype: any, field:any) {
+    return this.apiServ.get("vms/vendor/getAll/" + access + "/" + userid+"/"+page+"/"+size+"/"+ companytype + "/" +field);
+  }
 }

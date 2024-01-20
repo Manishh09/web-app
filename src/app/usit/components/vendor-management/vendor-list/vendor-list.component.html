@@ -8,12 +8,12 @@
       Vendors
     </span>
     <span class="filter-vendors">
-      <button mat-raised-button class="filter-button" color="warn" (click)="filterVendors('Recruiting')">Recruiting
+      <button mat-raised-button class="filter-button" color="warn" (click)="getAllVendorByType('Recruiting')">Recruiting
         Companies</button>
-      <button mat-raised-button class="filter-button" color="primary" (click)="filterVendors('Bench Sales')">Bench
+      <button mat-raised-button class="filter-button" color="primary" (click)="getAllVendorByType('Bench Sales')">Bench
         Companies</button>
       <button mat-raised-button class="filter-button" style="background-color: black; color: white;"
-        (click)="filterVendors('Both')">Both Recruiting & Staffing</button>
+        (click)="getAllVendorByType('Both')">Both Recruiting & Staffing</button>
     </span>
     <div class="vendor-actions">
       <!-- <button mat-icon-button class="add-user" (click)="uploadVendor()">
@@ -75,13 +75,15 @@
         <ng-container matColumnDef="TierType">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Tier Type"> Tier Type
           </th>
-          <td mat-cell *matCellDef="let element"> {{element.tyretype}} </td>
+          <td mat-cell *matCellDef="let element" > {{element.tyretype}} </td>
         </ng-container>
 
         <!-- AddedBy Column -->
         <ng-container matColumnDef="AddedBy">
           <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by AddedBy"> Added By </th>
-          <td mat-cell *matCellDef="let element"> {{element.pseudoname}} </td>
+          <td mat-cell *matCellDef="let element">
+            <span class="user-info" (click)="goToUserInfo(element.addedby)"> {{element.pseudoname}}  </span>
+          </td>
         </ng-container>
 
         <!-- AddedOn Column -->

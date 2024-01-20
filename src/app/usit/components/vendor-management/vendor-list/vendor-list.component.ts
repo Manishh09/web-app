@@ -108,6 +108,7 @@ export class VendorListComponent implements OnInit {
   isRejected: boolean = false;
   // to clear subscriptions
   private destroyed$ = new Subject<void>();
+  companyType: string = '';
   ngOnInit(): void {
     this.hasAcces = localStorage.getItem('role');
     this.loginId = localStorage.getItem('userid');
@@ -657,6 +658,10 @@ export class VendorListComponent implements OnInit {
       this.pageEvent = event;
       const currentPageIndex = event.pageIndex;
       this.currentPageIndex = currentPageIndex;
+      if(this.companyType) {
+        this.getAllVendorByType(this.companyType, event.pageIndex + 1)
+        return
+      }
       this.getAllData(event.pageIndex + 1);
     }
     return;
@@ -698,5 +703,23 @@ export class VendorListComponent implements OnInit {
 
   navigateToDashboard() {
     this.router.navigateByUrl('/usit/dashboard');
+  }
+
+  getAllVendorByType(type: string, pageIndex = 0) {
+    this.companyType = type;
+    const page = pageIndex ?  pageIndex : this.page;
+    this.vendorServ.getAllVendorByType( this.hasAcces,this.loginId, page,this.pageSize, type, this.field).subscribe(
+      (response: any) => {
+        this.dataSource.data = response.data.content
+        // for serial-num {}
+        this.dataSource.data.map((x: any, i) => {
+          x.serialNum = this.generateSerialNumber(i);
+        });
+        this.totalItems = response.data.totalElements;
+      })
+  }
+
+  goToUserInfo(id: number){
+    this.router.navigate(['usit/user-info',id])
   }
 }

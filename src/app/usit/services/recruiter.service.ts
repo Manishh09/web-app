@@ -86,4 +86,8 @@ export class RecruiterService {
    approveORRejectRecruiter(entity: any, action: 'Approved' | 'Reject'){
     return action === 'Approved' ? this.approve(entity.action, entity.id, entity.userid): this.rejectRecruiter(entity.id, entity.remarks);
   }
+
+  getAllVendorByType(access: string, userid: number,page: any, size: any, recruitertype: any, field:any) {
+    return this.apiServ.get("vms/recruiter/getAll/" + access + "/" + userid+"/"+page+"/"+size+"/"+ recruitertype + "/" +field);
+  }
 }
