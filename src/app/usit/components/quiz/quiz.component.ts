@@ -72,6 +72,7 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
   selectedDepartment: any;
   selectedCategory: any;
   setTimeOutVal: any;
+  allowAdd = false;
   ngOnInit(): void {
     if(this.data.actionName === 'edit-quiz'){
       this.initForm('');
@@ -107,6 +108,7 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
       next: (resp: any) => {
         if(resp.data){
           this.formObj = resp.data;
+          this.allowAdd =  resp.data.options.every((quest: any) => quest.answer !== '');
           this.initForm(this.formObj);
         }
       }
@@ -120,15 +122,12 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
     const category = this.selectedCategory;
     this.quizServ.getQuestionnaire(department,category).pipe(takeUntil(this.destroyed$)).subscribe({
       next: (resp: any) => {
-
         if (resp.status === "success") {
-
           if(resp.data){
-           // this.formObj = resp.data;
-            this.dataTobeSentToSnackBarService.message = "Quiz already exists!, Pleae select different category to add the questionnaire";
-            this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"]
+            this.dataTobeSentToSnackBarService.message = "KPT already exists, Please update KPT with the same selection criteria from KPT list";
+            this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-info"];
             this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);
-
+            this.dialogRef.close();
           }
 
         }
@@ -145,6 +144,8 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
       category: [data ? data.category : '',[Validators.required] ],
       options: this.fb.array(this.initFormArrayElements(data)),
     });
+    this.allowAdd =  this.quizForm.controls.options.controls.every((ctrl: FormGroup) => ctrl.get('answer')?.value !== '');
+
   }
 
   /**
@@ -153,6 +154,7 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
    */
   private initFormArrayElements(data?: any): FormGroup<Questionnaire>[] {
     let response = data ? data.options : this.formObj;
+
     return this.data.actionName === 'add-quiz' ? response.map((control: any) =>
       this.fb.group({
         optionA: [control.optionA,[ Validators.required,Validators.maxLength(100)] ],
@@ -186,6 +188,7 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
       const control = formArr.controls[questId]?.get('answer');
       control?.patchValue(event.value);
     }
+
   }
 
   /**
@@ -230,9 +233,9 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
       next:(resp: any) => {
 
         if (resp.status == 'success') {
-          this.dataTobeSentToSnackBarService.message = this.data.actionName ===  'add-quiz' ? 'Question added Successfully' : 'Question updated Successfully';
+          this.dataTobeSentToSnackBarService.message = this.data.actionName ===  'add-quiz' ? 'Quiz added Successfully' : 'Quiz updated Successfully';
         } else {
-          this.dataTobeSentToSnackBarService.message =  this.data.actionName ===  'add-quiz' ? 'Question addition failed': 'Question updation failed';
+          this.dataTobeSentToSnackBarService.message =  this.data.actionName ===  'add-quiz' ? 'Quiz addition failed': 'Quiz updation failed';
           this.dataTobeSentToSnackBarService.panelClass = ["custom-snack-failure"];
         }
         this.snackBarServ.openSnackBarFromComponent(this.dataTobeSentToSnackBarService);

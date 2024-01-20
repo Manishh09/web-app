@@ -30,7 +30,7 @@
                 {{ option.name }}
               </mat-option>
             </mat-select>
-              <mat-error *ngIf="this.quizForm.get('category')?.errors?.required">Category is required</mat-error>
+              <mat-error *ngIf="quizForm.get('category')?.errors?.required">Category is required</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -99,7 +99,7 @@
 
 </mat-card-content>
  <!--bottom action button -->
- <div class="actions" *ngIf="formObj?.options?.length">
+ <div class="actions" *ngIf="(quizForm.get('department')?.value && quizForm.get('category')?.value)">
   <button mat-raised-button color="white" (click)="onCancel()">Reset</button>
   <button type="submit" mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
 </div>

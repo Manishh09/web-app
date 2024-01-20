@@ -13,11 +13,11 @@
   <mat-card-header class="card-header">
     <mat-card-title class="card-title">Questionnaire</mat-card-title>
     <!-- add button -->
-  <button mat-icon-button (click)="addQuestion()"
+  <button [disabled]="!allowAdd && !quizForm.valid" mat-icon-button (click)="addQuestion()"
      matTooltip="Add Question"
      matTooltipPosition="left"
     >
-    <mat-icon class="item-icon">add_circle</mat-icon>
+    <mat-icon [ngClass]="{'item-icon': allowAdd }">add_circle</mat-icon>
   </button>
 </mat-card-header>
   <mat-card-content class="card-content">
