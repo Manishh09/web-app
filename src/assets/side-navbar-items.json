@@ -30,7 +30,18 @@
     {
       "text": "Immigration",
       "icon": "label",
-      "routerLink": "/usit/immigration"
+      "children": [
+        {
+          "text": "H1B Immigration",
+          "icon": "flight_land",
+          "routerLink": "/usit/h1b-immigartion"
+        },
+        {
+          "text": "Future OPT/CPT",
+          "icon": "school",
+          "routerLink": "/usit/future-opt-cpt"
+        }
+      ]
     },
 
     {
@@ -49,6 +60,11 @@
       "text": "Sales",
       "icon": "attach_money",
       "children": [
+        {
+          "text": "Hot List",
+          "icon": "flash_on",
+          "routerLink": "/usit/hot-list"
+        },
         {
           "text": "Consultants",
           "icon": "person",

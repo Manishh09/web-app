@@ -20,6 +20,10 @@ export class FileManagementService {
     return this.http.post(this.apiServ.apiUrl + `consultant/uploadMultiple/${id}`, formData, {observe: "response"});
   }
 
+  h1bUploadFile(formData:any, id: number) {
+    return this.http.post(this.apiServ.apiUrl + `img/H1BApplicants/h1docs/${id}`, formData, {observe: "response"});
+  }
+
   removefile(id: number, flg: string) {
     return this.apiServ.get(`auth/users/removefile/${id}/${flg}`);
   }
@@ -28,6 +32,9 @@ export class FileManagementService {
     return this.apiServ.get(`consultant/removefile/${id}/${flg}`);
   }
 
+  h1bRemoveFile(id: number, flg: string) {
+    return this.apiServ.get(`img/H1BApplicants/removefile/${id}/${flg}`);
+  }
 
   removefiles(id: number) {
     return this.apiServ.get(`auth/users/removefiles/${id}`);
@@ -45,6 +52,12 @@ export class FileManagementService {
 
   downloadconresume(id: number, flg: string): Observable<Blob> {
     return this.http.get(`${this.apiServ.apiUrl}consultant/download/${id}/${flg}`, {
+      responseType: 'blob',
+    });
+  }
+
+  downloadH1bFile(id: number, flg: string): Observable<Blob> {
+    return this.http.get(`${this.apiServ.apiUrl}img/H1BApplicants/download/${id}/${flg}`, {
       responseType: 'blob',
     });
   }

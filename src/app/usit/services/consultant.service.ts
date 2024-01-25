@@ -162,4 +162,12 @@ export class ConsultantService {
   public masmailingRecruiterEmails(flg: any) {
     return this.http.get( "recruiter/massmailEmails/" + flg);
   }
+
+  getSalesHotList( page: any, size: any, field: any) {
+    return this.http.get("consultant/hotlist/"  + page + "/" + size + "/" + field);
+  }
+
+  getOptCptList(page: any, size: any, field: any) {
+    return this.http.get(`consultant/all/${page}/${size}/${field}/p5`)
+  }
 }

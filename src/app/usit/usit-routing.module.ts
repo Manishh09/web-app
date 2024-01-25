@@ -21,6 +21,9 @@ import { QuizResultComponent } from './components/quiz/quiz-result/quiz-result.c
 import { ClosureListComponent } from './components/sales/closure-list/closure-list.component';
 import { PurchaseOrderListComponent } from './components/accounts&billing/purchase-order-list/purchase-order-list.component';
 import { UserInfoComponent } from './components/recruitment/user-info/user-info.component';
+import { H1bImmigrationComponent } from './components/Immigration/h1b-immigration/h1b-immigration.component';
+import { FutureOptCptComponent } from './components/Immigration/future-opt-cpt/future-opt-cpt.component';
+import { HotListComponent } from './components/sales/hot-list/hot-list.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
@@ -170,6 +173,15 @@ const routes: Routes = [
     path: 'purchase-orders',
     component: PurchaseOrderListComponent,
   },
+  {
+    path: 'h1b-immigartion', component: H1bImmigrationComponent,
+  },
+  {
+    path: 'future-opt-cpt', component: FutureOptCptComponent,
+  },
+  {
+    path: 'hot-list', component: HotListComponent,
+  }
 ];
 
 @NgModule({
