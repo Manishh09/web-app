@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VendorService } from 'src/app/usit/services/vendor.service';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -42,6 +43,11 @@ import {
   map,
 } from 'rxjs';
 import { Company } from 'src/app/usit/models/company';
+import {
+  NgxGpAutocompleteDirective,
+  NgxGpAutocompleteOptions,
+  NgxGpAutocompleteService
+} from "@angular-magic/ngx-gp-autocomplete";
 
 @Component({
   selector: 'app-add-vendor',
@@ -87,9 +93,9 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   private snackBarServ = inject(SnackBarService);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
-  options = {
-    componentRestrictions: { country: ['IN', 'US'] },
-  };
+  // options = {
+  //   componentRestrictions: { country: ['IN', 'US'] },
+  // };
 
   companySearchData: any[] = [];
   searchCompanyOptions$!: Observable<any>;
@@ -106,6 +112,16 @@ export class AddVendorComponent implements OnInit, OnDestroy {
    
   designation = localStorage.getItem('designation');
   isCompanyDataAvailable: boolean = false;
+
+  constructor(private ngxGpAutocompleteService: NgxGpAutocompleteService,) {
+    this.ngxGpAutocompleteService.setOptions({ componentRestrictions: { country: ['US'] } });
+  }
+
+  options = {
+    componentRestrictions: {
+      country: ['US'],
+    },
+  } as NgxGpAutocompleteOptions;
 
   ngOnInit(): void {
 
@@ -188,7 +204,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       user: localStorage.getItem('userid'),
       headquerter: [
        vendorData ?vendorData.headquerter : '',
-        Validators.required,
+        [Validators.required, this.atLeastTwoNumbers]
       ],
     });
     if (this.data.actionName === 'edit-vendor') {
@@ -214,6 +230,17 @@ export class AddVendorComponent implements OnInit, OnDestroy {
     this.validateControls(this.data.actionName);
   }
 
+  atLeastTwoNumbers(control: AbstractControl): { [key: string]: boolean } | null {
+    const value: string = control.value || '';
+    const numDigits = value.replace(/[^0-9]/g, '').length;
+  
+    if (numDigits < 2) {
+      return { 'atLeastTwoNumbers': true }; 
+    }
+  
+    return null; 
+  }
+  
   validateControls(action = 'add-vendor') {
     if (action === 'edit-vendor') {
       this.vendorForm.get('status').valueChanges.subscribe((res: any) => {
@@ -452,6 +479,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
 
   handleAddressChange(address: any) {
     this.vendorForm.controls.headquerter.setValue(address.formatted_address);
+    this.vendorForm.controls.website.setValue(address.website);
   }
   /**
    * Cancel
