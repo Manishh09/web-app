@@ -31,6 +31,7 @@ export class HotListComponent implements OnInit {
     'Visa',
     'Experience',
     'Rate',
+    'Priority',
     'CurrentLocation',
     'Relocation',
     'Phone',
