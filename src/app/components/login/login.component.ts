@@ -109,7 +109,7 @@ export class LoginComponent implements OnInit {
          // console.log(result.data);
 
           this.permissionServ.login(loggedInUserData).subscribe((data) => {
-            this.router.navigate(['usit/dashboard']);
+             this.router.navigate(['usit/dashboard']);
             const message = 'You have logged in successfully!';
             this.showErroNotification(message, 'success');
           });
