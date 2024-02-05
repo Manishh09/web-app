@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormBuilder, FormControl, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, FormArray, ReactiveFormsModule, AbstractControl, ValidatorFn } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
@@ -182,8 +182,8 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
    * @param event selected answer
    * @param questId question index
    */
-  selectAnswer(event: MatRadioChange, questId: number) {
-    if(event){
+  selectAnswer(event: MatRadioChange, questId: number) { 
+    if(event && event.value !== ""){
       const formArr = this.quizForm.controls.options;
       const control = formArr.controls[questId]?.get('answer');
       control?.patchValue(event.value);
@@ -216,15 +216,25 @@ export class QuizComponent implements OnInit,OnDestroy{ // add quiz component
     this.quizForm.controls.options.removeAt(id);
   }
 
+  areAllQuestionsAnswered(): boolean {
+    const formArray = this.quizForm.controls['options'] as FormArray;
+    for (let i = 0; i < formArray.length; i++) {
+      const answerControl = formArray.at(i).get('answer');
+      if (!answerControl || !answerControl.value) {
+        return false; // At least one question is unanswered
+      }
+    }
+    return true; // All questions have been answered
+  }
+  
   /**
    *
    * submit form
    */
   onSubmit() {
     this.isFormSubmitted = true;
-    console.log('form.value for save:', JSON.stringify(this.quizForm.value));
-    if (this.quizForm.invalid) {
-      // show errors
+    if (this.quizForm.invalid || !this.areAllQuestionsAnswered()) {
+      // Show errors and prevent form submission if any question is unanswered
       this.displayFormErrors();
       return;
     }
